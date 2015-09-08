@@ -23,6 +23,14 @@ namespace ExtendCSharp
         {
             return Math.Sqrt(d);
         }
+        public static int Floor(this double d)
+        {
+            return Math.Floor(d).Cast<int>();
+        }
+        public static int Ceiling(this double d)
+        {
+            return ((int)Math.Ceiling(d));
+        }
         #endregion
 
         #region String
@@ -42,13 +50,38 @@ namespace ExtendCSharp
                 return indexes;
             for (int index = 0; ; index += value.Length)
             {
+                if (index >= str.Length)
+                    return indexes;
                 index = str.IndexOf(value, index);
                 if (index == -1)
                     return indexes;
                 indexes.Add(index);
             }
         }
+        public static String SplitAndGet(this String s, int Index, params char[] chars)
+        {
+            String[] t = s.Split(chars);
+            if (Index >= t.Length)
+                return null;
+            return t[Index];
+        }
+        public static String SplitAndGet(this String s, int Index, params String[] str)
+        {
+            String[] t = s.Split(str, StringSplitOptions.None);
+            if (Index >= t.Length)
+                return null;
+            return t[Index];
+        }
         #endregion
+
+        #region String[]
+        public static bool Contains(this String[] arr,String str)
+        {
+           return arr.AsQueryable().Contains<string>(str);
+        }
+      
+        #endregion
+
 
         #region Control
         public static void SetTextInvoke(this Control t, string s)
@@ -123,9 +156,99 @@ namespace ExtendCSharp
         }
         #endregion
 
+        #region WebBrowser
+
+        public static void Navigate(this WebBrowser wb, String Url, string TargetFrame, String PostData, String AdditionalHeaders)
+        {
+            System.Text.Encoding a = System.Text.Encoding.UTF8;
+            byte[] byte1 = a.GetBytes(PostData);
+            wb.Navigate(Url, TargetFrame, byte1, AdditionalHeaders);
+        }
+        public static void Navigate(this WebBrowser wb, Uri Url, string TargetFrame, String PostData, String AdditionalHeaders)
+        {
+            System.Text.Encoding a = System.Text.Encoding.UTF8;
+            byte[] byte1 = a.GetBytes(PostData);
+            wb.Navigate(Url, TargetFrame, byte1, AdditionalHeaders);
+        }
+
+
+        public static void NavigateAndWait(this WebBrowser wb,String Url)
+        {
+            wb.Navigate(Url);
+            while (wb.ReadyState != WebBrowserReadyState.Complete)
+                Application.DoEvents();
+        }
+        public static void NavigateAndWait(this WebBrowser wb, Uri Url)
+        {
+            wb.Navigate(Url);
+            while (wb.ReadyState != WebBrowserReadyState.Complete)
+                Application.DoEvents();
+        }
+        public static void NavigateAndWait(this WebBrowser wb, String Url, bool NewWindow)
+        {
+            wb.Navigate(Url, NewWindow);
+            while (wb.ReadyState != WebBrowserReadyState.Complete)
+                Application.DoEvents();
+        }
+        public static void NavigateAndWait(this WebBrowser wb, Uri Url,bool NewWindow)
+        {
+            wb.Navigate(Url, NewWindow);
+            while (wb.ReadyState != WebBrowserReadyState.Complete)
+                Application.DoEvents();
+        }
+        public static void NavigateAndWait(this WebBrowser wb, String Url, string TargetFrame)
+        {
+            wb.Navigate(Url, TargetFrame);
+            while (wb.ReadyState != WebBrowserReadyState.Complete)
+                Application.DoEvents();
+        }
+        public static void NavigateAndWait(this WebBrowser wb, Uri Url, string TargetFrame)
+        {
+            wb.Navigate(Url, TargetFrame);
+            while (wb.ReadyState != WebBrowserReadyState.Complete)
+                Application.DoEvents();
+        }
+        public static void NavigateAndWait(this WebBrowser wb, String Url, string TargetFrame,byte[]PostData, String AdditionalHeaders)
+        {
+            wb.Navigate(Url, TargetFrame, PostData, AdditionalHeaders);
+            while (wb.ReadyState != WebBrowserReadyState.Complete)
+                Application.DoEvents();
+            
+        }
+        public static void NavigateAndWait(this WebBrowser wb, Uri Url, string TargetFrame, byte[] PostData, String AdditionalHeaders)
+        {
+            wb.Navigate(Url, TargetFrame, PostData, AdditionalHeaders);
+            while (wb.ReadyState != WebBrowserReadyState.Complete)
+                Application.DoEvents();
+        }
+        public static void NavigateAndWait(this WebBrowser wb, String Url, string TargetFrame, String PostData, String AdditionalHeaders)
+        {
+            wb.Navigate(Url, TargetFrame, PostData, AdditionalHeaders);
+            while (wb.ReadyState != WebBrowserReadyState.Complete)
+                Application.DoEvents();
+
+        }
+        public static void NavigateAndWait(this WebBrowser wb, Uri Url, string TargetFrame, String PostData, String AdditionalHeaders)
+        {
+            wb.Navigate(Url, TargetFrame, PostData, AdditionalHeaders);
+            while (wb.ReadyState != WebBrowserReadyState.Complete)
+                Application.DoEvents();
+        }
 
 
 
+
+
+
+
+        #endregion
+
+        #region Uri
+        public static void Append(this Uri self, String s)
+        {
+            self = new Uri(self, s);
+        }
+        #endregion
 
 
 
