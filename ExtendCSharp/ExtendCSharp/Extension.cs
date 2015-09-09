@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -158,6 +159,10 @@ namespace ExtendCSharp
 
         #region WebBrowser
 
+
+
+
+
         public static void Navigate(this WebBrowser wb, String Url, string TargetFrame, String PostData, String AdditionalHeaders)
         {
             System.Text.Encoding a = System.Text.Encoding.UTF8;
@@ -172,77 +177,212 @@ namespace ExtendCSharp
         }
 
 
+
+
+        public static void NavigateInvoke(this WebBrowser wb, String Url)
+        {
+            if (wb.InvokeRequired)
+                wb.Invoke((MethodInvoker)delegate { wb.NavigateInvoke(Url); });
+            else
+                wb.Navigate(Url);
+        }
+        public static void NavigateInvoke(this WebBrowser wb, Uri Url)
+        {
+            if (wb.InvokeRequired)
+                wb.Invoke((MethodInvoker)delegate { wb.NavigateInvoke(Url); });
+            else
+                wb.Navigate(Url);
+        }
+        public static void NavigateInvoke(this WebBrowser wb, String Url, bool NewWindow)
+        {
+            if (wb.InvokeRequired)
+                wb.Invoke((MethodInvoker)delegate { wb.NavigateInvoke(Url, NewWindow); });
+            else
+                wb.Navigate(Url, NewWindow);
+        }
+        public static void NavigateInvoke(this WebBrowser wb, Uri Url, bool NewWindow)
+        {
+            if (wb.InvokeRequired)
+                wb.Invoke((MethodInvoker)delegate { wb.NavigateInvoke(Url, NewWindow); });
+            else
+                wb.Navigate(Url, NewWindow);
+        }
+        public static void NavigateInvoke(this WebBrowser wb, String Url, string TargetFrame)
+        {
+            if (wb.InvokeRequired)
+                wb.Invoke((MethodInvoker)delegate { wb.NavigateInvoke(Url, TargetFrame); });
+            else
+                wb.Navigate(Url, TargetFrame);
+        }
+        public static void NavigateInvoke(this WebBrowser wb, Uri Url, string TargetFrame)
+        {
+            if (wb.InvokeRequired)
+                wb.Invoke((MethodInvoker)delegate { wb.NavigateInvoke(Url, TargetFrame); });
+            else
+                wb.Navigate(Url, TargetFrame);
+        }
+        public static void NavigateInvoke(this WebBrowser wb, String Url, string TargetFrame, byte[] PostData, String AdditionalHeaders)
+        {
+            if (wb.InvokeRequired)
+                wb.Invoke((MethodInvoker)delegate { wb.NavigateInvoke(Url, TargetFrame, PostData, AdditionalHeaders); });
+            else
+                wb.Navigate(Url, TargetFrame, PostData, AdditionalHeaders);
+
+        }
+        public static void NavigateInvoke(this WebBrowser wb, Uri Url, string TargetFrame, byte[] PostData, String AdditionalHeaders)
+        {
+            if (wb.InvokeRequired)
+                wb.Invoke((MethodInvoker)delegate { wb.NavigateInvoke(Url, TargetFrame, PostData, AdditionalHeaders); });
+            else
+                wb.Navigate(Url, TargetFrame, PostData, AdditionalHeaders);
+        }
+        public static void NavigateInvoke(this WebBrowser wb, String Url, string TargetFrame, String PostData, String AdditionalHeaders)
+        {
+            if (wb.InvokeRequired)
+                wb.Invoke((MethodInvoker)delegate { wb.NavigateInvoke(Url,TargetFrame, PostData, AdditionalHeaders); });
+            else
+                wb.Navigate(Url, TargetFrame, PostData, AdditionalHeaders);
+        }
+        public static void NavigateInvoke(this WebBrowser wb, Uri Url, string TargetFrame, String PostData, String AdditionalHeaders)
+        {
+            if (wb.InvokeRequired)
+                wb.Invoke((MethodInvoker)delegate { wb.NavigateInvoke(Url, TargetFrame, PostData, AdditionalHeaders); });
+            else
+                wb.Navigate(Url, TargetFrame, PostData, AdditionalHeaders);
+        }
+
+
         public static void NavigateAndWait(this WebBrowser wb,String Url)
         {
-            wb.Navigate(Url);
-            while (wb.ReadyState != WebBrowserReadyState.Complete)
-                Application.DoEvents();
+            wb.NavigateInvoke(Url);
+            wb.WaitCompleteInvoke();
         }
         public static void NavigateAndWait(this WebBrowser wb, Uri Url)
         {
-            wb.Navigate(Url);
-            while (wb.ReadyState != WebBrowserReadyState.Complete)
-                Application.DoEvents();
+            wb.NavigateInvoke(Url);
+            wb.WaitCompleteInvoke();
         }
         public static void NavigateAndWait(this WebBrowser wb, String Url, bool NewWindow)
         {
-            wb.Navigate(Url, NewWindow);
-            while (wb.ReadyState != WebBrowserReadyState.Complete)
-                Application.DoEvents();
+            wb.NavigateInvoke(Url, NewWindow);
+            wb.WaitCompleteInvoke();
         }
         public static void NavigateAndWait(this WebBrowser wb, Uri Url,bool NewWindow)
         {
-            wb.Navigate(Url, NewWindow);
-            while (wb.ReadyState != WebBrowserReadyState.Complete)
-                Application.DoEvents();
+            wb.NavigateInvoke(Url, NewWindow);
+            wb.WaitCompleteInvoke();
         }
         public static void NavigateAndWait(this WebBrowser wb, String Url, string TargetFrame)
         {
-            wb.Navigate(Url, TargetFrame);
-            while (wb.ReadyState != WebBrowserReadyState.Complete)
-                Application.DoEvents();
+            wb.NavigateInvoke(Url, TargetFrame);
+            wb.WaitCompleteInvoke();
         }
         public static void NavigateAndWait(this WebBrowser wb, Uri Url, string TargetFrame)
         {
-            wb.Navigate(Url, TargetFrame);
-            while (wb.ReadyState != WebBrowserReadyState.Complete)
-                Application.DoEvents();
+            wb.NavigateInvoke(Url, TargetFrame);
+            wb.WaitCompleteInvoke();
         }
         public static void NavigateAndWait(this WebBrowser wb, String Url, string TargetFrame,byte[]PostData, String AdditionalHeaders)
         {
-            wb.Navigate(Url, TargetFrame, PostData, AdditionalHeaders);
-            while (wb.ReadyState != WebBrowserReadyState.Complete)
-                Application.DoEvents();
-            
+            wb.NavigateInvoke(Url, TargetFrame, PostData, AdditionalHeaders);
+            wb.WaitCompleteInvoke();
+
         }
         public static void NavigateAndWait(this WebBrowser wb, Uri Url, string TargetFrame, byte[] PostData, String AdditionalHeaders)
         {
-            wb.Navigate(Url, TargetFrame, PostData, AdditionalHeaders);
-            while (wb.ReadyState != WebBrowserReadyState.Complete)
-                Application.DoEvents();
+            wb.NavigateInvoke(Url, TargetFrame, PostData, AdditionalHeaders);
+            wb.WaitCompleteInvoke();
         }
         public static void NavigateAndWait(this WebBrowser wb, String Url, string TargetFrame, String PostData, String AdditionalHeaders)
         {
-            wb.Navigate(Url, TargetFrame, PostData, AdditionalHeaders);
-            while (wb.ReadyState != WebBrowserReadyState.Complete)
-                Application.DoEvents();
-
+            wb.NavigateInvoke(Url, TargetFrame, PostData, AdditionalHeaders);
+            wb.WaitCompleteInvoke();
         }
         public static void NavigateAndWait(this WebBrowser wb, Uri Url, string TargetFrame, String PostData, String AdditionalHeaders)
         {
-            wb.Navigate(Url, TargetFrame, PostData, AdditionalHeaders);
-            while (wb.ReadyState != WebBrowserReadyState.Complete)
-                Application.DoEvents();
+            wb.NavigateInvoke(Url, TargetFrame, PostData, AdditionalHeaders);
+            wb.WaitCompleteInvoke();
         }
 
 
+        public static void WaitCompleteInvoke(this WebBrowser wb)
+        {
+            if(wb.InvokeRequired)
+            {
+                wb.Invoke((MethodInvoker) delegate { wb.WaitCompleteInvoke(); });
+            }
+            else
+            {
+                while (wb.ReadyState != WebBrowserReadyState.Complete)
+                    Application.DoEvents();
+            }
+        }
 
-
+        public static HtmlDocument DocumentInvoke(this WebBrowser wb)
+        {
+            if (wb.InvokeRequired)
+            {
+                return (HtmlDocument)wb.Invoke((Func < HtmlDocument >)delegate { return wb.DocumentInvoke(); });
+            }
+            else
+            {
+                return wb.Document;
+            }
+        }
 
 
 
         #endregion
 
+        #region HtmlDocument
+        public static List<HtmlElement> GetElementsByClass(this HtmlDocument self,String Class)
+        {
+            List<HtmlElement> t = new List<HtmlElement>();
+            foreach (HtmlElement hel in self.All)
+            {
+                if (hel.GetAttribute("className").Split(' ', '\t').Contains(Class))
+                    t.Add(hel);
+            }
+            return t;
+        }
+        public static List<HtmlElement> GetElementsByTagNameClass(this HtmlDocument self, String Class,String Tag)
+        {
+            List<HtmlElement> t = new List<HtmlElement>();
+            foreach (HtmlElement hel in self.GetElementsByTagName(Tag))
+            {
+                if (hel.GetAttribute("className").Split(' ', '\t').Contains(Class))
+                    t.Add(hel);
+            }
+            return t;
+        }
+
+
+        #endregion
+
+        #region HtmlElement
+        public static List<HtmlElement> GetElementsByClass(this HtmlElement self, String Class)
+        {
+            List<HtmlElement> t = new List<HtmlElement>();
+            foreach (HtmlElement hel in self.All)
+            {
+                if (hel.GetAttribute("className").Split(' ', '\t').Contains(Class))
+                    t.Add(hel);
+            }
+            return t;
+        }
+        public static List<HtmlElement> GetElementsByTagNameClass(this HtmlElement self, String Class, String Tag)
+        {
+            List<HtmlElement> t = new List<HtmlElement>();
+            foreach (HtmlElement hel in self.GetElementsByTagName(Tag))
+            {
+                if (hel.GetAttribute("className").Split(' ', '\t').Contains(Class))
+                    t.Add(hel);
+            }
+            return t;
+        }
+
+
+        #endregion 
         #region Uri
         public static void Append(this Uri self, String s)
         {
@@ -250,6 +390,16 @@ namespace ExtendCSharp
         }
         #endregion
 
+        #region Form
+        public static void CloseInvoke(this Form self)
+        {
+            if (self.InvokeRequired)
+                self.Invoke((MethodInvoker)delegate { self.CloseInvoke(); });
+            else
+                self.Close();
+            
+        }
+        #endregion
 
 
         #region DEMO
