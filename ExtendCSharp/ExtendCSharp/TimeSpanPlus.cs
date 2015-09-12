@@ -42,6 +42,9 @@ namespace ExtendCSharp
         {
             _time = _time.Add(new TimeSpan(hours, 0, 0));
         }
+
+
+
         public void AddTime(int sec, int min, int hou)
         {
             _time = _time.Add(new TimeSpan(hou, min, sec));
