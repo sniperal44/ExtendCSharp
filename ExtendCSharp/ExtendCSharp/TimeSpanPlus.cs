@@ -8,59 +8,372 @@ namespace ExtendCSharp
 {
     public class TimeSpanPlus
     {
-        private TimeSpan _time;
+        private int _millisec, _sec, _min, _hour, _day;
         public TimeSpan Time
         {
             get
             {
-                return _time;
+                return new TimeSpan(_day,_hour,_min,_sec,_millisec);
             }
             set
             {
-                _time = value;
+                _millisec = value.Milliseconds;
+                _sec = value.Seconds;
+                _min = value.Minutes;
+                _hour = value.Hours;
+                _day = value.Days;
             }
         }
-        public TimeSpanPlus(long ticks)
+
+        public int Milliseconds
         {
-            _time = new TimeSpan(ticks);
+            get
+            {
+                return _millisec;
+            }
         }
+        public int Seconds
+        {
+            get
+            {
+                return _sec;
+            }
+        }
+        public int Minutes
+        {
+            get
+            {
+                return _min;
+            }
+        }
+        public int Hours
+        {
+            get
+            {
+                return _hour;
+            }
+        }
+        public int Days
+        {
+            get
+            {
+                return _day;
+            }
+        }
+
+
+        public double TotalMilliseconds
+        {
+            get
+            {
+                return _millisec*_sec*_min*_hour*_day;
+            }
+        }
+        public double TotalSeconds
+        {
+            get
+            {
+                return TotalMilliseconds / 1000;
+            }
+        }
+        public double TotalMinutes
+        {
+            get
+            {
+                return TotalMilliseconds / 60000;
+            }
+        }
+        public double TotalHours
+        {
+            get
+            {
+                return TotalMilliseconds / 3600000;
+            }
+        }
+        public double TotalDays
+        {
+            get
+            {
+                return TotalMilliseconds / 86400000;
+            }
+        }
+
+
+        
+
         public TimeSpanPlus(int milliseconds = 0, int seconds = 0, int minutes = 0, int hours = 0, int days = 0)
         {
-            _time = new TimeSpan(days, hours, minutes, seconds, milliseconds);
+            SetTime(milliseconds, seconds, minutes, hours, days);
+        }
+        public TimeSpanPlus(TimeSpanPlus Time)
+        {
+            SetTime(Time);
+        }
+        public TimeSpanPlus(TimeSpan Time)
+        {
+            SetTime(Time);
         }
 
-
-        public void AddSeconds(int seconds)
-        {
-            _time = _time.Add(new TimeSpan(0, 0, seconds));
-        }
-        public void AddMinuts(int minutes)
-        {
-            _time = _time.Add(new TimeSpan(0, minutes, 0));
-        }
-        public void AddHours(int hours)
-        {
-            _time = _time.Add(new TimeSpan(hours, 0, 0));
-        }
-
-
-
-        public void AddTime(int sec, int min, int hou)
-        {
-            _time = _time.Add(new TimeSpan(hou, min, sec));
-        }
-        override public string ToString()
-        {
-            return _time.ToString();
-        }
-        public string ToString(string format)
-        {
-            return _time.ToString(format);
-        }
 
         public void SetTime(int milliseconds = 0, int seconds = 0, int minutes = 0, int hours = 0, int days = 0)
         {
-            _time = new TimeSpan(days, hours, minutes, seconds, milliseconds);
+            _millisec = milliseconds;
+            _sec = seconds;
+            _min = minutes;
+            _hour = hours;
+            _day = days;
         }
+        public void SetTime(TimeSpanPlus Time)
+        {
+            _millisec = Time._millisec;
+            _sec = Time._sec;
+            _min = Time._min;
+            _hour = Time._hour;
+            _day = Time._day;
+        }
+        public void SetTime(TimeSpan Time)
+        {
+            _millisec = Time.Milliseconds;
+            _sec = Time.Seconds;
+            _min = Time.Minutes;
+            _hour = Time.Hours;
+            _day = Time.Days;
+        }
+
+
+
+      
+        public void AddMilliseconds(int milliseconds)
+        {
+            int t = _millisec + milliseconds;
+            if (t < 1000)
+                _millisec = t;
+            else
+            {
+                _millisec = t % 1000;
+                AddSeconds(t / 1000);
+            }
+        }
+        public void AddSeconds(int seconds)
+        {
+            int t = _sec + seconds;
+            if (t < 60)
+                _sec = t;
+            else
+            {
+                _sec=t % 60;
+                AddMinuts(t / 60);
+            }
+        }
+        public void AddMinuts(int minutes)
+        {
+            int t = _min + minutes;
+            if (t < 60)
+                _min = t;
+            else
+            {
+                _min = t % 60;
+                AddHours(t / 60);
+            }
+        }
+        public void AddHours(int hours)
+        {
+            int t = _hour + hours;
+            if (t < 24)
+                _hour = t;
+            else
+            {
+                _hour = t % 24;
+                AddDays(t / 24);
+            }
+        }
+        public void AddDays(int days)
+        {
+            _day += days;
+        }
+
+        public void AddTime(int milliseconds = 0, int seconds = 0, int minutes = 0, int hours = 0, int days = 0)
+        {
+            AddMilliseconds(milliseconds);
+            AddSeconds(seconds);
+            AddMinuts(minutes);
+            AddHours(hours);
+            AddDays(days);
+        }
+        public void AddTime(TimeSpanPlus Time)
+        {
+            AddMilliseconds(Time.Milliseconds);
+            AddSeconds(Time.Seconds);
+            AddMinuts(Time.Minutes);
+            AddHours(Time.Hours);
+            AddDays(Time.Days);
+        }
+        public void AddTime(TimeSpan Time)
+        {
+            AddMilliseconds(Time.Milliseconds);
+            AddSeconds(Time.Seconds);
+            AddMinuts(Time.Minutes);
+            AddHours(Time.Hours);
+            AddDays(Time.Days);
+        }
+
+
+
+        public bool SubtractMilliseconds(int milliseconds)
+        {
+            if (milliseconds >= 60)
+            {
+                if (!SubtractSeconds(milliseconds / 60))
+                    return false;
+                milliseconds %= 60;
+            }
+
+            if (_sec >= milliseconds)
+            {
+                _millisec -= milliseconds;
+                return true;
+            }
+            else
+            {
+                if (SubtractSeconds(1))
+                {
+                    _millisec = 60 - milliseconds;
+                    return true;
+                }
+                return false;
+
+            }
+        }
+        public bool SubtractSeconds(int seconds)
+        {
+            if (seconds >= 60)
+            {
+                if (!SubtractMinuts(seconds / 60))
+                    return false;
+                seconds %= 60;
+            }
+
+            if (_sec >= seconds)
+            {
+                _sec -= seconds;
+                return true;
+            }
+            else
+            {
+                if (SubtractMinuts(1))
+                {
+                    _sec = 60 - seconds;
+                    return true;
+                }
+                return false;
+
+            }
+        }
+        public bool SubtractMinuts(int minutes)
+        {
+            if (minutes >= 60)
+            {
+                if (!SubtractHours(minutes / 60))
+                    return false;
+                minutes %= 60;
+            }
+
+            if (_min >= minutes)
+            {
+                _min -= minutes;
+                return true;
+            }
+            else
+            {
+                if (SubtractHours(1))
+                {
+                    _min = 60 - minutes;
+                    return true;
+                }
+                return false;
+
+            }
+        }
+        public bool SubtractHours(int hours)
+        {
+            if(hours>=24)
+            {
+                if (!SubtractDays(hours / 24))
+                    return false;
+                hours %= 24;
+            }
+
+            if (_hour >= hours)
+            {
+                _hour -= hours;
+                return true;
+            }
+            else
+            {
+                if(SubtractDays(1))
+                {
+                    _hour = 24 - hours;
+                    return true;
+                }
+                return false;
+                
+            }
+        }
+        public bool SubtractDays(int days)
+        {
+            if (_day >= days)
+            {
+                _day -= days;
+                return true;
+            }
+            else
+            {
+                _day = 0;
+                _hour = 0;
+                _min = 0;
+                _sec = 0;
+                _millisec = 0;
+                return false;
+            }
+        }
+
+        public bool SubtractTime(int milliseconds = 0, int seconds = 0, int minutes = 0, int hours = 0, int days = 0)
+        {
+            return SubtractDays(days) && SubtractHours(hours) && SubtractMinuts(minutes) && SubtractSeconds(seconds) && SubtractMilliseconds(milliseconds);
+        }
+        public bool SubtractTime(TimeSpanPlus Time)
+        {
+            return SubtractDays(Time.Days) && SubtractHours(Time.Hours) && SubtractMinuts(Time.Minutes) && SubtractSeconds(Time.Seconds) && SubtractMilliseconds(Time.Milliseconds);
+        }
+        public bool SubtractTime(TimeSpan Time)
+        {
+            return SubtractDays(Time.Days) && SubtractHours(Time.Hours) && SubtractMinuts(Time.Minutes) && SubtractSeconds(Time.Seconds) && SubtractMilliseconds(Time.Milliseconds);
+        }
+
+
+        override public string ToString()
+        {
+            return Time.ToString();
+        }
+        public string ToString(string format)
+        {
+            return Time.ToString(format);
+        }
+
+
+        public static TimeSpanPlus operator +(TimeSpanPlus c1, TimeSpanPlus c2)
+        {
+            TimeSpanPlus t=new TimeSpanPlus(c1);
+            t.AddTime(c2);
+            return t;
+        }
+
+        public static TimeSpanPlus operator -(TimeSpanPlus c1, TimeSpanPlus c2)
+        {
+            TimeSpanPlus t = new TimeSpanPlus(c1);
+            t.SubtractTime(c2);
+            return t;
+        }
+
     }
 }

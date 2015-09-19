@@ -1,7 +1,9 @@
-﻿using System;
+﻿using CsQuery;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,7 +12,7 @@ using System.Windows.Forms;
 namespace ExtendCSharp
 {
     public static class Extension
-    {        
+    {
         #region NUMBER
         public static bool IsInteger(this double d)
         {
@@ -26,7 +28,7 @@ namespace ExtendCSharp
         }
         public static int Floor(this double d)
         {
-            return Math.Floor(d).Cast<int>();
+            return Math.Floor(d)._Cast<int>();
         }
         public static int Ceiling(this double d)
         {
@@ -76,11 +78,11 @@ namespace ExtendCSharp
         #endregion
 
         #region String[]
-        public static bool Contains(this String[] arr,String str)
+        public static bool Contains(this String[] arr, String str)
         {
-           return arr.AsQueryable().Contains<string>(str);
+            return arr.AsQueryable().Contains<string>(str);
         }
-      
+
         #endregion
 
 
@@ -149,21 +151,21 @@ namespace ExtendCSharp
             self.Add(obj);
         }
 
-        
 
 
 
-        public static object GetAtInvoke(this ListBox self,int i)
+
+        public static object GetAtInvoke(this ListBox self, int i)
         {
             if (self.InvokeRequired)
-               return self.Invoke((Func<object>)delegate { return self.GetAtInvoke(i); });
+                return self.Invoke((Func<object>)delegate { return self.GetAtInvoke(i); });
             else
             {
                 if (i >= self.Items.Count)
                     return null;
                 return self.Items[i];
             }
-                
+
         }
 
         public static int GetItemsCountInvoke(this ListBox self)
@@ -184,12 +186,12 @@ namespace ExtendCSharp
             else
             {
                 if (i < self.Items.Count)
-                    self.Items.RemoveAt(i);                
+                    self.Items.RemoveAt(i);
             }
         }
 
 
-        public static void SwapInvoke(this ListBox self, int item1,int item2)
+        public static void SwapInvoke(this ListBox self, int item1, int item2)
         {
             if (self.InvokeRequired)
                 self.Invoke((MethodInvoker)delegate { self.SwapInvoke(item1, item2); });
@@ -198,28 +200,28 @@ namespace ExtendCSharp
                 if (item1 < self.Items.Count && item2 < self.Items.Count)
                 {
                     object t = self.Items[item1];
-                    self.Items[item1]= self.Items[item2];
+                    self.Items[item1] = self.Items[item2];
                     self.Items[item2] = t;
                 }
-                    
+
             }
         }
         #endregion
 
         #region DataGridView
-        public static void SwapInvoke(this DataGridView self, int c1,int r1, int c2,int r2)
+        public static void SwapInvoke(this DataGridView self, int c1, int r1, int c2, int r2)
         {
-            if(self.InvokeRequired)
+            if (self.InvokeRequired)
             {
                 self.Invoke((MethodInvoker)delegate { self.SwapInvoke(c1, r1, c2, r2); });
             }
             else
-                if(c1<self.Columns.Count && c2 < self.Columns.Count && r1 < self.Rows.Count && r2 < self.Rows.Count)
-                {
-                    object o1 = self[c1, r1].Value;
-                    self[c1,r1].Value = self[c2, r2].Value;
-                    self[c2, r2].Value = o1;
-                }
+                if (c1 < self.Columns.Count && c2 < self.Columns.Count && r1 < self.Rows.Count && r2 < self.Rows.Count)
+            {
+                object o1 = self[c1, r1].Value;
+                self[c1, r1].Value = self[c2, r2].Value;
+                self[c2, r2].Value = o1;
+            }
         }
 
         public static int GetColumnCountInvoke(this DataGridView self)
@@ -244,12 +246,22 @@ namespace ExtendCSharp
             else
                 return self[c, r].Value;
         }
-        public static void SetAtInvoke(this DataGridView self,int c,int r, object o)
+        public static void SetAtInvoke(this DataGridView self, int c, int r, object o)
         {
             if (self.InvokeRequired)
-                self.Invoke((MethodInvoker)delegate { self.SetAtInvoke(c,r,o); });
+                self.Invoke((MethodInvoker)delegate { self.SetAtInvoke(c, r, o); });
             else
                 self[c, r].Value = o;
+        }
+
+        public static void SetColumNameInvoke(this DataGridView self, int Column, String Name)
+        {
+            if (self.InvokeRequired)
+                self.Invoke((MethodInvoker)delegate { self.SetColumNameInvoke(Column, Name); });
+            else
+            {
+                self.Columns[Column].HeaderText = Name;
+            }
         }
 
         public static int GetNotNullElementInColumnInvoke(this DataGridView self, int Column)
@@ -297,7 +309,7 @@ namespace ExtendCSharp
         }
 
 
-        public static void ShiftUpInvoke(this DataGridView self,int Column, int RemovePosition)
+        public static void ShiftUpInvoke(this DataGridView self, int Column, int RemovePosition)
         {
             if (self.InvokeRequired)
                 self.Invoke((MethodInvoker)delegate { self.ShiftUpInvoke(Column, RemovePosition); });
@@ -321,14 +333,19 @@ namespace ExtendCSharp
         }
 
 
+
+
+
         #endregion
 
         #region object
-        public static T Cast<T>(this object o)
+        public static T _Cast<T>(this object o)
         {
             return (T)o;
         }
         #endregion
+
+        /*
 
         #region WebBrowser
 
@@ -418,7 +435,7 @@ namespace ExtendCSharp
         public static void NavigateInvoke(this WebBrowser wb, String Url, string TargetFrame, String PostData, String AdditionalHeaders)
         {
             if (wb.InvokeRequired)
-                wb.Invoke((MethodInvoker)delegate { wb.NavigateInvoke(Url,TargetFrame, PostData, AdditionalHeaders); });
+                wb.Invoke((MethodInvoker)delegate { wb.NavigateInvoke(Url, TargetFrame, PostData, AdditionalHeaders); });
             else
                 wb.Navigate(Url, TargetFrame, PostData, AdditionalHeaders);
         }
@@ -431,7 +448,7 @@ namespace ExtendCSharp
         }
 
 
-        public static void NavigateAndWait(this WebBrowser wb,String Url)
+        public static void NavigateAndWait(this WebBrowser wb, String Url)
         {
             wb.NavigateInvoke(Url);
             wb.WaitCompleteInvoke();
@@ -446,7 +463,7 @@ namespace ExtendCSharp
             wb.NavigateInvoke(Url, NewWindow);
             wb.WaitCompleteInvoke();
         }
-        public static void NavigateAndWait(this WebBrowser wb, Uri Url,bool NewWindow)
+        public static void NavigateAndWait(this WebBrowser wb, Uri Url, bool NewWindow)
         {
             wb.NavigateInvoke(Url, NewWindow);
             wb.WaitCompleteInvoke();
@@ -461,7 +478,7 @@ namespace ExtendCSharp
             wb.NavigateInvoke(Url, TargetFrame);
             wb.WaitCompleteInvoke();
         }
-        public static void NavigateAndWait(this WebBrowser wb, String Url, string TargetFrame,byte[]PostData, String AdditionalHeaders)
+        public static void NavigateAndWait(this WebBrowser wb, String Url, string TargetFrame, byte[] PostData, String AdditionalHeaders)
         {
             wb.NavigateInvoke(Url, TargetFrame, PostData, AdditionalHeaders);
             wb.WaitCompleteInvoke();
@@ -484,29 +501,23 @@ namespace ExtendCSharp
         }
 
 
-        public async  static void WaitCompleteInvoke(this WebBrowser wb)
+        public async static void WaitCompleteInvoke(this WebBrowser wb)
         {
-            if(wb.InvokeRequired)
+            if (wb.InvokeRequired)
             {
-                wb.Invoke((MethodInvoker) delegate { wb.WaitCompleteInvoke(); });
+                wb.Invoke((MethodInvoker)delegate { wb.WaitCompleteInvoke(); });
             }
             else
             {
                 while (wb.ReadyState != WebBrowserReadyState.Complete)
                 {
-                    Thread.Sleep(10);
                     Application.DoEvents();
+                    Thread.Sleep(100);
                 }
 
+                // Memory leak Thread Sleep
+                GC.Collect();
 
-                /*EventWaitHandle wh = new EventWaitHandle(false, EventResetMode.AutoReset);
-                WebBrowserNavigatedEventHandler h= (s, e) => {
-                    wh.Set();
-                };
-                wb.Navigated += h;
-                await Task.Run(() => wh.WaitOne());
-                wb.Navigated -= h;
-                */
             }
         }
 
@@ -514,45 +525,70 @@ namespace ExtendCSharp
         {
             if (wb.InvokeRequired)
             {
-                return (HtmlDocument)wb.Invoke((Func < HtmlDocument >)delegate { return wb.DocumentInvoke(); });
+                return (HtmlDocument)wb.Invoke((Func<HtmlDocument>)delegate { return wb.DocumentInvoke(); });
             }
             else
             {
                 return wb.Document;
             }
         }
+        public static String HtmlInvoke(this WebBrowser wb)
+        {
+            if (wb.InvokeRequired)
+            {
+                return (String)wb.Invoke((Func<String>)delegate { return wb.HtmlInvoke(); });
+            }
+            else
+            {
+                return wb.DocumentText;
+            }
+        }
 
-
+        public static void DisposePlus(this WebBrowser wb)
+        {
+            wb.NavigateAndWait("about:blank");
+            wb.Dispose();
+            wb = null;
+        }
 
         #endregion
 
+
+
         #region HtmlDocument
-        public static List<HtmlElement> GetElementsByClass(this HtmlDocument self,String Class)
+        public static List<HtmlElement> GetElementsByClass(this HtmlDocument self, String Class)
         {
             List<HtmlElement> t = new List<HtmlElement>();
-            foreach (HtmlElement hel in self.All)
+            foreach (HtmlElement temp in self.All)
             {
-                if (hel.GetAttribute("className").Split(' ', '\t').Contains(Class))
-                    t.Add(hel);
+                if (temp.GetAttribute("className").Split(' ', '\t').Contains(Class))
+                    t.Add(temp);
+                else
+                    temp.Dispose();
             }
+            GC.Collect();
             return t;
+
         }
         public static List<HtmlElement> GetElementsByTagNameClass(this HtmlDocument self, String Tag, params String[] Classes)
         {
             List<HtmlElement> t = new List<HtmlElement>();
-            foreach (HtmlElement hel in self.GetElementsByTagName(Tag))
+            foreach (HtmlElement temp in self.GetElementsByTagName(Tag))
             {
                 bool buco = false;
                 foreach (String c in Classes)
-                    if (!hel.GetAttribute("className").Split(' ', '\t').Contains(c))
+                    if (!temp.GetAttribute("className").Split(' ', '\t').Contains(c))
                     {
                         buco = true;
                         break;
                     }
 
                 if (!buco)
-                    t.Add(hel);
+                    t.Add(temp);
+                else
+                    temp.Dispose();
             }
+            GC.Collect();
             return t;
         }
 
@@ -563,63 +599,88 @@ namespace ExtendCSharp
         public static List<HtmlElement> GetElementsByClass(this HtmlElement self, params String[] Classes)
         {
             List<HtmlElement> t = new List<HtmlElement>();
-            foreach (HtmlElement hel in self.All)
+            foreach (HtmlElement temp in self.All)
             {
                 bool buco = false;
                 foreach (String c in Classes)
-                    if (!hel.GetAttribute("className").Split(' ', '\t').Contains(c))
+                    if (!temp.GetAttribute("className").Split(' ', '\t').Contains(c))
                     {
                         buco = true;
                         break;
                     }
 
                 if (!buco)
-                    t.Add(hel);
+                    t.Add(temp);
+                else
+                    temp.Dispose();
             }
+            GC.Collect();
             return t;
         }
-        public static List<HtmlElement> GetElementsByTagNameClass(this HtmlElement self,  String Tag,params String[] Classes)
+        public static List<HtmlElement> GetElementsByTagNameClass(this HtmlElement self, String Tag, params String[] Classes)
         {
             List<HtmlElement> t = new List<HtmlElement>();
-            foreach (HtmlElement hel in self.GetElementsByTagName(Tag))
+            foreach (HtmlElement temp in self.GetElementsByTagName(Tag))
             {
                 bool buco = false;
                 foreach (String c in Classes)
-                    if (!hel.GetAttribute("className").Split(' ', '\t').Contains(c))
+                    if (!temp.GetAttribute("className").Split(' ', '\t').Contains(c))
                     {
                         buco = true;
                         break;
                     }
-                        
-                if(!buco)
-                    t.Add(hel);
+
+                if (!buco)
+                    t.Add(temp);
+                else
+                    temp.Dispose();
             }
+            GC.Collect();
             return t;
         }
         public static List<HtmlElement> GetElementsByID(this HtmlElement self, String ID)
         {
             List<HtmlElement> t = new List<HtmlElement>();
-            foreach (HtmlElement hel in self.All)
+            foreach (HtmlElement temp in self.All)
             {
-                if (hel.Id==ID)
-                    t.Add(hel);
+                if (temp.Id==ID)
+                    t.Add(temp);
+                else
+                    temp.Dispose();
             }
+            GC.Collect();
             return t;
         }
-        public static List<HtmlElement> GetElementsByTagNameID(this HtmlElement self,  String Tag, String ID)
+        public static List<HtmlElement> GetElementsByTagNameID(this HtmlElement self, String Tag, String ID)
         {
             List<HtmlElement> t = new List<HtmlElement>();
-            foreach (HtmlElement hel in self.GetElementsByTagName(Tag))
+            foreach (HtmlElement temp in self.GetElementsByTagName(Tag))
             {
-                if (hel.Id == ID)
-                    t.Add(hel);
+                if (temp.Id == ID)
+                    t.Add(temp);
+                else
+                    temp.Dispose();
             }
+            GC.Collect();
             return t;
         }
 
-
+        public static void Dispose(this HtmlElement self)
+        {
+            Marshal.ReleaseComObject(self.DomElement);
+        }
+        public static void Dispose(this List<HtmlElement> self)
+        {
+            foreach (HtmlElement t in self)
+                t.Dispose();
+            self.Clear();
+            self.TrimExcess();
+        }
         #endregion 
-       
+     */
+        
+        
+          
         #region Uri
         public static void Append(this Uri self, String s)
         {
@@ -636,6 +697,33 @@ namespace ExtendCSharp
                 self.Close();
             
         }
+        public static void HideInvoke(this Form self)
+        {
+            if (self.InvokeRequired)
+                self.Invoke((MethodInvoker)delegate {
+                    self.HideInvoke();
+                });
+            else
+                self.Hide();
+
+        }
+        public static void ShowInvoke(this Form self)
+        {
+            if (self.InvokeRequired)
+                self.Invoke((MethodInvoker)delegate { self.ShowInvoke(); });
+            else
+                self.Show();
+
+        }
+        public static void BringToFrontInvoke(this Form self)
+        {
+            if (self.InvokeRequired)
+                self.Invoke((MethodInvoker)delegate { self.BringToFrontInvoke(); });
+            else
+                self.BringToFront();
+
+        }
+
         #endregion
 
         #region Enum
