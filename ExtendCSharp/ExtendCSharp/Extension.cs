@@ -723,7 +723,22 @@ namespace ExtendCSharp
                 self.BringToFront();
 
         }
+        public static void SetWindowStateInvoke(this Form self,FormWindowState fws)
+        {
+            if (self.InvokeRequired)
+                self.Invoke((MethodInvoker)delegate { self.WindowState = fws; });
+            else
+                self.WindowState = fws;
 
+        }
+        public static void SetTopMostInvoke(this Form self, bool TopMost)
+        {
+            if (self.InvokeRequired)
+                self.Invoke((MethodInvoker)delegate { self.TopMost = TopMost; });
+            else
+                self.TopMost = TopMost;
+
+        }
         #endregion
 
         #region Enum
