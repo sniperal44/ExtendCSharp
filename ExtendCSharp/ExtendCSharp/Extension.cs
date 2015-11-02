@@ -1,6 +1,7 @@
 ﻿using CsQuery;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -345,342 +346,45 @@ namespace ExtendCSharp
         }
         #endregion
 
-        /*
-
-        #region WebBrowser
-
-
-        public static Uri GetUrlInvoke(this WebBrowser wb)
+        #region Point
+        public static bool InPoligon(this Point[] Points, Point p)
         {
-            if (wb.InvokeRequired)
-                return (Uri)wb.Invoke((Func<Uri>)delegate { return wb.GetUrlInvoke(); });
-            else
-                return wb.Url;
-        }
+            int max_point = Points.Length - 1;
+            float total_angle = GetAngle(Points[max_point].X, Points[max_point].Y, p.X, p.Y, Points[0].X, Points[0].Y);
 
 
-        public static void Navigate(this WebBrowser wb, String Url, string TargetFrame, String PostData, String AdditionalHeaders)
-        {
-            System.Text.Encoding a = System.Text.Encoding.UTF8;
-            byte[] byte1 = a.GetBytes(PostData);
-            wb.Navigate(Url, TargetFrame, byte1, AdditionalHeaders);
-        }
-        public static void Navigate(this WebBrowser wb, Uri Url, string TargetFrame, String PostData, String AdditionalHeaders)
-        {
-            System.Text.Encoding a = System.Text.Encoding.UTF8;
-            byte[] byte1 = a.GetBytes(PostData);
-            wb.Navigate(Url, TargetFrame, byte1, AdditionalHeaders);
-        }
-
-
-
-
-        public static void NavigateInvoke(this WebBrowser wb, String Url)
-        {
-            if (wb.InvokeRequired)
-                wb.Invoke((MethodInvoker)delegate { wb.NavigateInvoke(Url); });
-            else
-                wb.Navigate(Url);
-        }
-        public static void NavigateInvoke(this WebBrowser wb, Uri Url)
-        {
-            if (wb.InvokeRequired)
-                wb.Invoke((MethodInvoker)delegate { wb.NavigateInvoke(Url); });
-            else
-                wb.Navigate(Url);
-        }
-        public static void NavigateInvoke(this WebBrowser wb, String Url, bool NewWindow)
-        {
-            if (wb.InvokeRequired)
-                wb.Invoke((MethodInvoker)delegate { wb.NavigateInvoke(Url, NewWindow); });
-            else
-                wb.Navigate(Url, NewWindow);
-        }
-        public static void NavigateInvoke(this WebBrowser wb, Uri Url, bool NewWindow)
-        {
-            if (wb.InvokeRequired)
-                wb.Invoke((MethodInvoker)delegate { wb.NavigateInvoke(Url, NewWindow); });
-            else
-                wb.Navigate(Url, NewWindow);
-        }
-        public static void NavigateInvoke(this WebBrowser wb, String Url, string TargetFrame)
-        {
-            if (wb.InvokeRequired)
-                wb.Invoke((MethodInvoker)delegate { wb.NavigateInvoke(Url, TargetFrame); });
-            else
-                wb.Navigate(Url, TargetFrame);
-        }
-        public static void NavigateInvoke(this WebBrowser wb, Uri Url, string TargetFrame)
-        {
-            if (wb.InvokeRequired)
-                wb.Invoke((MethodInvoker)delegate { wb.NavigateInvoke(Url, TargetFrame); });
-            else
-                wb.Navigate(Url, TargetFrame);
-        }
-        public static void NavigateInvoke(this WebBrowser wb, String Url, string TargetFrame, byte[] PostData, String AdditionalHeaders)
-        {
-            if (wb.InvokeRequired)
-                wb.Invoke((MethodInvoker)delegate { wb.NavigateInvoke(Url, TargetFrame, PostData, AdditionalHeaders); });
-            else
-                wb.Navigate(Url, TargetFrame, PostData, AdditionalHeaders);
-
-        }
-        public static void NavigateInvoke(this WebBrowser wb, Uri Url, string TargetFrame, byte[] PostData, String AdditionalHeaders)
-        {
-            if (wb.InvokeRequired)
-                wb.Invoke((MethodInvoker)delegate { wb.NavigateInvoke(Url, TargetFrame, PostData, AdditionalHeaders); });
-            else
-                wb.Navigate(Url, TargetFrame, PostData, AdditionalHeaders);
-        }
-        public static void NavigateInvoke(this WebBrowser wb, String Url, string TargetFrame, String PostData, String AdditionalHeaders)
-        {
-            if (wb.InvokeRequired)
-                wb.Invoke((MethodInvoker)delegate { wb.NavigateInvoke(Url, TargetFrame, PostData, AdditionalHeaders); });
-            else
-                wb.Navigate(Url, TargetFrame, PostData, AdditionalHeaders);
-        }
-        public static void NavigateInvoke(this WebBrowser wb, Uri Url, string TargetFrame, String PostData, String AdditionalHeaders)
-        {
-            if (wb.InvokeRequired)
-                wb.Invoke((MethodInvoker)delegate { wb.NavigateInvoke(Url, TargetFrame, PostData, AdditionalHeaders); });
-            else
-                wb.Navigate(Url, TargetFrame, PostData, AdditionalHeaders);
-        }
-
-
-        public static void NavigateAndWait(this WebBrowser wb, String Url)
-        {
-            wb.NavigateInvoke(Url);
-            wb.WaitCompleteInvoke();
-        }
-        public static void NavigateAndWait(this WebBrowser wb, Uri Url)
-        {
-            wb.NavigateInvoke(Url);
-            wb.WaitCompleteInvoke();
-        }
-        public static void NavigateAndWait(this WebBrowser wb, String Url, bool NewWindow)
-        {
-            wb.NavigateInvoke(Url, NewWindow);
-            wb.WaitCompleteInvoke();
-        }
-        public static void NavigateAndWait(this WebBrowser wb, Uri Url, bool NewWindow)
-        {
-            wb.NavigateInvoke(Url, NewWindow);
-            wb.WaitCompleteInvoke();
-        }
-        public static void NavigateAndWait(this WebBrowser wb, String Url, string TargetFrame)
-        {
-            wb.NavigateInvoke(Url, TargetFrame);
-            wb.WaitCompleteInvoke();
-        }
-        public static void NavigateAndWait(this WebBrowser wb, Uri Url, string TargetFrame)
-        {
-            wb.NavigateInvoke(Url, TargetFrame);
-            wb.WaitCompleteInvoke();
-        }
-        public static void NavigateAndWait(this WebBrowser wb, String Url, string TargetFrame, byte[] PostData, String AdditionalHeaders)
-        {
-            wb.NavigateInvoke(Url, TargetFrame, PostData, AdditionalHeaders);
-            wb.WaitCompleteInvoke();
-
-        }
-        public static void NavigateAndWait(this WebBrowser wb, Uri Url, string TargetFrame, byte[] PostData, String AdditionalHeaders)
-        {
-            wb.NavigateInvoke(Url, TargetFrame, PostData, AdditionalHeaders);
-            wb.WaitCompleteInvoke();
-        }
-        public static void NavigateAndWait(this WebBrowser wb, String Url, string TargetFrame, String PostData, String AdditionalHeaders)
-        {
-            wb.NavigateInvoke(Url, TargetFrame, PostData, AdditionalHeaders);
-            wb.WaitCompleteInvoke();
-        }
-        public static void NavigateAndWait(this WebBrowser wb, Uri Url, string TargetFrame, String PostData, String AdditionalHeaders)
-        {
-            wb.NavigateInvoke(Url, TargetFrame, PostData, AdditionalHeaders);
-            wb.WaitCompleteInvoke();
-        }
-
-
-        public async static void WaitCompleteInvoke(this WebBrowser wb)
-        {
-            if (wb.InvokeRequired)
+            for (int i = 0; i < max_point; i++)
             {
-                wb.Invoke((MethodInvoker)delegate { wb.WaitCompleteInvoke(); });
+                total_angle += GetAngle(Points[i].X, Points[i].Y, p.X, p.Y, Points[i + 1].X, Points[i + 1].Y);
             }
-            else
-            {
-                while (wb.ReadyState != WebBrowserReadyState.Complete)
-                {
-                    Application.DoEvents();
-                    Thread.Sleep(100);
-                }
 
-                // Memory leak Thread Sleep
-                GC.Collect();
-
-            }
+            return (Math.Abs(total_angle) > 0.000001);
         }
 
-        public static HtmlDocument DocumentInvoke(this WebBrowser wb)
+        private static float GetAngle(float Ax, float Ay, float Bx, float By, float Cx, float Cy)
         {
-            if (wb.InvokeRequired)
-            {
-                return (HtmlDocument)wb.Invoke((Func<HtmlDocument>)delegate { return wb.DocumentInvoke(); });
-            }
-            else
-            {
-                return wb.Document;
-            }
+            float dot_product = DotProduct(Ax, Ay, Bx, By, Cx, Cy);
+            float cross_product = CrossProductLength(Ax, Ay, Bx, By, Cx, Cy);
+            return (float)Math.Atan2(cross_product, dot_product);
         }
-        public static String HtmlInvoke(this WebBrowser wb)
+        private static float DotProduct(float Ax, float Ay, float Bx, float By, float Cx, float Cy)
         {
-            if (wb.InvokeRequired)
-            {
-                return (String)wb.Invoke((Func<String>)delegate { return wb.HtmlInvoke(); });
-            }
-            else
-            {
-                return wb.DocumentText;
-            }
+            float BAx = Ax - Bx;
+            float BAy = Ay - By;
+            float BCx = Cx - Bx;
+            float BCy = Cy - By;
+            return (BAx * BCx + BAy * BCy);
         }
-
-        public static void DisposePlus(this WebBrowser wb)
+        private static float CrossProductLength(float Ax, float Ay, float Bx, float By, float Cx, float Cy)
         {
-            wb.NavigateAndWait("about:blank");
-            wb.Dispose();
-            wb = null;
+            float BAx = Ax - Bx;
+            float BAy = Ay - By;
+            float BCx = Cx - Bx;
+            float BCy = Cy - By;
+            return (BAx * BCy - BAy * BCx);
         }
-
         #endregion
 
-
-
-        #region HtmlDocument
-        public static List<HtmlElement> GetElementsByClass(this HtmlDocument self, String Class)
-        {
-            List<HtmlElement> t = new List<HtmlElement>();
-            foreach (HtmlElement temp in self.All)
-            {
-                if (temp.GetAttribute("className").Split(' ', '\t').Contains(Class))
-                    t.Add(temp);
-                else
-                    temp.Dispose();
-            }
-            GC.Collect();
-            return t;
-
-        }
-        public static List<HtmlElement> GetElementsByTagNameClass(this HtmlDocument self, String Tag, params String[] Classes)
-        {
-            List<HtmlElement> t = new List<HtmlElement>();
-            foreach (HtmlElement temp in self.GetElementsByTagName(Tag))
-            {
-                bool buco = false;
-                foreach (String c in Classes)
-                    if (!temp.GetAttribute("className").Split(' ', '\t').Contains(c))
-                    {
-                        buco = true;
-                        break;
-                    }
-
-                if (!buco)
-                    t.Add(temp);
-                else
-                    temp.Dispose();
-            }
-            GC.Collect();
-            return t;
-        }
-
-
-        #endregion
-
-        #region HtmlElement
-        public static List<HtmlElement> GetElementsByClass(this HtmlElement self, params String[] Classes)
-        {
-            List<HtmlElement> t = new List<HtmlElement>();
-            foreach (HtmlElement temp in self.All)
-            {
-                bool buco = false;
-                foreach (String c in Classes)
-                    if (!temp.GetAttribute("className").Split(' ', '\t').Contains(c))
-                    {
-                        buco = true;
-                        break;
-                    }
-
-                if (!buco)
-                    t.Add(temp);
-                else
-                    temp.Dispose();
-            }
-            GC.Collect();
-            return t;
-        }
-        public static List<HtmlElement> GetElementsByTagNameClass(this HtmlElement self, String Tag, params String[] Classes)
-        {
-            List<HtmlElement> t = new List<HtmlElement>();
-            foreach (HtmlElement temp in self.GetElementsByTagName(Tag))
-            {
-                bool buco = false;
-                foreach (String c in Classes)
-                    if (!temp.GetAttribute("className").Split(' ', '\t').Contains(c))
-                    {
-                        buco = true;
-                        break;
-                    }
-
-                if (!buco)
-                    t.Add(temp);
-                else
-                    temp.Dispose();
-            }
-            GC.Collect();
-            return t;
-        }
-        public static List<HtmlElement> GetElementsByID(this HtmlElement self, String ID)
-        {
-            List<HtmlElement> t = new List<HtmlElement>();
-            foreach (HtmlElement temp in self.All)
-            {
-                if (temp.Id==ID)
-                    t.Add(temp);
-                else
-                    temp.Dispose();
-            }
-            GC.Collect();
-            return t;
-        }
-        public static List<HtmlElement> GetElementsByTagNameID(this HtmlElement self, String Tag, String ID)
-        {
-            List<HtmlElement> t = new List<HtmlElement>();
-            foreach (HtmlElement temp in self.GetElementsByTagName(Tag))
-            {
-                if (temp.Id == ID)
-                    t.Add(temp);
-                else
-                    temp.Dispose();
-            }
-            GC.Collect();
-            return t;
-        }
-
-        public static void Dispose(this HtmlElement self)
-        {
-            Marshal.ReleaseComObject(self.DomElement);
-        }
-        public static void Dispose(this List<HtmlElement> self)
-        {
-            foreach (HtmlElement t in self)
-                t.Dispose();
-            self.Clear();
-            self.TrimExcess();
-        }
-        #endregion 
-     */
-        
-        
-          
         #region Uri
         public static void Append(this Uri self, String s)
         {
@@ -749,6 +453,10 @@ namespace ExtendCSharp
         public static String ToStringReplace(this Enum e, String find, String replace)
         {
             return e.ToString().Replace(find, replace);
+        }
+        public static String ToString(this Enum e)
+        {
+            return e.ToString();
         }
 
         public static bool IsAn<T>(this Enum e)
