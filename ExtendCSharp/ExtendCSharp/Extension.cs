@@ -347,8 +347,25 @@ namespace ExtendCSharp
         #endregion
 
         #region Point
-        public static bool InPoligon(this Point[] Points, Point p)
+
+        public static bool InPoligon(this Point[] Points, Point p )
         {
+            int i, j;
+            bool c = false;
+            for (i = 0, j = Points.Length - 1; i < Points.Length; j = i++)
+            {
+                if (((Points[i].Y > p.Y) != (Points[j].Y > p.Y)) &&
+                 (p.X < (Points[j].X - Points[i].X) * (p.Y - Points[i].Y) / (Points[j].Y - Points[i].Y) + Points[i].X))
+                    c = !c;
+            }
+            return c;
+        }
+
+
+      /*  public static bool InPoligon(this Point[] Points, Point p)
+        {
+            
+           
             int max_point = Points.Length - 1;
             float total_angle = GetAngle(Points[max_point].X, Points[max_point].Y, p.X, p.Y, Points[0].X, Points[0].Y);
 
@@ -382,7 +399,7 @@ namespace ExtendCSharp
             float BCx = Cx - Bx;
             float BCy = Cy - By;
             return (BAx * BCy - BAy * BCx);
-        }
+        }*/
         #endregion
 
         #region Uri
