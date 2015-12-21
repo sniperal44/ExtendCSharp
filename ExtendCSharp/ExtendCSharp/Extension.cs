@@ -108,6 +108,7 @@ namespace ExtendCSharp
                 result.Append(bytes[i].ToString(upperCase ? "X2" : "x2"));
 
             return result.ToString();
+
         }
 
         #endregion
