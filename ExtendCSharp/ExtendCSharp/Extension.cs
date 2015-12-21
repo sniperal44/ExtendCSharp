@@ -47,6 +47,17 @@ namespace ExtendCSharp
         {
             return int.Parse(d);
         }
+        public static bool IsFloat(this String d)
+        {
+            float n;
+            return float.TryParse(d, out n);
+        }
+        public static float ParseFloat(this String d)
+        {
+            return float.Parse(d);
+        }
+
+
         public static List<int> AllIndexesOf(this String str, string value)
         {
             List<int> indexes = new List<int>();
@@ -79,9 +90,24 @@ namespace ExtendCSharp
         #endregion
 
         #region String[]
+
         public static bool Contains(this String[] arr, String str)
         {
             return arr.AsQueryable().Contains<string>(str);
+        }
+
+        #endregion
+
+        #region byte[]
+
+        public static string ToHex(this byte[] bytes, bool upperCase)
+        {
+            StringBuilder result = new StringBuilder(bytes.Length * 2);
+
+            for (int i = 0; i < bytes.Length; i++)
+                result.Append(bytes[i].ToString(upperCase ? "X2" : "x2"));
+
+            return result.ToString();
         }
 
         #endregion
@@ -154,7 +180,28 @@ namespace ExtendCSharp
 
 
 
+        public static void ClearInvoke(this ListBox self)
+        {
 
+            if (self.InvokeRequired)
+                self.Invoke((MethodInvoker)delegate { self.ClearInvoke(); });
+            else
+            {
+                self.Items.Clear();
+            }
+
+        }
+        public static void AddInvoke(this ListBox self, object obj)
+        {
+            
+            if (self.InvokeRequired)
+                self.Invoke((MethodInvoker)delegate { self.AddInvoke(obj); });
+            else
+            {
+                self.Items.Add(obj);
+            }
+
+        }
 
         public static object GetAtInvoke(this ListBox self, int i)
         {
@@ -484,6 +531,20 @@ namespace ExtendCSharp
         }
         #endregion
 
+
+        #region Graphics
+
+        public static void DrawCircle(this Graphics g, Pen pen,float centerX, float centerY, float radius)
+        {
+            g.DrawEllipse(pen, centerX - radius, centerY - radius,radius + radius, radius + radius);
+        }
+
+        public static void FillCircle(this Graphics g, Brush brush,float centerX, float centerY, float radius)
+        {
+            g.FillEllipse(brush, centerX - radius, centerY - radius,radius + radius, radius + radius);
+        }
+
+        #endregion
 
         #region DEMO
 
