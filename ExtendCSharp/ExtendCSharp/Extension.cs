@@ -1,4 +1,5 @@
 ﻿using CsQuery;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -532,7 +533,6 @@ namespace ExtendCSharp
         }
         #endregion
 
-
         #region Graphics
 
         public static void DrawCircle(this Graphics g, Pen pen,float centerX, float centerY, float radius)
@@ -546,6 +546,36 @@ namespace ExtendCSharp
         }
 
         #endregion
+
+        #region MySQL
+
+        public static Exception TryClose(this MySqlDataReader dr)
+        {
+            try
+            {
+                dr.Close();
+                return null;
+            }
+            catch(Exception e)
+            {
+                return e;
+            }
+        }
+        public static Exception TryClose(this MySqlConnection dr)
+        {
+            try
+            {
+                dr.Close();
+                return null;
+            }
+            catch (Exception e)
+            {
+                return e;
+            }
+        }
+
+        #endregion
+
 
         #region DEMO
 
