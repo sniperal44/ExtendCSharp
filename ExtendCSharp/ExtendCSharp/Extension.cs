@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -574,6 +575,21 @@ namespace ExtendCSharp
             }
         }
 
+
+        public static object GetFieldValue(this MySqlDataReader dr,int i,Type tipo)
+        {
+            try
+            {
+                MethodInfo method = dr.GetType().GetMethod("GetFieldValue");
+                method = method.MakeGenericMethod(tipo);
+                return method.Invoke(dr, new object[] { i });
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            return null;
+        }
         #endregion
 
 
