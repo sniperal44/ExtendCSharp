@@ -139,7 +139,7 @@ namespace ExtendCSharp
 
 
 
-        public static List<Control> GetControl(Control Control, bool TuttiILivelli)
+        public static List<Control> GetControl(this Control Control, bool TuttiILivelli)
         {
             List<Control> temp = new List<Control>();
 
