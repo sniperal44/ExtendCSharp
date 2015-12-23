@@ -33,6 +33,19 @@ namespace ExtendCSharp
             return (T)d.ReadObject(s);
         }
 
+        public static String Serialize(object o)
+        {
+            MemoryStream stream = new MemoryStream();
+            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(o));
+            ser.WriteObject(stream, o);
+            stream.Position = 0;
+            StreamReader sr = new StreamReader(stream);
+            String s = sr.ReadToEnd();
+            stream.Close();
+            stream.Dispose();
+            return s;
+        }
+
 
     }
 }
