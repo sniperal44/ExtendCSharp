@@ -36,7 +36,7 @@ namespace ExtendCSharp
         public static String Serialize(object o)
         {
             MemoryStream stream = new MemoryStream();
-            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(o));
+            DataContractJsonSerializer ser = new DataContractJsonSerializer(o.GetType());
             ser.WriteObject(stream, o);
             stream.Position = 0;
             StreamReader sr = new StreamReader(stream);
