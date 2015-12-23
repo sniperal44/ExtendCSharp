@@ -115,7 +115,6 @@ namespace ExtendCSharp
 
         #endregion
 
-
         #region Control
         public static void SetTextInvoke(this Control t, string s)
         {
@@ -137,6 +136,30 @@ namespace ExtendCSharp
             t.Size = new System.Drawing.Size(Width, Height);
             return t;
         }
+
+
+
+        public static List<Control> GetControl(Control Control, bool TuttiILivelli)
+        {
+            List<Control> temp = new List<Control>();
+
+            if (TuttiILivelli)
+            {
+                foreach (Control cont in Control.Controls)
+                {
+                    temp.AddRange(GetControl(cont, true));
+                    temp.Add(cont);
+                }
+                return temp;
+            }
+            else
+            {
+                foreach (Control cont in Control.Controls)
+                    temp.Add(cont);
+                return temp;
+            }
+        }
+
         #endregion
 
         #region Control.ControlCollection
