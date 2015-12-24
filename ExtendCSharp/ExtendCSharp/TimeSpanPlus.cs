@@ -62,39 +62,39 @@ namespace ExtendCSharp
         }
 
 
-        public double TotalMilliseconds
+        public long TotalMilliseconds
         {
             get
             {
-                return _millisec*_sec*_min*_hour*_day;
+                return _millisec+ TotalSeconds*1000;
             }
         }
-        public double TotalSeconds
+        public long TotalSeconds
         {
             get
             {
-                return TotalMilliseconds / 1000;
+                return _sec + TotalMinutes * 60;
             }
         }
-        public double TotalMinutes
+        public long TotalMinutes
         {
             get
             {
-                return TotalMilliseconds / 60000;
+                return _min+ TotalHours*60;
             }
         }
-        public double TotalHours
+        public long TotalHours
         {
             get
             {
-                return TotalMilliseconds / 3600000;
+                return _hour+TotalDays*24;
             }
         }
-        public double TotalDays
+        public long TotalDays
         {
             get
             {
-                return TotalMilliseconds / 86400000;
+                return _day;
             }
         }
 
@@ -221,11 +221,11 @@ namespace ExtendCSharp
 
         public bool SubtractMilliseconds(int milliseconds)
         {
-            if (milliseconds >= 60)
+            if (milliseconds >= 1000)
             {
-                if (!SubtractSeconds(milliseconds / 60))
+                if (!SubtractSeconds(milliseconds / 1000))
                     return false;
-                milliseconds %= 60;
+                milliseconds %= 1000;
             }
 
             if (_sec >= milliseconds)
@@ -262,7 +262,7 @@ namespace ExtendCSharp
             {
                 if (SubtractMinuts(1))
                 {
-                    _sec = 60 - seconds;
+                    _sec = 60 - seconds+ _sec;
                     return true;
                 }
                 return false;
@@ -287,7 +287,7 @@ namespace ExtendCSharp
             {
                 if (SubtractHours(1))
                 {
-                    _min = 60 - minutes;
+                    _min = 60 - minutes+ _min;
                     return true;
                 }
                 return false;
@@ -312,7 +312,7 @@ namespace ExtendCSharp
             {
                 if(SubtractDays(1))
                 {
-                    _hour = 24 - hours;
+                    _hour = 24 - hours+ _hour;
                     return true;
                 }
                 return false;

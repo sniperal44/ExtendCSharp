@@ -13,7 +13,7 @@ namespace ExtendCSharp
     {
         Timer t = null;
         TimeSpanPlus tsp = null;
-
+        int Interval;
         public TimeSpanPlus Time
         {
             get
@@ -29,61 +29,82 @@ namespace ExtendCSharp
             }
         }
 
-        public delegate void TickHandler(CountDown sender);
-        public event TickHandler Tick;
 
-        public CountDown()
+        public delegate void CountDownHandler(CountDown sender);
+        public event CountDownHandler Tick;
+        public event CountDownHandler Started;
+        public delegate void CountDownStopHandler(CountDown sender, StopStatus s);
+        public event CountDownStopHandler Stopped;
+
+
+        public CountDown(int Interval=1000)
         {
             tsp = new TimeSpanPlus();
+            this.Interval = Interval;
             InitTimer();
         }
-        public CountDown(TimeSpanPlus TimeSpan)
+        public CountDown(TimeSpanPlus TimeSpan, int Interval = 1000)
         {
             SetTime(TimeSpan);
+            this.Interval = Interval;
             InitTimer();
         }
-        public CountDown(TimeSpan TimeSpan)
+        public CountDown(TimeSpan TimeSpan, int Interval = 1000)
         {
             SetTime(TimeSpan);
+            this.Interval = Interval;
             InitTimer();
         }
 
-        public void SetTime(TimeSpanPlus TimeSpan)
-        {
-            Stop();
-            tsp = new TimeSpanPlus(TimeSpan);
-        }
-        public void SetTime(TimeSpan TimeSpan)
-        {
-            Stop();
-            tsp = new TimeSpanPlus(TimeSpan);
-        }
 
         private void InitTimer()
         {
             t = new Timer();
-            t.Interval = 1000;
+            t.Interval = Interval;
             t.Elapsed += (s, e) => {
-                if (tsp.SubtractSeconds(1))
+                if (tsp.SubtractMilliseconds(Interval) && tsp.TotalMilliseconds>0)
                 {
                     if (Tick != null)
                         Tick(this);
                 }
                 else
-                    t.Stop();
+                {
+                    Stop(StopStatus.End);
+                }
+
             };
+        }
+
+
+        public void SetTime(TimeSpanPlus TimeSpan)
+        {
+            Stop(StopStatus.Stopped);
+            tsp = new TimeSpanPlus(TimeSpan);
+        }
+        public void SetTime(TimeSpan TimeSpan)
+        {
+            Stop(StopStatus.Stopped);
+            tsp = new TimeSpanPlus(TimeSpan);
         }
 
 
         public void Start()
         {
             if (t != null)
+            {
                 t.Start();
+                if (Started != null)
+                    Started(this);
+            }
         }
-        public void Stop()
+        public void Stop(StopStatus s = StopStatus.Stopped)
         {
-            if(t!=null)
+            if (t != null)
+            {
                 t.Stop();
+                if (Stopped != null)
+                    Stopped(this,s);
+            }
         }
 
 
@@ -91,9 +112,15 @@ namespace ExtendCSharp
         {
             if(Tick!=null)
                 foreach(Delegate d in Tick.GetInvocationList())
-                {
-                    Tick -= (TickHandler)d;
-                }      
+                    Tick -= (CountDownHandler)d;
+
+            if (Started != null)
+                foreach (Delegate d in Started.GetInvocationList())
+                    Started -= (CountDownHandler)d;
+
+            if (Stopped != null)
+                foreach (Delegate d in Stopped.GetInvocationList())
+                    Stopped -= (CountDownStopHandler)d;
         }
 
 
@@ -113,11 +140,16 @@ namespace ExtendCSharp
 
         public void Dispose()
         {
-            Stop();
+            Stop(StopStatus.Stopped);
             t.Dispose();
         }
 
 
-
+        
+    }
+    public enum StopStatus
+    {
+        End,
+        Stopped
     }
 }
