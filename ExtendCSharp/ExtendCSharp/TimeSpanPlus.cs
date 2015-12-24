@@ -228,7 +228,7 @@ namespace ExtendCSharp
                 milliseconds %= 1000;
             }
 
-            if (_sec >= milliseconds)
+            if (_millisec >= milliseconds)
             {
                 _millisec -= milliseconds;
                 return true;
@@ -237,7 +237,7 @@ namespace ExtendCSharp
             {
                 if (SubtractSeconds(1))
                 {
-                    _millisec = 60 - milliseconds;
+                    _millisec = 1000 - milliseconds+ _millisec;
                     return true;
                 }
                 return false;
