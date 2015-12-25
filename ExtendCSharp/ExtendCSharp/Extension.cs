@@ -174,6 +174,16 @@ namespace ExtendCSharp
             c.Location = new System.Drawing.Point(0, y);
             self.Add(c);
         }
+        public static void Replace(this Control.ControlCollection self, Control ToRemove, Control ToAdd)
+        {
+            ToAdd.Size = ToRemove.Size;
+            ToAdd.Location = ToRemove.Location;
+            self.Remove(ToRemove);
+            self.Add(ToAdd);
+        }
+
+
+
         #endregion
 
         #region FileInfo
@@ -483,6 +493,7 @@ namespace ExtendCSharp
         #endregion
 
         #region Form
+
         public static void CloseInvoke(this Form self)
         {
             if (self.InvokeRequired)
@@ -533,6 +544,9 @@ namespace ExtendCSharp
                 self.TopMost = TopMost;
 
         }
+        
+        
+        
         #endregion
 
         #region Enum
