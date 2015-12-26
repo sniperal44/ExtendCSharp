@@ -573,6 +573,16 @@ namespace ExtendCSharp
 
         #region Graphics
 
+        public static void DrawLines(this Graphics g, Pen pen, params Point[] p )
+        {
+            g.DrawLines(pen,p);
+        }
+
+        public static void DrawPolygon(this Graphics g, Pen pen, params Point[] p )
+        {
+            g.DrawPolygon(pen,p);
+        }
+
         public static void DrawCircle(this Graphics g, Pen pen,float centerX, float centerY, float radius)
         {
             g.DrawEllipse(pen, centerX - radius, centerY - radius,radius + radius, radius + radius);
@@ -629,6 +639,21 @@ namespace ExtendCSharp
         }
         #endregion
 
+        #region TextBox
+        [DllImport("user32.dll")]
+        static extern bool HideCaret(IntPtr hWnd);
+        [DllImport("user32.dll")]
+        static extern bool ShowCaret(IntPtr hWnd);
+
+
+        public static void Caret(this TextBox dr,bool Visible)
+        {
+            if (Visible)
+                ShowCaret(dr.Handle);
+            else
+                HideCaret(dr.Handle);
+        }
+        #endregion
 
         #region DEMO
 
