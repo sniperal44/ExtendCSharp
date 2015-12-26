@@ -130,6 +130,14 @@ namespace ExtendCSharp
             else
                 t.Enabled = b;
         }
+        public static void SetVisibleInvoke(this Control t, bool b)
+        {
+            if (t.InvokeRequired)
+                t.Invoke((MethodInvoker)delegate { t.SetVisibleInvoke(b); });
+            else
+                t.Visible = b;
+        }
+
 
         public static Control SetSize(this Control t, int Width, int Height)
         {
