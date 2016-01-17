@@ -7,13 +7,23 @@ using System.Threading.Tasks;
 
 namespace ExtendCSharp
 {
-    public class MyFileSystem
+
+    public class MyFileSystem: MyFileSystem<object>
+    {
+        public MyFileSystem(String RootPath, MyFileSystemLoadOption option = null) : base(RootPath, option)
+        {
+            
+        }
+    }
+
+    public class MyFileSystem<T>
+        where T : new()
     {
         String _RootRealPath="";
         public String RootPath { get { return _RootRealPath; } }
 
-        MyFileSystemNode _Root;
-        public MyFileSystemNode Root {
+        MyFileSystemNode<T> _Root;
+        public MyFileSystemNode<T> Root {
             get { return _Root; }
         }
 
@@ -25,34 +35,34 @@ namespace ExtendCSharp
                 if (MyFileSystemUtil.IsRootpath(RootPath))
                     RootPath += "\\";
                 _RootRealPath = RootPath;
-                _Root = new MyFileSystemNode(RootPath,null, option);
+                _Root = new MyFileSystemNode<T>(RootPath,null, option);
             }
             else
                 throw new DirectoryNotFoundException("la cartella specificata deve essere una directory valida\r\n" + RootPath);
             
         }
 
-        public void Merge(MyFileSystem OtherFileSystem)
+        public void Merge(MyFileSystem<T> OtherFileSystem)
         {
             _Root.Merge(OtherFileSystem._Root);
         }
-        public void Add(MyFileSystem OtherFileSystem)
+        public void Add(MyFileSystem<T> OtherFileSystem)
         {
             _Root.Add(OtherFileSystem._Root);
         }
 
     }
 
-
-    public class MyFileSystemNode
+    public class MyFileSystemNode<T>
+        where T : new()
     {
         #region Costruttori
 
-        public MyFileSystemNode(MyFileSystemNode Parent = null)
+        public MyFileSystemNode(MyFileSystemNode<T> Parent = null)
         {
             _Parent = Parent;
         }
-        public MyFileSystemNode(String LoadPath,MyFileSystemNode Parent = null,MyFileSystemLoadOption option=null)
+        public MyFileSystemNode(String LoadPath,MyFileSystemNode<T> Parent = null,MyFileSystemLoadOption option=null)
         {
             _Parent = Parent;
             LoadFromRealPath(LoadPath, option);
@@ -68,15 +78,19 @@ namespace ExtendCSharp
         String _Name="";
         public String Name { get { return _Name; } }
 
-        MyFileSystemNode _Parent = null;
-        public MyFileSystemNode Parent
+        MyFileSystemNode<T> _Parent = null;
+        public MyFileSystemNode<T> Parent
         {
             get { return _Parent; }
             set { _Parent = value; }
         }
 
 
-        Dictionary<String, MyFileSystemNode> _FileSystem = new Dictionary<string, MyFileSystemNode>();
+        Dictionary<String, MyFileSystemNode<T>> _FileSystem = new Dictionary<string, MyFileSystemNode<T>>();
+
+
+        public T AddittionalData = new T();
+
 
         #endregion
      
@@ -85,9 +99,13 @@ namespace ExtendCSharp
             Path = System.IO.Path.GetFullPath(Path);
             
             if (File.Exists(Path))
-            { 
-                if(option == null  || (option!=null && option.RestrictExtensionEnable && option.RestrictExtension.Contains(System.IO.Path.GetExtension(Path).TrimStart('.'))))
+            {
+                if (System.IO.Path.GetExtension(Path) == ".exe")
                 {
+
+                }
+                if (option == null || (option != null && (!option.RestrictExtensionEnable || option.RestrictExtension.Contains(System.IO.Path.GetExtension(Path).TrimStart('.')))))
+                { 
                     _Type = MyFileSystemNodeType.File;
                     _Name = Path.SplitAndGetLast('\\', '/');
                 }
@@ -104,7 +122,7 @@ namespace ExtendCSharp
                     foreach (string subdirectory in subdir)
                     {
                         String t = subdirectory.SplitAndGetLast('\\', '/');
-                        _FileSystem[t] = new MyFileSystemNode(subdirectory, this, option);
+                        _FileSystem[t] = new MyFileSystemNode<T>(subdirectory, this, option);
                     }
                 }
                 catch(Exception ex)
@@ -121,7 +139,7 @@ namespace ExtendCSharp
                         if (option == null || (option != null && (!option.RestrictExtensionEnable || option.RestrictExtension.Contains(System.IO.Path.GetExtension(subfile).TrimStart('.')))))
                         {
                             String t = subfile.SplitAndGetLast('\\', '/');
-                            _FileSystem[t] = new MyFileSystemNode(subfile, this, option);
+                            _FileSystem[t] = new MyFileSystemNode<T>(subfile, this, option);
                         } 
                     }
                 }
@@ -141,7 +159,7 @@ namespace ExtendCSharp
 
         #region Getter
 
-        public MyFileSystemNode[] GetAllNode(MyFileSystemNodeType? Type=null )
+        public MyFileSystemNode<T>[] GetAllNode(MyFileSystemNodeType? Type=null )
         {
             if(Type==null)
                 return _FileSystem.Select(pair => pair.Value).ToArray(); 
@@ -162,7 +180,7 @@ namespace ExtendCSharp
             return s;
         }
 
-        public MyFileSystemNode this[String _Path]
+        public MyFileSystemNode<T> this[String _Path]
         {
             get {
                 _Path = _Path.Trim('\\', '/');
@@ -196,13 +214,23 @@ namespace ExtendCSharp
 
         #endregion
 
-        public void Merge(MyFileSystemNode OtherNode)
+        #region Override
+
+        public override string ToString()
+        {
+            return _Name;
+        }
+
+        #endregion
+
+
+        public void Merge(MyFileSystemNode<T> OtherNode)
         {
             if(Type==MyFileSystemNodeType.File)
             {
                 throw new Exception("Errore!\r\nLa destinazione della merge non può essere un file");
             }
-            foreach (KeyValuePair<String,MyFileSystemNode> kv in OtherNode._FileSystem)
+            foreach (KeyValuePair<String,MyFileSystemNode<T>> kv in OtherNode._FileSystem)
             {
                 if(_FileSystem.ContainsKey(kv.Key))
                 {
@@ -217,7 +245,7 @@ namespace ExtendCSharp
                 }
             }
         }
-        public void Add(MyFileSystemNode OtherNode)
+        public void Add(MyFileSystemNode<T> OtherNode)
         {
             if (Type == MyFileSystemNodeType.File)
             {
@@ -238,15 +266,6 @@ namespace ExtendCSharp
         }
     }
 
-    public class MyFileSystemUtil
-    {
-        public static bool IsRootpath(String Path)
-        {
-            Path = Path.Trim().TrimEnd('\\', '/');
-            return Path.Length == 2 && Path[1] == ':';
-        }
-    }
-
     public class MyFileSystemLoadOption
     {
         public bool IgnoreException = false;
@@ -259,6 +278,18 @@ namespace ExtendCSharp
         }
 
     }
+
+
+
+    public class MyFileSystemUtil
+    {
+        public static bool IsRootpath(String Path)
+        {
+            Path = Path.Trim().TrimEnd('\\', '/');
+            return Path.Length == 2 && Path[1] == ':';
+        }
+    }
+
     public enum MyFileSystemNodeType
     {
         File,
