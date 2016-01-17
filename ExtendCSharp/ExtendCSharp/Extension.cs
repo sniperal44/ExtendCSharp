@@ -89,6 +89,74 @@ namespace ExtendCSharp
                 return null;
             return t[Index];
         }
+
+        public static String SplitAndGetLast(this String s, params char[] chars)
+        {
+            String[] t = s.Split(chars);
+            return t.Last();
+        }
+        public static String SplitAndGetLast(this String s, params String[] str)
+        {
+            String[] t = s.Split(str, StringSplitOptions.None);
+            return t.Last();
+        }
+
+        public static String SplitAndGetFirst(this String s, params char[] chars)
+        {
+            String[] t = s.Split(chars);
+            return t.First();
+        }
+        public static String SplitAndGetFirst(this String s,  params String[] str)
+        {
+            String[] t = s.Split(str, StringSplitOptions.None);
+            return t.First();
+        }
+
+
+        public static String RemoveLeft(this String s,params String[] str)
+        {
+            bool repeat = false;
+            String st = s;
+            do
+            {
+                foreach (String ss in str)
+                    if (st.StartsWith(ss))
+                    {
+                        st = st.Remove(0, ss.Length);
+                        repeat = true;
+                    }
+            }
+            while (repeat == true && str.Length > 1);
+            return st;
+        }
+        public static String RemoveRight(this String s, params String[] str)
+        {
+            bool repeat = false;
+            String st = s;
+            do
+            {
+                foreach (String ss in str)
+                    if (st.EndsWith(ss))
+                    {
+                        st.Remove(st.LastIndexOf(ss));
+                        repeat = true;
+                    } 
+            }
+            while (repeat == true && str.Length > 1);
+            return st;
+        }
+
+        public static String OneCharEnd(this String s,char c)
+        {
+            s.TrimEnd(c);
+            return s + c;
+        }
+        public static String OneCharStart(this String s, char c)
+        {
+            s.TrimStart(c);
+            return c+s;
+        }
+
         #endregion
 
         #region String[]
@@ -123,6 +191,14 @@ namespace ExtendCSharp
             else
                 t.Text = s;
         }
+        public static void AppendTextInvoke(this Control t, string s)
+        {
+            if (t.InvokeRequired)
+                t.Invoke((MethodInvoker)delegate { t.AppendTextInvoke(s); });
+            else
+                t.Text = t.Text+s;
+        }
+
         public static void SetEnableInvoke(this Control t, bool b)
         {
             if (t.InvokeRequired)
