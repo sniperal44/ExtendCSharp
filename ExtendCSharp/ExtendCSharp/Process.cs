@@ -14,12 +14,11 @@ namespace ExtendCSharp
         public ProcessStatus _Status;
         ProcessStatus Status { get { return _Status; } }
 
-
-
         String _Command, _Params;
         public String Command { get { return _Command; } }
         public String Params { get { return _Params; } }
 
+		
         public bool UseShellExecute { get; set; }
         public bool RedirectStandardOutput { get; set; }
         public bool RedirectStandardError { get; set; }
