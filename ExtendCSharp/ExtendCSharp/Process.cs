@@ -10,6 +10,7 @@ namespace ExtendCSharp
 {
     public class MyProcess
     {
+	
         public ProcessStatus _Status;
         ProcessStatus Status { get { return _Status; } }
 
