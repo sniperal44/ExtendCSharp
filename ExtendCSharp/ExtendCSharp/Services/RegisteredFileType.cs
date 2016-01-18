@@ -19,6 +19,10 @@ namespace ExtendCSharp.Services
 
     public class RegisteredFileType
     {
+
+        static private Hashtable iconsInfo = null;
+        
+
         #region APIs
 
         [DllImport("shell32.dll", EntryPoint = "ExtractIconA", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
@@ -34,11 +38,28 @@ namespace ExtendCSharp.Services
 
         #region CORE METHODS
 
+        public static Icon GetIconFromExtension(String Ext)
+        {
+            if (iconsInfo == null)
+                iconsInfo = GetFileTypeAndIcon();
+            Ext = '.' + Ext.TrimStart('.');
+            object o = iconsInfo[Ext];
+            if (o != null)
+            {
+                string fileAndParam = o.ToString();
+                if (!String.IsNullOrEmpty(fileAndParam))
+                    return RegisteredFileType.ExtractIconFromFile(fileAndParam, true); 
+            }
+
+            return null;
+        }
+
+
         /// <summary>
         /// Gets registered file types and their associated icon in the system.
         /// </summary>
         /// <returns>Returns a hash table which contains the file extension as keys, the icon file and param as values.</returns>
-        public static Hashtable GetFileTypeAndIcon()
+        private static Hashtable GetFileTypeAndIcon()
         {
             try
             {
@@ -101,7 +122,7 @@ namespace ExtendCSharp.Services
         /// <param name="fileAndParam">The params string, 
         /// such as ex: "C:\\Program Files\\NetMeeting\\conf.exe,1".</param>
         /// <returns>This method always returns the large size of the icon (may be 32x32 px).</returns>
-        public static Icon ExtractIconFromFile(string fileAndParam)
+        private static Icon ExtractIconFromFile(string fileAndParam)
         {
             try
             {
@@ -127,7 +148,7 @@ namespace ExtendCSharp.Services
         /// <param name="isLarge">
         /// Determines the returned icon is a large (may be 32x32 px) 
         /// or small icon (16x16 px).</param>
-        public static Icon ExtractIconFromFile(string fileAndParam, bool isLarge)
+        private static Icon ExtractIconFromFile(string fileAndParam, bool isLarge)
         {
             unsafe
             {

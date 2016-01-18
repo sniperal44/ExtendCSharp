@@ -19,7 +19,7 @@ namespace ExtendCSharp
     public class MyFileSystem<T>
         where T : new()
     {
-        String _RootRealPath="";
+        String _RootRealPath = "";
         public String RootPath { get { return _RootRealPath; } }
 
         MyFileSystemNode<T> _Root;
@@ -27,19 +27,19 @@ namespace ExtendCSharp
             get { return _Root; }
         }
 
-        public MyFileSystem(String RootPath,MyFileSystemLoadOption option=null)
+        public MyFileSystem(String RootPath, MyFileSystemLoadOption option = null)
         {
             if (Directory.Exists(RootPath))
             {
-                RootPath=RootPath.TrimEnd('\\', '/');
+                RootPath = RootPath.TrimEnd('\\', '/');
                 if (MyFileSystemUtil.IsRootpath(RootPath))
                     RootPath += "\\";
                 _RootRealPath = RootPath;
-                _Root = new MyFileSystemNode<T>(RootPath,null, option);
+                _Root = new MyFileSystemNode<T>(RootPath, null, option);
             }
             else
                 throw new DirectoryNotFoundException("la cartella specificata deve essere una directory valida\r\n" + RootPath);
-            
+
         }
 
         public void Merge(MyFileSystem<T> OtherFileSystem)
@@ -51,6 +51,11 @@ namespace ExtendCSharp
             _Root.Add(OtherFileSystem._Root);
         }
 
+
+        public String GetFullPath(MyFileSystemNode<T> Nodo)
+        {
+            return Path.Combine(_RootRealPath, Nodo.GetFullPath());
+        }
     }
 
     public class MyFileSystemNode<T>
