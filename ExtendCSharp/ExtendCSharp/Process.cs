@@ -8,8 +8,6 @@ using System.Threading.Tasks;
 
 namespace ExtendCSharp
 {
-
-
     public class MyProcess
     {
         public ProcessStatus _Status;
