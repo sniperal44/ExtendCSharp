@@ -38,6 +38,10 @@
     <Reference Include="MySql.Data">
       <HintPath>.\MySql.Data.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -51,7 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MyFileSystem.cs" />
+    <Compile Include="FileSystemPlus.cs" />
     <Compile Include="Process.cs" />
     <Compile Include="Services\FFmpeg.cs" />
     <Compile Include="Services\RegisteredFileType.cs" />
@@ -64,7 +68,7 @@
     <Compile Include="CountDown.cs" />
     <Compile Include="Extension.cs" />
     <Compile Include="FolderSelectDialog.cs" />
-    <Compile Include="Json.cs" />
+    <Compile Include="Services\Json.cs" />
     <Compile Include="MySQLext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
