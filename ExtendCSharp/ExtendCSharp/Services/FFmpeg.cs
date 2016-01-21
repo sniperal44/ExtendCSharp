@@ -7,33 +7,60 @@ using System.Threading.Tasks;
 
 namespace ExtendCSharp.Services
 {
-    public class FFmpeg
+    static public class FFmpeg
     {
-        bool Loaded = false;
+        static bool Loaded = false;
 
-        String _Path;
-        String FFmpegPath { get { return _Path; } }
+        static String _Path;
+        static String FFmpegPath { get { return _Path; } }
 
         public delegate void FFmpegStatusChanged(FFmpegStatus Status);
         public delegate void FFmpegProgressChanged(int Percent);
 
-        public FFmpeg(String Path)
+        static public bool Initialize(String Path)
         {
-            if(CheckValidFFmpeg(Path))
+            if (!Loaded && CheckValidFFmpeg(Path))
             {
                 Loaded = true;
                 _Path = Path;
             }
+            return Loaded;
         }
-        bool CheckValidFFmpeg(String Path)
+        static public void Reset(String Path)
         {
-            return true;
+            Loaded = false;
+            _Path = null;
         }
 
 
+        static bool CheckValidFFmpeg(String Path)
+        {
+            MyProcess p = new MyProcess(Path);
+            bool valid = false;
+            p.OnNewLine += (string line) => {
+                if (line == null)
+                    return;
+                else if (line.StartsWith("ffmpeg version"))
+                {
+                    valid = true;
+                }
+            };
 
 
-        public bool FlacToMp3(String Input,String Output,bool OverrideIfExist,FFmpegStatusChanged OnStatusChanged=null, FFmpegProgressChanged OnProgressChanged=null, bool Async = true )
+            p.UseShellExecute = false;
+            p.RedirectStandardOutput = true;
+            p.RedirectStandardError = true;
+            p.CreateNoWindow = true;
+            p.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+
+            p.Async = false;
+            p.Start();
+
+            return valid;
+        }
+
+
+        static public bool FlacToMp3(String Input,String Output,bool OverrideIfExist,FFmpegStatusChanged OnStatusChanged=null, FFmpegProgressChanged OnProgressChanged=null, bool Async = true )
         {
             if (!Loaded)
                 return false;
@@ -126,15 +153,11 @@ namespace ExtendCSharp.Services
 
 
 
-        
-
-
-
-        bool CheckValidInput(String Path)
+        static bool CheckValidInput(String Path)
         {
             return true;
         }
-        bool CheckValidOutput(String Path)
+        static bool CheckValidOutput(String Path)
         {
             return true;
         }

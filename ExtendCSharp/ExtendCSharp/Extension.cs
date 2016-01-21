@@ -649,10 +649,10 @@ namespace ExtendCSharp
 
         public static bool IsAn<T>(this Enum e)
         {
-            if (e is T)
-                return true;
-            return false;
+            return e is T;
         }
+      
+
         #endregion
 
         #region Graphics

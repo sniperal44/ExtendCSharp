@@ -56,7 +56,5 @@ namespace ExtendCSharp.Services
             stream.Dispose();
             return s;*/
         }
-
-
     }
 }
