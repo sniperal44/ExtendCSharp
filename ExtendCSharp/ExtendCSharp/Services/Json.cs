@@ -28,23 +28,32 @@ namespace ExtendCSharp.Services
 
              return t;*/
 
-            return JsonConvert.DeserializeObject<T>(s);
+            try
+            {
+                return JsonConvert.DeserializeObject<T>(s);
+            }catch(Exception ex) { return default(T); }
         }
         public static T Deserialize<T>(Stream s)
         {
             /*DataContractJsonSerializer d = new DataContractJsonSerializer(typeof(T));
             return (T)d.ReadObject(s);*/
-
-            using (StreamReader sr = new StreamReader(s))
+            try
             {
-                return JsonConvert.DeserializeObject<T>(sr.ReadToEnd());
+                using (StreamReader sr = new StreamReader(s))
+                {
+                    return JsonConvert.DeserializeObject<T>(sr.ReadToEnd());
+                }
             }
+            catch (Exception ex) { return default(T); }
         }
 
         public static String Serialize(object o)
         {
-
-            return JsonConvert.SerializeObject(o);
+            try
+            {
+                return JsonConvert.SerializeObject(o);
+            }
+            catch (Exception ex) { return default(String); }
 
             /*MemoryStream stream = new MemoryStream();
             DataContractJsonSerializer ser = new DataContractJsonSerializer(o.GetType());

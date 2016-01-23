@@ -290,15 +290,34 @@ namespace ExtendCSharp
         #region ListBox.ObjectCollection
         public static void AddUnique(this ListBox.ObjectCollection self, object obj)
         {
-            foreach (object o in self)
+            if(!self.Contains(obj))
+                self.Add(obj);
+            /*foreach (object o in self)
             {
                 if (o.Equals(obj))
                     return;
             }
-            self.Add(obj);
+            self.Add(obj);*/
         }
 
 
+        public static List<T> ToList<T>(this ListBox.ObjectCollection self)
+        {
+
+            List<T> temp = new List<T>();
+            foreach(T o in self)
+                temp.Add(o);
+
+            return temp;
+        }
+        public static ListPlus<T> ToListPlus<T>(this ListBox.ObjectCollection self)
+        {
+
+            ListPlus<T> temp = new ListPlus<T>();
+            foreach (T o in self)
+                temp.Add(o);
+            return temp;
+        }
 
         public static void ClearInvoke(this ListBox self)
         {
@@ -322,6 +341,18 @@ namespace ExtendCSharp
             }
 
         }
+        public static void RemoveInvoke(this ListBox self, object obj)
+        {
+
+            if (self.InvokeRequired)
+                self.Invoke((MethodInvoker)delegate { self.RemoveInvoke(obj); });
+            else
+            {
+                self.Items.Remove(obj);
+            }
+
+        }
+
 
         public static object GetAtInvoke(this ListBox self, int i)
         {
@@ -374,6 +405,19 @@ namespace ExtendCSharp
 
             }
         }
+        #endregion
+
+        #region List<String>
+
+        public static void AddToLower(this List<String> self, String s)
+        {
+            self.Add(s.ToLower());
+        }
+        public static void AddToUpper(this List<String> self, String s)
+        {
+            self.Add(s.ToUpper());
+        }
+
         #endregion
 
         #region DataGridView
@@ -739,6 +783,15 @@ namespace ExtendCSharp
         }
         #endregion
 
+        #region IEnumerable
+
+        public static ListPlus<T> ToListPlus<T>(this IEnumerable<T> data)
+        {
+            return new ListPlus<T>(data);
+        }
+
+        #endregion
+        
         #region DEMO
 
         #endregion
