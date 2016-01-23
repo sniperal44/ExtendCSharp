@@ -285,6 +285,16 @@ namespace ExtendCSharp
             else
                 p.Value = Value;
         }
+        public static void SetMaximumInvoke(this ProgressBar p, int Maximum)
+        {
+            if (p.InvokeRequired)
+                p.Invoke((MethodInvoker)delegate { p.SetMaximumInvoke(Maximum); });
+            else
+                p.Maximum = Maximum;
+        }
+
+
+
         #endregion
 
         #region ListBox.ObjectCollection

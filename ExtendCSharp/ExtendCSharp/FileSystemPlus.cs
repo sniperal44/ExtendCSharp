@@ -1,5 +1,6 @@
 ﻿using ExtendCSharp.ExtendedClass;
 using ExtendCSharp.Interfaces;
+using ExtendCSharp.Services;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,11 @@ namespace ExtendCSharp
         }
     }
     [JsonObject(MemberSerialization.OptIn)]
+
+
+
+
+
     public class FileSystemPlus<T>
         where T : ICloneablePlus,new()
     {
@@ -27,7 +33,7 @@ namespace ExtendCSharp
         [JsonProperty]
         protected String _RootRealPath = "";
         [JsonProperty]
-        public String RootPath { get { return _RootRealPath; } }
+        public String RootPath { get { return _RootRealPath; } set { _RootRealPath = value; } }
 
         [JsonProperty]
         protected FileSystemNodePlus<T> _Root;
@@ -82,10 +88,61 @@ namespace ExtendCSharp
 
         public String GetFullPath(FileSystemNodePlus<T> Nodo)
         {
-            return Path.Combine(_RootRealPath, Nodo.GetFullPath());
+            return SystemService.Combine(_RootRealPath, Nodo.GetFullPath().TrimStart('\\','/'));
         }
+        public ListPlus<String> GetAllFileFullPath()
+        {
+            return GetAllFileFullPath(Root);
+        }
+        private ListPlus<String> GetAllFileFullPath(FileSystemNodePlus<T> Nodo)
+        {
+            ListPlus<String> ls = new ListPlus<string>();
+            FileSystemNodePlus<T>[] an = Nodo.GetAllNode();
+            foreach (FileSystemNodePlus<T> n in an)
+            {
+                if (n.Type==FileSystemNodePlusType.File)
+                    ls.Add(GetFullPath(n));
+                else if (n.Type == FileSystemNodePlusType.Directory)
+                {
+                    ls.AddRange(GetAllFileFullPath(n));
+                }
+            }
+            return ls;
+
+        }
+
+        public ListPlus<String> GetAllFilePath()
+        {
+            return GetAllFilePath(Root);
+        }
+        private ListPlus<String> GetAllFilePath(FileSystemNodePlus<T> Nodo)
+        {
+            ListPlus<String> ls = new ListPlus<string>();
+            FileSystemNodePlus<T>[] an = Nodo.GetAllNode();
+            foreach (FileSystemNodePlus<T> n in an)
+            {
+                if (n.Type == FileSystemNodePlusType.File)
+                    ls.Add(n.GetFullPath());
+                else if (n.Type == FileSystemNodePlusType.Directory)
+                {
+                    ls.AddRange(GetAllFilePath(n));
+                }
+            }
+            return ls;
+
+        }
+
     }
     [JsonObject(MemberSerialization.OptIn)]
+
+
+
+
+
+
+
+
+
     public class FileSystemNodePlus<T>
         where T : ICloneablePlus,new()
     {
@@ -377,6 +434,10 @@ namespace ExtendCSharp
     }
 
 
+
+
+
+
     public class FileSystemPlusLoadOption
     {
         public bool IgnoreException = false;
@@ -389,6 +450,8 @@ namespace ExtendCSharp
         }
 
     }
+
+
 
 
 
