@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -87,7 +88,37 @@ namespace ExtendCSharp.Services
                 OnComplete(true);
         }
 
-        
+        public static bool FileExist(String Path)
+        {
+            return File.Exists(Path);
+        }
+        public static bool DirectoryExist(String Path)
+        {
+            return Directory.Exists(Path);
+        }
+        public static bool Exist(String Path)
+        {
+            return FileExist(Path) || DirectoryExist(Path);
+        }
+
+        public static String GetMD5(String Path)
+        {
+            try
+            {
+                using (var md5 = MD5.Create())
+                {
+                    using (var stream = File.OpenRead(Path))
+                    {
+                        return md5.ComputeHash(stream).ToHex(true);
+                    }
+
+                }
+            }
+            catch(Exception)
+            {
+                return "";
+            }
+        }
 
         public delegate void CopyProgressChangedDelegate(double persentage,ref bool cancelFlag);
         public delegate void CopyCompleteDelegate(bool copiato);

@@ -1,8 +1,10 @@
-﻿using System;
+﻿using ExtendCSharp.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ExtendCSharp.Services
@@ -15,8 +17,10 @@ namespace ExtendCSharp.Services
         static String _Path;
         static String FFmpegPath { get { return _Path; } }
 
-        public delegate void FFmpegStatusChanged(FFmpegStatus Status, String Source, String Destination);
-        public delegate void FFmpegProgressChanged(int Percent,String Source,String Destination,FFmpegError Error= FFmpegError.nul);
+        public delegate void FFmpegConvertStatusChanged(FFmpegStatus Status, String Source, String Destination);
+        public delegate void FFmpegConvertProgressChanged(int Percent,String Source,String Destination,FFmpegError Error= FFmpegError.nul);
+
+        public delegate void FFmpegGetMetadataEnd(String Source,FFmpegMetadata metadata);
 
         static public bool Initialize(String Path)
         {
@@ -61,7 +65,7 @@ namespace ExtendCSharp.Services
         }
 
 
-        static public bool ToMp3(String Input,String Output,bool OverrideIfExist,FFmpegStatusChanged OnStatusChanged=null, FFmpegProgressChanged OnProgressChanged=null, bool Async = true )
+        static public bool ToMp3(String Input,String Output,bool OverrideIfExist,FFmpegConvertStatusChanged OnStatusChanged=null, FFmpegConvertProgressChanged OnProgressChanged=null, bool Async = true )
         {
             if (!_Loaded)
                 return false;
@@ -78,7 +82,7 @@ namespace ExtendCSharp.Services
                 }
 
 
-                MyProcess p = new MyProcess(_Path, "-i \"" + Input + "\" -map 0:0 -map 0:1 -c:a:0 libmp3lame  -ab 320k -map_metadata 0 -id3v2_version 3   -c:v copy \"" + Output + "\"");
+                MyProcess p = new MyProcess(_Path, "-i \"" + Input + "\" -map 0:0 -map 0:1? -c:a:0 libmp3lame  -ab 320k -map_metadata 0 -id3v2_version 3   -c:v copy \"" + Output + "\"");
                 if (OnStatusChanged != null)
                 {
                     p.OnStatusChanged += (ProcessStatus s) => {
@@ -159,10 +163,113 @@ namespace ExtendCSharp.Services
             return true;
         }
 
+        /// <summary>
+        /// Ottiene i Metadata da un file Media in modalità sincrona
+        /// </summary>
+        /// <param name="Input">Path del file Media</param>
+        /// <returns></returns>
+        static public FFmpegMetadata GetMetadata(String Input)
+        {
+            if (!_Loaded)
+                return null;
+
+            if (CheckValidInput(Input))
+            {
+                MyProcess p = new MyProcess(_Path, "-i \"" + Input + "\"");
+                FFmpegMetadata temp = new FFmpegMetadata();
+                p.OnNewLine += (string line) =>
+                {
+
+                    if (line == null)
+                        return;
+                    else if (line.StartsWith("    LANGUAGE        : "))
+                    {
+                        temp.Language = line.RemoveLeft("    LANGUAGE        : ").Trim();
+                    }
+                    else if (line.StartsWith("    YEAR            : "))
+                    {
+                        temp.Year = line.RemoveLeft("    YEAR            : ").Trim();
+                    }
+                    else if (line.StartsWith("    TITLE           : "))
+                    {
+                        temp.Title = line.RemoveLeft("    TITLE           : ").Trim();
+                    }
+                    else if (line.StartsWith("    ARTIST          : "))
+                    {
+                        temp.Artist = line.RemoveLeft("    ARTIST          : ").Trim();
+                    }
+                    else if (line.StartsWith("    ALBUM           : "))
+                    {
+                        temp.Album = line.RemoveLeft("    ALBUM           : ").Trim();
+                    }
+                    else if (line.StartsWith("    DATE            : "))
+                    {
+                        temp.Date = line.RemoveLeft("    DATE            : ").Trim();
+                    }
+                    else if (line.StartsWith("    GENRE           : "))
+                    {
+                        temp.Genre = line.RemoveLeft("    GENRE           : ").Trim();
+                    }
+                    else if (line.StartsWith("    COMMENT         : "))
+                    {
+                        temp.Comment = line.RemoveLeft("    COMMENT         : ").Trim();
+                    }
+                    else if (line.StartsWith("    track           : "))
+                    {
+                        temp.track = line.RemoveLeft("    track           : ").Trim();
+                    }
+                    else if (line.StartsWith("    ENSEMBLE        : "))
+                    {
+                        temp.Ensemble = line.RemoveLeft("    ENSEMBLE        : ").Trim();
+                    }
+                    else if (line.StartsWith("  Duration:"))
+                    {
+                        String[] sss = line.Split(',');
+                        if (sss.Length == 3)
+                        {
+                            temp.Duration = sss[0].RemoveLeft("  Duration: ").Trim();
+                            temp.start = sss[1].RemoveLeft(" start: ").Trim();
+                            temp.bitrate = sss[2].RemoveLeft(" bitrate: ").Trim();
+                        }
+                    }
+                };
+
+
+
+                p.UseShellExecute = false;
+                p.RedirectStandardOutput = true;
+                p.RedirectStandardError = true;
+                p.CreateNoWindow = true;
+                p.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+
+                p.Async = false;
+                p.Start();
+
+                return temp;
+            }
+            else
+                return null;
+
+            
+        }
+
+        /// <summary>
+        /// Ottiene i Metadata da un file Media in modalità Asincrona
+        /// </summary>
+        /// <param name="Input">Path del file Media</param>
+        /// <returns></returns>
+        static public void GetMetadata(String Input, FFmpegGetMetadataEnd OnGetMetadataEnd = null)
+        {
+            new Thread(() =>
+            {
+                OnGetMetadataEnd(Input, GetMetadata(Input));
+            }).Start();     
+        }
+
 
         static bool CheckValidInput(String Path)
         {
-            if(File.Exists(Path))
+            if(SystemService.FileExist(Path))
                 return true;
             return false;
         }
@@ -173,6 +280,47 @@ namespace ExtendCSharp.Services
 
         }
 
+    }
+    public class FFmpegMetadata :ICloneablePlus
+    {
+        public String Language = "";
+        public String Year = "";
+        public String Title = "";
+        public String Artist = "";
+        public String Album = "";
+        public String Date = "";
+        public String Genre = "";
+        public String Comment = "";
+        public String track = "";
+        public String Ensemble = "";
+        public String Duration = "";
+        public String start = "";
+        public String bitrate = "";
+
+
+        object ICloneablePlus.Clone()
+        {
+            FFmpegMetadata t = new FFmpegMetadata();
+            t.Language = Language;
+            t.Year = Year;
+            t.Title = Title;
+            t.Artist = Artist;
+            t.Album = Album;
+            t.Date = Date;
+            t.Genre = Genre;
+            t.Comment = Comment;
+            t.track = track;
+            t.Ensemble = Ensemble;
+            t.Duration = Duration;
+            t.start = start;
+            t.bitrate = bitrate;
+            return t;
+        }
+
+        public FFmpegMetadata CloneClass()
+        {
+            return (FFmpegMetadata)(this as ICloneablePlus).Clone();
+        }
     }
     public enum FFmpegStatus
     {

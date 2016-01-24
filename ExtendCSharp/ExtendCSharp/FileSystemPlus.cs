@@ -214,14 +214,11 @@ namespace ExtendCSharp
             
             if (File.Exists(Path))
             {
-                if (System.IO.Path.GetExtension(Path) == ".exe")
-                {
-
-                }
                 if (option == null || (option != null && (!option.RestrictExtensionEnable || option.RestrictExtension.Contains(System.IO.Path.GetExtension(Path).TrimStart('.').ToLower()))))
                 { 
                     _Type = FileSystemNodePlusType.File;
                     _Name = Path.SplitAndGetLast('\\', '/');
+                    _Name=_Name.Remove(_Name.LastIndexOf('.'))+ System.IO.Path.GetExtension(_Name).ToLower();
                 }
             }
             else if(Directory.Exists(Path))
