@@ -132,6 +132,8 @@ namespace ExtendCSharp
 
         }
 
+
+       
     }
     [JsonObject(MemberSerialization.OptIn)]
 
@@ -332,6 +334,21 @@ namespace ExtendCSharp
             }
         }
 
+        public int GetNodeCount(FileSystemNodePlusLevelType Level, FileSystemNodePlusType Type)
+        {
+            int i = 0;
+            if (Level==FileSystemNodePlusLevelType.FirstLevel)
+                 return  _FileSystem.Where(x => (Type & x.Value.Type) == x.Value.Type).Count();
+            else
+                return GetNodeCount(this, Type);
+        }
+        private int GetNodeCount(FileSystemNodePlus<T> Nodo, FileSystemNodePlusType Type)
+        {
+            int i = Nodo._FileSystem.Where(x => (Type & x.Value.Type) == x.Value.Type).Count();
+            foreach (KeyValuePair<String, FileSystemNodePlus<T>> kv in Nodo._FileSystem.Where(x=>x.Value.Type==FileSystemNodePlusType.Directory))
+                i+=GetNodeCount(kv.Value,  Type);
+            return i;
+        }
         #endregion
 
         #region Override
@@ -463,8 +480,8 @@ namespace ExtendCSharp
 
     public enum FileSystemNodePlusType
     {
-        File,
-        Directory
+        File=1,
+        Directory=2
     }
 
     public enum FileSystemNodePlusLevelType

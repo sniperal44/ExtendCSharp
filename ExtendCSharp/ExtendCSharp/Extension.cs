@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -283,7 +284,8 @@ namespace ExtendCSharp
             if (p.InvokeRequired)
                 p.Invoke((MethodInvoker)delegate { p.SetValueInvoke(Value); });
             else
-                p.Value = Value;
+                if(Value<p.Maximum)
+                    p.Value = Value;
         }
         public static void SetMaximumInvoke(this ProgressBar p, int Maximum)
         {
@@ -293,6 +295,33 @@ namespace ExtendCSharp
                 p.Maximum = Maximum;
         }
 
+
+        public static void SetProgressNoAnimation(this ProgressBar p, int value)
+        {
+            if (value > p.Maximum)
+                value = p.Maximum;
+
+            if (value == p.Maximum)
+            {
+                p.Maximum = value + 1;
+                p.Value = value + 1;
+                p.Maximum = value;
+            }
+            else
+            {
+                p.Value = value + 1;
+            }
+            p.Value = value;   
+        }
+        public static void SetProgressNoAnimationInvoke(this ProgressBar p, int value)
+        {
+            if (p.InvokeRequired)
+                p.Invoke((MethodInvoker)delegate { p.SetProgressNoAnimation(value); });
+            else
+            {
+                p.SetProgressNoAnimation(value);
+            }         
+        }
 
 
         #endregion
@@ -801,7 +830,76 @@ namespace ExtendCSharp
         }
 
         #endregion
-        
+
+        #region MD5
+
+
+        public static void ComputeHashMultiBlockAsync(this MD5 self, byte[] input, int size, MD5BlockTransformEventHandler2 OnMD5BlockTransform, MD5ComputeHashFinishEventHandler OnMD5ComputeHashFinish,bool Async=true)
+        {
+            Thread t = new Thread(() =>
+              {
+                  using (var md5 = MD5.Create())
+                  {
+                      
+                      int offset = 0;
+
+                      while (input.Length - offset >= size)
+                      {
+                          offset += md5.TransformBlock(input, offset, size, input, offset);
+                          if (OnMD5BlockTransform != null)
+                          {
+                                OnMD5BlockTransform((offset * 100L) / input.Length, size, offset);   
+                          }
+                      }
+                      md5.TransformFinalBlock(input, offset, input.Length - offset);
+                      if (OnMD5ComputeHashFinish != null)
+                          OnMD5ComputeHashFinish(md5.Hash);
+                  }
+              });
+            t.Start();
+            if (!Async)
+                t.Join();
+
+        }
+        public static void ComputeHashMultiBlockAsync(this MD5 self,Stream s, MD5BlockTransformEventHandler OnMD5BlockTransform, MD5ComputeHashFinishEventHandler OnMD5ComputeHashFinish,bool Async=true)
+        {
+            Thread t = new Thread(() =>
+                {
+                    using (var md5 = MD5.Create())
+                    {
+                        int BufferSize = 1024 * 1024;
+                        byte[] buffer = new byte[BufferSize];
+                        int readCount;
+
+                        double PercentPerRead = BufferSize*100.0 / s.Length ;
+                        while ((readCount = s.Read(buffer, 0, BufferSize)) > 0)
+                        {
+                            md5.TransformBlock(buffer, 0, readCount, buffer, 0);
+                            if (OnMD5BlockTransform != null)
+                            {
+                                OnMD5BlockTransform(PercentPerRead);
+                            }
+                        }
+                        md5.TransformFinalBlock(buffer, 0, readCount);
+
+                        if (OnMD5ComputeHashFinish != null)
+                            OnMD5ComputeHashFinish(md5.Hash);
+                    }
+                });
+            t.Start();
+            if (!Async)
+                t.Join();
+
+        }
+
+
+
+        public delegate void MD5BlockTransformEventHandler(double ReadPercent);
+        public delegate void MD5BlockTransformEventHandler2(double Percent, int Size, int Offset);
+        public delegate void MD5ComputeHashFinishEventHandler(byte[] Hash);
+
+        #endregion
+
         #region DEMO
 
         #endregion

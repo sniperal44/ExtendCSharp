@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using static ExtendCSharp.Extension;
 
 namespace ExtendCSharp.Services
 {
@@ -50,7 +51,7 @@ namespace ExtendCSharp.Services
                     else
                     {
                         if (OnComplete != null)
-                            OnComplete(false);
+                            OnComplete(true);
                         return;
                     }
    
@@ -109,9 +110,8 @@ namespace ExtendCSharp.Services
                 {
                     using (var stream = File.OpenRead(Path))
                     {
-                        return md5.ComputeHash(stream).ToHex(true);
+                        return md5.ComputeHash(stream).ToHex(true);  
                     }
-
                 }
             }
             catch(Exception)
@@ -119,6 +119,29 @@ namespace ExtendCSharp.Services
                 return "";
             }
         }
+        public static void GetMD5(String Path, MD5BlockTransformEventHandler OnMD5BlockTransform, MD5ComputeHashFinishEventHandler OnMD5ComputeHashFinish,bool Async=true)
+        {
+            try
+            {
+                using (var md5 = MD5.Create())
+                {
+                    using (var stream = File.OpenRead(Path))
+                    {      
+                        md5.ComputeHashMultiBlockAsync(stream, OnMD5BlockTransform, OnMD5ComputeHashFinish, Async);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                if (OnMD5ComputeHashFinish != null)
+                    OnMD5ComputeHashFinish(null);
+            }
+        }
+
+
+
+
+
 
         public delegate void CopyProgressChangedDelegate(double persentage,ref bool cancelFlag);
         public delegate void CopyCompleteDelegate(bool copiato);

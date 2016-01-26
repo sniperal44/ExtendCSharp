@@ -78,7 +78,7 @@ namespace ExtendCSharp.Services
                     if (OverrideIfExist)
                         File.Delete(Output);
                     else
-                        return false;
+                        return true;
                 }
 
 
@@ -162,6 +162,15 @@ namespace ExtendCSharp.Services
 
             return true;
         }
+        static public  bool ConvertTo(FFmpegConversionEndFormat Formato, String Input, String Output, bool OverrideIfExist, FFmpegConvertStatusChanged OnStatusChanged = null, FFmpegConvertProgressChanged OnProgressChanged = null, bool Async = true)
+        {
+            if (Formato == FFmpegConversionEndFormat.mp3)
+                return ToMp3(Input, Output,OverrideIfExist, OnStatusChanged, OnProgressChanged,Async);
+
+            return false;
+        }
+
+
 
         /// <summary>
         /// Ottiene i Metadata da un file Media in modalità sincrona
@@ -190,26 +199,57 @@ namespace ExtendCSharp.Services
                     {
                         temp.Year = line.RemoveLeft("    YEAR            : ").Trim();
                     }
+
+
                     else if (line.StartsWith("    TITLE           : "))
                     {
                         temp.Title = line.RemoveLeft("    TITLE           : ").Trim();
                     }
+                    else if (line.StartsWith("    title           : "))
+                    {
+                        temp.Title = line.RemoveLeft("    title           : ").Trim();
+                    }
+
+
                     else if (line.StartsWith("    ARTIST          : "))
                     {
                         temp.Artist = line.RemoveLeft("    ARTIST          : ").Trim();
                     }
+                    else if (line.StartsWith("    artist          :"))
+                    {
+                        temp.Artist = line.RemoveLeft("    artist          :").Trim();
+                    }
+
+
                     else if (line.StartsWith("    ALBUM           : "))
                     {
                         temp.Album = line.RemoveLeft("    ALBUM           : ").Trim();
                     }
+                    else if (line.StartsWith("    album           :"))
+                    {
+                        temp.Album = line.RemoveLeft("    album           :").Trim();
+                    }
+
+
                     else if (line.StartsWith("    DATE            : "))
                     {
                         temp.Date = line.RemoveLeft("    DATE            : ").Trim();
                     }
+                    else if (line.StartsWith("    date            : "))
+                    {
+                        temp.Date = line.RemoveLeft("    date            : ").Trim();
+                    }
+
                     else if (line.StartsWith("    GENRE           : "))
                     {
                         temp.Genre = line.RemoveLeft("    GENRE           : ").Trim();
                     }
+                    else if (line.StartsWith("    genre           :"))
+                    {
+                        temp.Genre = line.RemoveLeft("    genre           :").Trim();
+                    }
+
+
                     else if (line.StartsWith("    COMMENT         : "))
                     {
                         temp.Comment = line.RemoveLeft("    COMMENT         : ").Trim();
@@ -322,17 +362,20 @@ namespace ExtendCSharp.Services
             return (FFmpegMetadata)(this as ICloneablePlus).Clone();
         }
     }
+
     public enum FFmpegStatus
     {
         Running,
         Stop,
     }
-
     public enum FFmpegError
     {
         nul=0,
         DestFolderNotFound=1,
     }
-
+    public enum FFmpegConversionEndFormat
+    {
+        mp3
+    }
 
 }
