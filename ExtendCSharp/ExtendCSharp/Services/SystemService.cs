@@ -1,11 +1,15 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using static ExtendCSharp.Extension;
+
 
 namespace ExtendCSharp.Services
 {
@@ -141,6 +145,33 @@ namespace ExtendCSharp.Services
 
 
 
+        public static void SetAssociation(string Extension, string KeyName, string OpenWith, string FileDescription)
+        {
+
+            RegistryKey key = Registry.ClassesRoot.CreateSubKey(Extension);
+            key.SetValue("", "My Project");
+            key.Close();
+
+            key = Registry.ClassesRoot.CreateSubKey(Extension + "\\Shell\\Open\\command");
+            key.SetValue("", "\"" + Application.ExecutablePath + "\" \"%L\"");
+            key.Close();
+
+            key = Registry.ClassesRoot.CreateSubKey(Extension + "\\DefaultIcon");
+            key.SetValue("", Application.StartupPath + "\\icon.ico");
+            key.Close();
+
+
+            // Delete the key instead of trying to change it
+           /* CurrentUser = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\.ucs", true);
+            CurrentUser.DeleteSubKey("UserChoice", false);
+            CurrentUser.Close();
+            */
+            // Tell explorer the file association has been changed
+            SHChangeNotify(0x08000000, 0x0000, IntPtr.Zero, IntPtr.Zero);
+        }
+
+        [DllImport("shell32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern void SHChangeNotify(uint wEventId, uint uFlags, IntPtr dwItem1, IntPtr dwItem2);
 
 
         public delegate void CopyProgressChangedDelegate(double persentage,ref bool cancelFlag);
