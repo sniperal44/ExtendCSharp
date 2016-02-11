@@ -144,21 +144,62 @@ namespace ExtendCSharp.Services
 
 
 
-
-        public static void SetAssociation(string Extension, string KeyName, string OpenWith, string FileDescription)
+        public static string NormalizePath(string path)
         {
+            return Path.GetFullPath(new Uri(path).LocalPath)
+                       .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                       .ToUpperInvariant();
+        }
 
+
+        #region Extension - File Association
+
+        public static void SetAssociationFileExtention(string Extension, string ApplicationName, string AppPath, string FileDescription,string Icon=null)
+        {
+            Extension = "." + Extension.Trim('.').ToLowerInvariant();
+            RegistryKey BaseKey;
+            RegistryKey OpenMethod;
+            RegistryKey Shell;
+
+            BaseKey = Registry.ClassesRoot.CreateSubKey(Extension);
+            BaseKey.SetValue("", ApplicationName);
+
+            OpenMethod = Registry.ClassesRoot.CreateSubKey(ApplicationName);
+            OpenMethod.SetValue("", FileDescription);
+            if(Icon==null)
+                OpenMethod.CreateSubKey("DefaultIcon").SetValue("", "\"" + AppPath + "\",0");
+            else
+                OpenMethod.CreateSubKey("DefaultIcon").SetValue("", "\"" + Icon + "\"");
+            Shell = OpenMethod.CreateSubKey("Shell");
+            Shell.CreateSubKey("edit").CreateSubKey("command").SetValue("", "\"" + AppPath + "\"" + " \"%1\"");
+            Shell.CreateSubKey("open").CreateSubKey("command").SetValue("", "\"" + AppPath + "\"" + " \"%1\"");
+            BaseKey.Close();
+            OpenMethod.Close();
+            Shell.Close();
+
+
+/*
+            Extension = "." + Extension.Trim('.').ToLowerInvariant();
             RegistryKey key = Registry.ClassesRoot.CreateSubKey(Extension);
-            key.SetValue("", "My Project");
+            key.SetValue("", ApplicationName);
             key.Close();
 
-            key = Registry.ClassesRoot.CreateSubKey(Extension + "\\Shell\\Open\\command");
-            key.SetValue("", "\"" + Application.ExecutablePath + "\" \"%L\"");
+            key = Registry.ClassesRoot.CreateSubKey(Extension + "\\Shell\\open\\command");
+            //key.SetValue("", "\"" + Application.ExecutablePath + "\" \"%L\"");
+            key.SetValue("", "\"" + AppPath + "\" \"%L\"");
             key.Close();
+
+            key = Registry.ClassesRoot.CreateSubKey(Extension + "\\Shell\\edit\\command");
+            //key.SetValue("", "\"" + Application.ExecutablePath + "\" \"%L\"");
+            key.SetValue("", "\"" + AppPath + "\" \"%L\"");
+            key.Close();
+
 
             key = Registry.ClassesRoot.CreateSubKey(Extension + "\\DefaultIcon");
-            key.SetValue("", Application.StartupPath + "\\icon.ico");
-            key.Close();
+            //key.SetValue("", Application.StartupPath + "\\icon.ico");
+            key.SetValue("", IconPath);
+
+            key.Close();*/
 
 
             // Delete the key instead of trying to change it
@@ -169,9 +210,54 @@ namespace ExtendCSharp.Services
             // Tell explorer the file association has been changed
             SHChangeNotify(0x08000000, 0x0000, IntPtr.Zero, IntPtr.Zero);
         }
+        public static string FileExtentionInfo(AssocStr assocStr, string Extension)
+        {
+            Extension = "." + Extension.Trim('.').ToLowerInvariant();
+            uint pcchOut = 0;
+            AssocQueryString(AssocF.Verify, assocStr, Extension, null, null, ref pcchOut);
+            StringBuilder pszOut = new StringBuilder((int)pcchOut);
+            AssocQueryString(AssocF.Verify, assocStr, Extension, null, pszOut, ref pcchOut);
+            return pszOut.ToString();
+        }
+
+        [Flags]
+        private enum AssocF
+        {
+            Init_NoRemapCLSID = 0x1,
+            Init_ByExeName = 0x2,
+            Open_ByExeName = 0x2,
+            Init_DefaultToStar = 0x4,
+            Init_DefaultToFolder = 0x8,
+            NoUserSettings = 0x10,
+            NoTruncate = 0x20,
+            Verify = 0x40,
+            RemapRunDll = 0x80,
+            NoFixUps = 0x100,
+            IgnoreBaseClass = 0x200
+        }
+        public enum AssocStr
+        {
+            Command = 1,
+            Executable,
+            FriendlyDocName,
+            FriendlyAppName,
+            NoOpen,
+            ShellNewValue,
+            DDECommand,
+            DDEIfExec,
+            DDEApplication,
+            DDETopic
+        }
+
+
 
         [DllImport("shell32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern void SHChangeNotify(uint wEventId, uint uFlags, IntPtr dwItem1, IntPtr dwItem2);
+        [DllImport("Shlwapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        static extern uint AssocQueryString(AssocF flags, AssocStr str, string pszAssoc, string pszExtra, [Out] StringBuilder pszOut, [In][Out] ref uint pcchOut);
+        
+        #endregion
+
 
 
         public delegate void CopyProgressChangedDelegate(double persentage,ref bool cancelFlag);
