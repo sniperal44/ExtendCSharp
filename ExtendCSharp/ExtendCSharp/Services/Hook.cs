@@ -33,7 +33,7 @@ namespace ExtendCSharp.Services
     }
     public class HookMouse : Hook
     {
-        public delegate void HookProcMouse(int nCode, MouseMessages wParam, IntPtr lParam, ref bool Suppress);
+        public delegate void HookProcMouse(int nCode, MyMouseEvent wParam, IntPtr lParam, ref bool Suppress);
         public event HookProcMouse EventDispatcher = null;
         private int Hook = 0;
         private HookProcInterno HPI;
@@ -42,7 +42,7 @@ namespace ExtendCSharp.Services
         {
             bool Suppress = false;
             if (EventDispatcher != null)
-                EventDispatcher(nCode, (MouseMessages)wParam, lParam, ref Suppress);
+                EventDispatcher(nCode, new MyMouseEvent((MouseMessagesInternal)wParam), lParam, ref Suppress);
 
             return Suppress ? 1 : CallNextHookEx(Hook, nCode, wParam, lParam);
         }
@@ -62,7 +62,7 @@ namespace ExtendCSharp.Services
     }
     public class HookKeyboard : Hook
     {
-        public delegate void HookProcKeyboard(int nCode, KeyStatus wParam, Keys key, ref bool Suppress);
+        public delegate void HookProcKeyboard(int nCode, MyKeyboardEvent wParam, Keys key, ref bool Suppress);
         public event HookProcKeyboard EventDispatcher = null;
         private int Hook = 0;
         private HookProcInterno HPI;
@@ -71,7 +71,7 @@ namespace ExtendCSharp.Services
         {
             bool Suppress = false;
             if (EventDispatcher != null)
-                EventDispatcher(nCode, (KeyStatus)wParam, (Keys)Marshal.ReadInt32(lParam), ref Suppress);
+                EventDispatcher(nCode, new MyKeyboardEvent((HookKeyStatusInternal)wParam),(Keys)Marshal.ReadInt32(lParam), ref Suppress);
 
             return Suppress ? 1 : CallNextHookEx(Hook, nCode, wParam, lParam);
         }
