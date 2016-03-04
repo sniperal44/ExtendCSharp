@@ -64,6 +64,7 @@
     <Compile Include="Services\FFmpeg.cs" />
     <Compile Include="Services\Hook.cs" />
     <Compile Include="Services\MouseKeyboardService.cs" />
+    <Compile Include="Services\ProcessMemory.cs" />
     <Compile Include="Services\RegisteredFileType.cs" />
     <Compile Include="Services\SystemService.cs" />
     <Compile Include="Services\Zip.cs" />
