@@ -70,7 +70,8 @@ namespace ExtendCSharp.Services
         private static extern bool keybd_event(byte bVk, byte bScan, uint dwFlags, int dwExtraInfo);
 
         [DllImport("user32.dll")]
-        private static extern short GetAsyncKeyState(int vKey);
+        //private static extern short GetAsyncKeyState(int vKey);
+        public static extern short GetAsyncKeyState(int vKey);
         [DllImport("User32.dll")]
         private static extern short GetAsyncKeyState(Keys vKey);
 
@@ -103,11 +104,8 @@ namespace ExtendCSharp.Services
             ke.KeyStat = MyKeyboardEvent.KeyStatus.Up;
             SendKeyEvent(ke, k);
         }
+
     }
-
-
-
-
 
 
     public class MyMouseEvent
