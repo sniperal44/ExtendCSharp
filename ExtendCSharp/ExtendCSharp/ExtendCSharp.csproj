@@ -58,6 +58,7 @@
   <ItemGroup>
     <Compile Include="ExtendedClass\ObjectPlus.cs" />
     <Compile Include="FileSystemPlus.cs" />
+    <Compile Include="FullPrecisionNumber.cs" />
     <Compile Include="Interfaces\ICloneablePlus.cs" />
     <Compile Include="ListPlus.cs" />
     <Compile Include="Process.cs" />

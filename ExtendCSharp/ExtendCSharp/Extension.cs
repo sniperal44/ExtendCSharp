@@ -214,7 +214,7 @@ namespace ExtendCSharp
             else
                 t.Visible = b;
         }
-
+        
 
         public static Control SetSize(this Control t, int Width, int Height)
         {

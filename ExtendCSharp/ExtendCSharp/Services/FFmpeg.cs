@@ -375,7 +375,8 @@ namespace ExtendCSharp.Services
     }
     public enum FFmpegConversionEndFormat
     {
-        mp3
+        mp3,
+        flac
     }
 
 }

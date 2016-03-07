@@ -45,52 +45,60 @@ namespace ExtendCSharp.Services
             byte[] buffer = new byte[1024 * 1024]; // 1MB buffer
             bool cancelFlag = false;
 
-            using (FileStream source = new FileStream(Source, FileMode.Open, FileAccess.Read))
+            try
             {
-                long fileLength = source.Length;
-                if (File.Exists(Dest))
+                using (FileStream source = new FileStream(Source, FileMode.Open, FileAccess.Read))
                 {
-                    if (Override)
-                        File.Delete(Dest);
-                    else
+                    long fileLength = source.Length;
+                    if (File.Exists(Dest))
                     {
-                        if (OnComplete != null)
-                            OnComplete(true);
-                        return;
-                    }
-   
-                }
-
-                SystemService.CreateFolderSecure(SystemService.GetParent(Dest));
-                using (FileStream dest = new FileStream(Dest, FileMode.CreateNew, FileAccess.Write))
-                {
-                    long totalBytes = 0;
-                    int currentBlockSize = 0;
-
-                    while ((currentBlockSize = source.Read(buffer, 0, buffer.Length)) > 0)
-                    {
-                        totalBytes += currentBlockSize;
-                        double persentage = (double)totalBytes * 100.0 / fileLength;
-
-                        dest.Write(buffer, 0, currentBlockSize);
-
-                        if (OnProgressChanged != null)
+                        if (Override)
+                            File.Delete(Dest);
+                        else
                         {
-                            cancelFlag = false;
-                            OnProgressChanged(persentage, ref cancelFlag);
-                            if (cancelFlag)
-                                break;
-                            
+                            if (OnComplete != null)
+                                OnComplete(true,null);
+                            return;
+                        }
+
+                    }
+
+                    SystemService.CreateFolderSecure(SystemService.GetParent(Dest));
+                    using (FileStream dest = new FileStream(Dest, FileMode.CreateNew, FileAccess.Write))
+                    {
+                        long totalBytes = 0;
+                        int currentBlockSize = 0;
+
+                        while ((currentBlockSize = source.Read(buffer, 0, buffer.Length)) > 0)
+                        {
+                            totalBytes += currentBlockSize;
+                            double persentage = (double)totalBytes * 100.0 / fileLength;
+
+                            dest.Write(buffer, 0, currentBlockSize);
+
+                            if (OnProgressChanged != null)
+                            {
+                                cancelFlag = false;
+                                OnProgressChanged(persentage, ref cancelFlag);
+                                if (cancelFlag)
+                                    break;
+
+                            }
                         }
                     }
-                }
-                if (cancelFlag)
-                    if (File.Exists(Dest))
-                        File.Delete(Dest);
+                    if (cancelFlag)
+                        if (File.Exists(Dest))
+                            File.Delete(Dest);
 
+                }
+                if (OnComplete != null)
+                    OnComplete(true,null);
             }
-            if(OnComplete!=null)
-                OnComplete(true);
+            catch (Exception ex)
+            {
+                if (OnComplete != null)
+                    OnComplete(false,ex);
+            }
         }
 
         public static bool FileExist(String Path)
@@ -261,7 +269,9 @@ namespace ExtendCSharp.Services
 
 
         public delegate void CopyProgressChangedDelegate(double persentage,ref bool cancelFlag);
-        public delegate void CopyCompleteDelegate(bool copiato);
+        public delegate void CopyCompleteDelegate(bool copiato,Exception ex);
 
     }
+
+ 
 }
