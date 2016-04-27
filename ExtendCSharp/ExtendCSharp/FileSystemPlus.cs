@@ -27,7 +27,7 @@ namespace ExtendCSharp
 
 
     public class FileSystemPlus<T>
-        where T : ICloneablePlus,new()
+        where T : ICloneablePlus, new()
     {
         #region Variabili
         [JsonProperty]
@@ -47,7 +47,18 @@ namespace ExtendCSharp
 
         protected FileSystemPlus()
         {
+            _Root = new FileSystemNodePlus<T>();
+            
         }
+        public FileSystemPlus(String FakeRootPath)
+        {
+            FakeRootPath = FakeRootPath.TrimEnd('\\', '/');
+            if (FileSystemPlusUtil.IsRootpath(FakeRootPath))
+                FakeRootPath += "\\";
+            _RootRealPath = FakeRootPath;
+            _Root = new FileSystemNodePlus<T>(FakeRootPath.SplitAndGetLast('\\', '/'), FileSystemNodePlusType.Directory,null);
+        }
+
         public FileSystemPlus(String RootPath, FileSystemPlusLoadOption option = null)
         {
             if (Directory.Exists(RootPath))
@@ -65,7 +76,7 @@ namespace ExtendCSharp
 
         public void Merge(FileSystemPlus<T> OtherFileSystem)
         {
-             if (_Root == null)
+            if (_Root == null)
                 _Root = new FileSystemNodePlus<T>();
             _Root.Merge(OtherFileSystem._Root);
         }
@@ -73,7 +84,7 @@ namespace ExtendCSharp
         {
             if (_Root == null)
                 _Root = new FileSystemNodePlus<T>();
-            
+
             _Root.Add(OtherFileSystem._Root);
         }
         public FileSystemPlus<T> Clone()
@@ -85,7 +96,10 @@ namespace ExtendCSharp
             return n;
         }
 
-
+        public IEnumerable<FileSystemNodePlus<T>> Flatten()
+        {
+            return Root.Flatten();
+        }
         public String GetFullPath(FileSystemNodePlus<T> Nodo)
         {
             return SystemService.Combine(_RootRealPath, Nodo.GetFullPath().TrimStart('\\','/'));
@@ -133,6 +147,27 @@ namespace ExtendCSharp
         }
 
 
+        public FileSystemNodePlus<T> GetNodeFromPath(String Path)
+        {
+            Path = Path.RemoveLeft(_RootRealPath);
+            string[] tt = Path.Split('\\','/');
+            FileSystemNodePlus<T> NodoT = _Root;
+
+            for(int i=0;i<tt.Length;i++)
+            {
+                string tem = tt[i].Trim();
+                if (tem == "")
+                    continue;
+
+                NodoT = NodoT[tt[i]];
+                if (NodoT == null)
+                    return null;
+            }
+            return NodoT;
+
+
+        }
+
        
     }
     [JsonObject(MemberSerialization.OptIn)]
@@ -144,7 +179,7 @@ namespace ExtendCSharp
 
 
 
-
+    // TODO: implementare i metodi Linq
     public class FileSystemNodePlus<T>
         where T : ICloneablePlus,new()
     {
@@ -153,6 +188,12 @@ namespace ExtendCSharp
         public FileSystemNodePlus()
         {
 
+        }
+        public FileSystemNodePlus(String Name,FileSystemNodePlusType t,FileSystemNodePlus<T> Parent = null)
+        {
+            _Type = t;
+            _Name = Name;
+            _Parent = Parent;
         }
         public FileSystemNodePlus(FileSystemNodePlus<T> Parent = null)
         {
@@ -296,9 +337,11 @@ namespace ExtendCSharp
         public String GetFullPath()
         {
             String s = "";
-            if(_Parent!=null)
-                s= Parent.GetFullPath()+"\\";
-            s+= _Name;
+            if (_Parent != null)
+            {
+                s = Parent.GetFullPath() + "\\";
+                s += _Name;
+            }
             return s;
         }
 
@@ -384,10 +427,10 @@ namespace ExtendCSharp
         }
         public void Add(FileSystemNodePlus<T> OtherNode)
         {
-            if (Type == FileSystemNodePlusType.File)
+            /*if (Type == FileSystemNodePlusType.File)
             {
                 throw new Exception("Errore!\r\nLa destinazione dell'add non può essere un file");
-            }
+            }*/
 
             if (_FileSystem.ContainsKey(OtherNode._Name))
             {
@@ -422,6 +465,29 @@ namespace ExtendCSharp
             }
 
         }
+
+        /// <summary>
+        /// Crea un nuovo nodo, lo agguinge al nodo corrente e lo restituisce
+        /// </summary>
+        /// <param name="Nome"></param>
+        /// <param name="Type"></param>
+        /// <returns></returns>
+        public FileSystemNodePlus<T> CreateNode(String Nome, FileSystemNodePlusType Type)
+        {
+            if(!_FileSystem.ContainsKey(Nome))
+            {
+                FileSystemNodePlus<T> tt = new FileSystemNodePlus<T>(this);
+                tt._Name = Nome;
+                tt._Type = Type;
+                _FileSystem.Add(Nome,tt );
+                return tt;
+            }
+            return null;
+
+        }
+       
+
+
         public FileSystemNodePlus<T> Clone()
         {
             FileSystemNodePlus<T> n = new FileSystemNodePlus<T>();
@@ -434,6 +500,11 @@ namespace ExtendCSharp
             n.SetParentOnAllChild(FileSystemNodePlusLevelType.FirstLevel);
             return n;
         }
+        public IEnumerable<FileSystemNodePlus<T>> Flatten()
+        {
+            return _FileSystem.Flatten(x => x.Value._FileSystem).Select(x => x.Value);
+        }
+
 
         public void SetParentOnAllChild(FileSystemNodePlusLevelType type)
         {

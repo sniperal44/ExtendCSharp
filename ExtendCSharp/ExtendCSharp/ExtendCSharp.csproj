@@ -61,6 +61,7 @@
     <Compile Include="FullPrecisionNumber.cs" />
     <Compile Include="Interfaces\ICloneablePlus.cs" />
     <Compile Include="ListPlus.cs" />
+    <Compile Include="MD5Plus.cs" />
     <Compile Include="Process.cs" />
     <Compile Include="Services\FFmpeg.cs" />
     <Compile Include="Services\Hook.cs" />

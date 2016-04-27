@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static ExtendCSharp.Extension;
-
+using static ExtendCSharp.MD5Plus;
 
 namespace ExtendCSharp.Services
 {
@@ -22,11 +22,38 @@ namespace ExtendCSharp.Services
             return Directory.CreateDirectory(Path).Exists; 
         }
 
+
+
+        public static String GetFileName(String s)
+        {
+           return Path.GetFileName(s);
+        }
+        public static String GetFileNameWithoutExtension(String s)
+        {
+            return Path.GetFileNameWithoutExtension(s);
+        }
+        public static String GetExtension(String s)
+        {
+            return Path.GetExtension(s);
+        }
+
         public static String GetParent(String s)
         {
             return Directory.GetParent(s).FullName;
         }
-       
+
+        public static String[] GetDirectories(String s)
+        {
+            return Directory.GetDirectories(s);
+        }
+
+        public static String[] GetFiles(String s)
+        {
+            return Directory.GetFiles(s);
+        }
+
+
+
         public static String ChangeExtension(String Path,String Ext)
         {
             int sindex = Path.LastIndexOf('.');
@@ -109,10 +136,24 @@ namespace ExtendCSharp.Services
         {
             return Directory.Exists(Path);
         }
+        /// <summary>
+        /// Controlla se il path esiste ( file o cartella ) 
+        /// </summary>
+        /// <param name="Path"></param>
+        /// <returns></returns>
         public static bool Exist(String Path)
         {
             return FileExist(Path) || DirectoryExist(Path);
         }
+
+        public static long FileSize(String Path)
+        {
+            return new FileInfo(Path).Length;
+        }
+
+
+
+
 
         public static String GetMD5(String Path)
         {
@@ -122,7 +163,7 @@ namespace ExtendCSharp.Services
                 {
                     using (var stream = File.OpenRead(Path))
                     {
-                        return md5.ComputeHash(stream).ToHex(true);  
+                        return md5.ComputeHash(stream).ToHexString(true);  
                     }
                 }
             }
@@ -135,22 +176,26 @@ namespace ExtendCSharp.Services
         {
             try
             {
-                using (var md5 = MD5.Create())
+                MD5Plus md5 = new MD5Plus();
+                var stream = File.OpenRead(Path);
+                md5.OnMD5BlockTransformEventHandler += OnMD5BlockTransform;
+                md5.OnMD5ComputeHashFinishEventHandler += OnMD5ComputeHashFinish;
+                md5.OnMD5ComputeHashFinishEventHandler += (byte[] Hash)=>
                 {
-                    using (var stream = File.OpenRead(Path))
-                    {      
-                        md5.ComputeHashMultiBlockAsync(stream, OnMD5BlockTransform, OnMD5ComputeHashFinish, Async);
-                    }
-                }
+                    stream.Close();
+                    stream.Dispose();
+                };
+
+                md5.ComputeHashMultiBlockAsync(stream).Join();
+                              
             }
             catch (Exception ex)
             {
-                if (OnMD5ComputeHashFinish != null)
-                    OnMD5ComputeHashFinish(null);
+                OnMD5ComputeHashFinish?.Invoke(null);
             }
         }
 
-
+        
 
         public static string NormalizePath(string path)
         {

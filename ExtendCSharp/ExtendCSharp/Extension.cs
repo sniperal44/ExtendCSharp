@@ -171,7 +171,7 @@ namespace ExtendCSharp
 
         #region byte[]
 
-        public static string ToHex(this byte[] bytes, bool upperCase)
+        public static string ToHexString(this byte[] bytes, bool upperCase=true)
         {
             StringBuilder result = new StringBuilder(bytes.Length * 2);
 
@@ -188,14 +188,15 @@ namespace ExtendCSharp
         public static void SetTextInvoke(this Control t, string s)
         {
             if (t.InvokeRequired)
-                t.Invoke((MethodInvoker)delegate { t.SetTextInvoke(s); });
+                t.BeginInvoke((MethodInvoker)delegate { t.SetTextInvoke(s); });
+            
             else
                 t.Text = s;
         }
         public static void AppendTextInvoke(this Control t, string s)
         {
             if (t.InvokeRequired)
-                t.Invoke((MethodInvoker)delegate { t.AppendTextInvoke(s); });
+                t.BeginInvoke((MethodInvoker)delegate { t.AppendTextInvoke(s); });
             else
                 t.Text = t.Text+s;
         }
@@ -203,18 +204,26 @@ namespace ExtendCSharp
         public static void SetEnableInvoke(this Control t, bool b)
         {
             if (t.InvokeRequired)
-                t.Invoke((MethodInvoker)delegate { t.SetEnableInvoke(b); });
+                t.BeginInvoke((MethodInvoker)delegate { t.SetEnableInvoke(b); });
             else
                 t.Enabled = b;
         }
         public static void SetVisibleInvoke(this Control t, bool b)
         {
             if (t.InvokeRequired)
-                t.Invoke((MethodInvoker)delegate { t.SetVisibleInvoke(b); });
+                t.BeginInvoke((MethodInvoker)delegate { t.SetVisibleInvoke(b); });
             else
                 t.Visible = b;
         }
-        
+        private static Thread GetControlOwnerThread(this Control ctrl)
+        {
+            if (ctrl.InvokeRequired)
+                return (Thread)ctrl.Invoke((Func<Thread>)delegate { return ctrl.GetControlOwnerThread(); });
+            else
+                return System.Threading.Thread.CurrentThread;
+        }
+
+
 
         public static Control SetSize(this Control t, int Width, int Height)
         {
@@ -282,7 +291,7 @@ namespace ExtendCSharp
         public static void SetValueInvoke(this ProgressBar p, int Value)
         {
             if (p.InvokeRequired)
-                p.Invoke((MethodInvoker)delegate { p.SetValueInvoke(Value); });
+                p.BeginInvoke((MethodInvoker)delegate { p.SetValueInvoke(Value); });
             else
                 if(Value<p.Maximum)
                     p.Value = Value;
@@ -290,7 +299,7 @@ namespace ExtendCSharp
         public static void SetMaximumInvoke(this ProgressBar p, int Maximum)
         {
             if (p.InvokeRequired)
-                p.Invoke((MethodInvoker)delegate { p.SetMaximumInvoke(Maximum); });
+                p.BeginInvoke((MethodInvoker)delegate { p.SetMaximumInvoke(Maximum); });
             else
                 p.Maximum = Maximum;
         }
@@ -316,7 +325,7 @@ namespace ExtendCSharp
         public static void SetProgressNoAnimationInvoke(this ProgressBar p, int value)
         {
             if (p.InvokeRequired)
-                p.Invoke((MethodInvoker)delegate { p.SetProgressNoAnimation(value); });
+                p.BeginInvoke((MethodInvoker)delegate { p.SetProgressNoAnimation(value); });
             else
             {
                 p.SetProgressNoAnimation(value);
@@ -824,81 +833,32 @@ namespace ExtendCSharp
 
         #region IEnumerable
 
+        /// <summary>
+        /// Trasforma un IEnumerable in un ListPlus
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="data"></param>
+        /// <returns></returns>
         public static ListPlus<T> ToListPlus<T>(this IEnumerable<T> data)
         {
             return new ListPlus<T>(data);
         }
 
-        #endregion
-
-        #region MD5
-
-
-        public static void ComputeHashMultiBlockAsync(this MD5 self, byte[] input, int size, MD5BlockTransformEventHandler2 OnMD5BlockTransform, MD5ComputeHashFinishEventHandler OnMD5ComputeHashFinish,bool Async=true)
+        /// <summary>
+        /// Permette di "appiattire" una struttura ad albero in un IEnumerable
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="e"></param>
+        /// <param name="f"></param>
+        /// <returns></returns>
+        public static IEnumerable<T> Flatten<T>( this IEnumerable<T> e, Func<T, IEnumerable<T>> f)
         {
-            Thread t = new Thread(() =>
-              {
-                  using (var md5 = MD5.Create())
-                  {
-                      
-                      int offset = 0;
-
-                      while (input.Length - offset >= size)
-                      {
-                          offset += md5.TransformBlock(input, offset, size, input, offset);
-                          if (OnMD5BlockTransform != null)
-                          {
-                                OnMD5BlockTransform((offset * 100L) / input.Length, size, offset);   
-                          }
-                      }
-                      md5.TransformFinalBlock(input, offset, input.Length - offset);
-                      if (OnMD5ComputeHashFinish != null)
-                          OnMD5ComputeHashFinish(md5.Hash);
-                  }
-              });
-            t.Start();
-            if (!Async)
-                t.Join();
-
-        }
-        public static void ComputeHashMultiBlockAsync(this MD5 self,Stream s, MD5BlockTransformEventHandler OnMD5BlockTransform, MD5ComputeHashFinishEventHandler OnMD5ComputeHashFinish,bool Async=true)
-        {
-            Thread t = new Thread(() =>
-                {
-                    using (var md5 = MD5.Create())
-                    {
-                        int BufferSize = 1024 * 1024;
-                        byte[] buffer = new byte[BufferSize];
-                        int readCount;
-
-                        double PercentPerRead = BufferSize*100.0 / s.Length ;
-                        while ((readCount = s.Read(buffer, 0, BufferSize)) > 0)
-                        {
-                            md5.TransformBlock(buffer, 0, readCount, buffer, 0);
-                            if (OnMD5BlockTransform != null)
-                            {
-                                OnMD5BlockTransform(PercentPerRead);
-                            }
-                        }
-                        md5.TransformFinalBlock(buffer, 0, readCount);
-
-                        if (OnMD5ComputeHashFinish != null)
-                            OnMD5ComputeHashFinish(md5.Hash);
-                    }
-                });
-            t.Start();
-            if (!Async)
-                t.Join();
-
+            return e.SelectMany(c => f(c).Flatten(f)).Concat(e);
         }
 
-
-
-        public delegate void MD5BlockTransformEventHandler(double ReadPercent);
-        public delegate void MD5BlockTransformEventHandler2(double Percent, int Size, int Offset);
-        public delegate void MD5ComputeHashFinishEventHandler(byte[] Hash);
-
         #endregion
+
+      
 
         #region DEMO
 
