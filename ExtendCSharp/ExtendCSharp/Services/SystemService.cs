@@ -154,7 +154,11 @@ namespace ExtendCSharp.Services
 
 
 
-
+        /*/// <summary>
+        /// DEPRECATO!!!
+        /// </summary>
+        /// <param name="Path"></param>
+        /// <returns></returns>
         public static String GetMD5(String Path)
         {
             try
@@ -171,11 +175,12 @@ namespace ExtendCSharp.Services
             {
                 return "";
             }
-        }
-        public static void GetMD5(String Path, MD5BlockTransformEventHandler OnMD5BlockTransform, MD5ComputeHashFinishEventHandler OnMD5ComputeHashFinish,bool Async=true)
+        }*/
+        public static String GetMD5(String Path, MD5BlockTransformEventHandler OnMD5BlockTransform, MD5ComputeHashFinishEventHandler OnMD5ComputeHashFinish,bool Async=true)
         {
             try
             {
+                byte[] HashReturn=null;
                 MD5Plus md5 = new MD5Plus();
                 var stream = File.OpenRead(Path);
                 md5.OnMD5BlockTransformEventHandler += OnMD5BlockTransform;
@@ -184,15 +189,19 @@ namespace ExtendCSharp.Services
                 {
                     stream.Close();
                     stream.Dispose();
+                    
                 };
 
                 md5.ComputeHashMultiBlockAsync(stream).Join();
-                              
+                if (HashReturn != null)
+                    return HashReturn.ToHexString(); 
+
             }
             catch (Exception ex)
             {
                 OnMD5ComputeHashFinish?.Invoke(null);
             }
+            return "";
         }
 
         

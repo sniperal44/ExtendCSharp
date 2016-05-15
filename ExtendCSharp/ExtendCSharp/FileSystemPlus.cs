@@ -392,6 +392,9 @@ namespace ExtendCSharp
                 i+=GetNodeCount(kv.Value,  Type);
             return i;
         }
+        
+        
+        
         #endregion
 
         #region Override
@@ -465,7 +468,25 @@ namespace ExtendCSharp
             }
 
         }
+        public List<FileSystemNodePlus<T>> FindAll(FuncOggettoDaSelezionare fn, FileSystemNodePlusLevelType Type, FileSystemNodePlusControlType CType)
+        {
+            List<FileSystemNodePlus<T>> l = new List<FileSystemNodePlus<T>>();
+            if (CType == FileSystemNodePlusControlType.Pre || CType == FileSystemNodePlusControlType.PrePost)
+            {
+                l.AddRange(_FileSystem.Where(pair => fn(pair.Value)).Select(pair => pair.Value));        
+            }
 
+
+            if (Type == FileSystemNodePlusLevelType.AllNode)
+                foreach (KeyValuePair<String, FileSystemNodePlus<T>> kv in _FileSystem)
+                    l.AddRange(kv.Value.FindAll(fn, Type, CType));
+
+            if (CType == FileSystemNodePlusControlType.Post || CType == FileSystemNodePlusControlType.PrePost)
+            {
+                l.AddRange(_FileSystem.Where(pair => fn(pair.Value)).Select(pair => pair.Value));
+            }
+            return l;
+        }
         /// <summary>
         /// Crea un nuovo nodo, lo agguinge al nodo corrente e lo restituisce
         /// </summary>

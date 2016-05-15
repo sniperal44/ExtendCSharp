@@ -769,6 +769,15 @@ namespace ExtendCSharp
             g.FillEllipse(brush, centerX - radius, centerY - radius,radius + radius, radius + radius);
         }
 
+
+
+       /* public static void DrawImageInvoke(this Graphics g, Image image, int x, int y, int width,int height)
+        {
+            g.DrawImage(image, x, y, width, height);
+           
+        }
+        */
+
         #endregion
 
         #region MySQL
