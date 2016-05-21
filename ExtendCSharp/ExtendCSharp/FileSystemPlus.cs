@@ -409,6 +409,8 @@ namespace ExtendCSharp
 
         public void Merge(FileSystemNodePlus<T> OtherNode)
         {
+            if (OtherNode == null)
+                return;
             if(Type==FileSystemNodePlusType.File)
             {
                 throw new Exception("Errore!\r\nLa destinazione della merge non può essere un file");
@@ -427,6 +429,7 @@ namespace ExtendCSharp
                     _FileSystem[kv.Key] = kv.Value;
                 }
             }
+            this.SetParentOnAllChild(FileSystemNodePlusLevelType.FirstLevel);
         }
         public void Add(FileSystemNodePlus<T> OtherNode)
         {
@@ -446,6 +449,7 @@ namespace ExtendCSharp
             {
                 _FileSystem[OtherNode._Name] = OtherNode;
             }
+            this.SetParentOnAllChild(FileSystemNodePlusLevelType.FirstLevel);
         }
         public void Remove(FuncOggettoDaSelezionare fn, FileSystemNodePlusLevelType Type, FileSystemNodePlusControlType CType)
         {
@@ -509,11 +513,11 @@ namespace ExtendCSharp
        
 
 
-        public FileSystemNodePlus<T> Clone()
+        public FileSystemNodePlus<T> Clone(String Name=null)
         {
             FileSystemNodePlus<T> n = new FileSystemNodePlus<T>();
-            n._Type = _Type;
-            n._Name = _Name;
+            n._Type = _Type;  
+            n._Name = Name==null?_Name: Name;
             n.AddittionalData = AddittionalData.Clone()._Cast<T>();
             n._FileSystem = new Dictionary<string, FileSystemNodePlus<T>>();
             foreach (KeyValuePair<String, FileSystemNodePlus<T>> kv in _FileSystem)
