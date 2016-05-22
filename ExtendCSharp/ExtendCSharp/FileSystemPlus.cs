@@ -71,7 +71,6 @@ namespace ExtendCSharp
             }
             else
                 throw new DirectoryNotFoundException("la cartella specificata deve essere una directory valida\r\n" + RootPath);
-
         }
 
         public void Merge(FileSystemPlus<T> OtherFileSystem)

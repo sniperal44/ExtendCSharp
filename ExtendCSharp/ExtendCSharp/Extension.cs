@@ -305,7 +305,7 @@ namespace ExtendCSharp
         }
 
 
-        public static void SetProgressNoAnimation(this ProgressBar p, int value)
+        public static void SetValueNoAnimation(this ProgressBar p, int value)
         {
             if (value > p.Maximum)
                 value = p.Maximum;
@@ -322,13 +322,13 @@ namespace ExtendCSharp
             }
             p.Value = value;   
         }
-        public static void SetProgressNoAnimationInvoke(this ProgressBar p, int value)
+        public static void SetValueNoAnimationInvoke(this ProgressBar p, int value)
         {
             if (p.InvokeRequired)
-                p.BeginInvoke((MethodInvoker)delegate { p.SetProgressNoAnimation(value); });
+                p.BeginInvoke((MethodInvoker)delegate { p.SetValueNoAnimation(value); });
             else
             {
-                p.SetProgressNoAnimation(value);
+                p.SetValueNoAnimation(value);
             }         
         }
 
@@ -340,14 +340,8 @@ namespace ExtendCSharp
         {
             if(!self.Contains(obj))
                 self.Add(obj);
-            /*foreach (object o in self)
-            {
-                if (o.Equals(obj))
-                    return;
-            }
-            self.Add(obj);*/
         }
-
+        
 
         public static List<T> ToList<T>(this ListBox.ObjectCollection self)
         {
@@ -379,26 +373,42 @@ namespace ExtendCSharp
 
         }
         public static void AddInvoke(this ListBox self, object obj)
-        {
-            
+        {   
             if (self.InvokeRequired)
                 self.Invoke((MethodInvoker)delegate { self.AddInvoke(obj); });
             else
             {
                 self.Items.Add(obj);
             }
-
         }
+        public static void AddInvoke(this ListBox self, object[] obj)
+        {
+            if (self.InvokeRequired)
+                self.Invoke((MethodInvoker)delegate { self.AddInvoke(obj); });
+            else
+            {
+                self.Items.AddRange(obj);
+            }
+        }
+        public static void AddInvoke(this ListBox self, ListBox.ObjectCollection obj)
+        {
+            if (self.InvokeRequired)
+                self.Invoke((MethodInvoker)delegate { self.AddInvoke(obj); });
+            else
+            {
+                self.Items.AddRange(obj);
+            }
+        }
+
+
         public static void RemoveInvoke(this ListBox self, object obj)
         {
-
             if (self.InvokeRequired)
                 self.Invoke((MethodInvoker)delegate { self.RemoveInvoke(obj); });
             else
             {
                 self.Items.Remove(obj);
             }
-
         }
 
 
