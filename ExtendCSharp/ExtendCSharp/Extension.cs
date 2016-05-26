@@ -120,6 +120,7 @@ namespace ExtendCSharp
             String st = s;
             do
             {
+                repeat = false;
                 foreach (String ss in str)
                     if (st.StartsWith(ss))
                     {
@@ -136,16 +137,34 @@ namespace ExtendCSharp
             String st = s;
             do
             {
+                repeat = false;
                 foreach (String ss in str)
                     if (st.EndsWith(ss))
                     {
-                        st.Remove(st.LastIndexOf(ss));
+                        st=st.Remove(st.LastIndexOf(ss));
                         repeat = true;
                     } 
             }
             while (repeat == true && str.Length > 1);
             return st;
         }
+
+        public static String Substring(this String s,string delimiter1,string delimiter2)
+        {
+            int iD1 = s.IndexOf(delimiter1);
+            int iD2 = s.IndexOf(delimiter2);
+
+            if (iD1 == -1)
+                iD1 = 0;
+            else
+                iD1 += delimiter1.Length;
+
+            if(iD2==-1)
+                return s.Substring(iD1);
+            else
+                return s.Substring(iD1,iD2-iD1);
+        }
+
 
         public static String OneCharEnd(this String s,char c)
         {

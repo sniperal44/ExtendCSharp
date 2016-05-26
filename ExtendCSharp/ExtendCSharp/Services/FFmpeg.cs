@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace ExtendCSharp.Services
 {
@@ -31,7 +32,7 @@ namespace ExtendCSharp.Services
             }
             return _Loaded;
         }
-        static public void Reset(String Path)
+        static public void Reset()
         {
             _Loaded = false;
             _Path = null;
@@ -64,8 +65,37 @@ namespace ExtendCSharp.Services
             return valid;
         }
 
+        static public bool Mp3ToFlac()
+        {
+            /*ffmpeg.exe - i "07. Magic Box - Scream My Name (Radio  Edit).mp3" - map 0:1 ? -c copy OUT.jpg
+                ffmpeg.exe - i "07. Magic Box - Scream My Name (Radio  Edit).mp3" - map 0:0 - c:a: 0 flac - map_metadata 0 - id3v2_version 3  out.flac
+                metaflac --import - picture - from = "OUT.jpg" out.flac*/
+        }
+        static public bool Mp3ToWav()
+        {
 
-        static public bool ToMp3(String Input,String Output,bool OverrideIfExist,FFmpegConvertStatusChanged OnStatusChanged=null, FFmpegConvertProgressChanged OnProgressChanged=null, bool Async = true )
+        }
+
+
+
+
+        static public bool WavtoMp3()
+        {
+
+        }
+        static public bool WavtoFlac()
+        {
+
+        }
+
+
+
+
+        static public bool FlacToWav()
+        {
+
+        }
+        static public bool FlacToMp3(String Input,String Output,bool OverrideIfExist,FFmpegConvertStatusChanged OnStatusChanged=null, FFmpegConvertProgressChanged OnProgressChanged=null, bool Async = true )
         {
             if (!_Loaded)
                 return false;
@@ -162,10 +192,10 @@ namespace ExtendCSharp.Services
 
             return true;
         }
-        static public  bool ConvertTo(FFmpegConversionEndFormat Formato, String Input, String Output, bool OverrideIfExist, FFmpegConvertStatusChanged OnStatusChanged = null, FFmpegConvertProgressChanged OnProgressChanged = null, bool Async = true)
+        static public  bool ConvertTo(ConvertionEntity Source, ConvertionEntity Destination, bool OverrideIfExist, FFmpegConvertStatusChanged OnStatusChanged = null, FFmpegConvertProgressChanged OnProgressChanged = null, bool Async = true)
         {
-            if (Formato == FFmpegConversionEndFormat.mp3)
-                return ToMp3(Input, Output,OverrideIfExist, OnStatusChanged, OnProgressChanged,Async);
+            if (Destination.MediaMetadata is FFMpegMediaMetadataMp3)
+                return ToMp3(Source.Path, Destination.Path, OverrideIfExist, OnStatusChanged, OnProgressChanged,Async);
 
             return false;
         }
@@ -186,6 +216,7 @@ namespace ExtendCSharp.Services
             {
                 MyProcess p = new MyProcess(_Path, "-i \"" + Input + "\"");
                 FFmpegMetadata temp = new FFmpegMetadata();
+
                 p.OnNewLine += (string line) =>
                 {
 
@@ -267,9 +298,66 @@ namespace ExtendCSharp.Services
                         String[] sss = line.Split(',');
                         if (sss.Length == 3)
                         {
-                            temp.Duration = sss[0].RemoveLeft("  Duration: ").Trim();
-                            temp.start = sss[1].RemoveLeft(" start: ").Trim();
-                            temp.bitrate = sss[2].RemoveLeft(" bitrate: ").Trim();
+                            temp.MediaMetadata.Duration = sss[0].RemoveLeft("  Duration: ").Trim();
+                            temp.MediaMetadata.start = sss[1].RemoveLeft(" start: ").Trim();
+                            temp.MediaMetadata.bitrate = sss[2].RemoveLeft(" bitrate: ").Trim();
+                        }
+                    }
+                    else if (line.StartsWith("    Stream"))
+                    {
+                        String[] sss = line.Split(':');
+                        if (sss.Length == 4 && sss[2].Contains("Audio"))
+                        {
+
+                            sss = sss[3].Split(',');
+                            if(sss.Length>1)
+                            {
+                                if(sss[0].Contains("flac"))
+                                {
+                                    temp.MediaMetadata = new FFMpegMediaMetadataFlac(temp.MediaMetadata);
+
+                                    try
+                                    {
+                                        (temp.MediaMetadata  as FFMpegMediaMetadataFlac).SamplingRate= (SamplingRateInfo) Enum.Parse(typeof(SamplingRateInfo), "_" + sss[1].RemoveRight("Hz", " ").Trim());
+
+                                        string bittemp = sss[3].Substring("(", ")").RemoveRight("bit"," ").Trim();
+                                        (temp.MediaMetadata as FFMpegMediaMetadataFlac).Bit = (BitInfo)Enum.Parse(typeof(BitInfo), "_" + bittemp);
+
+
+                                    }
+                                    catch (Exception ex){}
+
+                                }
+                                else if (sss[0].Contains("mp3"))
+                                {
+                                    temp.MediaMetadata = new FFMpegMediaMetadataMp3(temp.MediaMetadata);
+                                    try
+                                    {
+                                        (temp.MediaMetadata as FFMpegMediaMetadataMp3).SamplingRate = (SamplingRateInfo)Enum.Parse(typeof(SamplingRateInfo), "_" + sss[1].RemoveRight("Hz", " ").Trim());
+
+                                        string bitrate = sss[4].RemoveRight("kb/s", " ").Trim();
+                                        int.TryParse(bitrate, out (temp.MediaMetadata as FFMpegMediaMetadataMp3).BitRateMp3);
+
+
+                                    }
+                                    catch (Exception ex) {
+                                        MessageBox.Show(ex.Message);
+                                    }
+
+
+                                }
+                                else if (sss[0].Contains("pcm"))
+                                {
+                                    temp.MediaMetadata = new FFMpegMediaMetadataWav(temp.MediaMetadata);
+                                    try
+                                    {
+                                        (temp.MediaMetadata as FFMpegMediaMetadataWav).SamplingRate = (SamplingRateInfo)Enum.Parse(typeof(SamplingRateInfo), "_" + sss[1].RemoveRight("Hz", " ").Trim());
+
+
+                                    }
+                                    catch (Exception ex) { }
+                                }
+                            }
                         }
                     }
                 };
@@ -321,6 +409,32 @@ namespace ExtendCSharp.Services
         }
 
     }
+
+
+    public class ConvertionEntity : ICloneablePlus
+    {
+        public FFMpegMediaMetadata MediaMetadata;
+        public String Path;
+        public ConvertionEntity(String Path, FFMpegMediaMetadata MediaMetadata)
+        {
+            this.Path = Path;
+            this.MediaMetadata = MediaMetadata;
+        }
+
+        object ICloneablePlus.Clone()
+        {
+            ConvertionEntity t = new ConvertionEntity(Path, MediaMetadata.CloneClass());
+            return t;
+        }
+        public ConvertionEntity CloneClass()
+        {
+            return (ConvertionEntity)(this as ICloneablePlus).Clone();
+        }
+    }
+
+
+
+
     public class FFmpegMetadata :ICloneablePlus
     {
         public String Language = "";
@@ -333,10 +447,12 @@ namespace ExtendCSharp.Services
         public String Comment = "";
         public String track = "";
         public String Ensemble = "";
-        public String Duration = "";
-        public String start = "";
-        public String bitrate = "";
+        public FFMpegMediaMetadata MediaMetadata=null;
 
+        public FFmpegMetadata()
+        {
+            MediaMetadata = new FFMpegMediaMetadata();
+        }
 
         object ICloneablePlus.Clone()
         {
@@ -351,9 +467,10 @@ namespace ExtendCSharp.Services
             t.Comment = Comment;
             t.track = track;
             t.Ensemble = Ensemble;
-            t.Duration = Duration;
-            t.start = start;
-            t.bitrate = bitrate;
+            if (MediaMetadata == null)
+                t.MediaMetadata = null;
+            else
+                t.MediaMetadata = MediaMetadata.CloneClass();
             return t;
         }
 
@@ -362,6 +479,121 @@ namespace ExtendCSharp.Services
             return (FFmpegMetadata)(this as ICloneablePlus).Clone();
         }
     }
+
+    public class FFMpegMediaMetadata : ICloneablePlus
+    {
+        public String Duration = "";
+        public String start = "";
+        public String bitrate = "";
+
+        public FFMpegMediaMetadata()
+        {
+            
+        }
+        public FFMpegMediaMetadata(FFMpegMediaMetadata Clone)
+        {
+            Duration = Clone.Duration;
+            start = Clone.start;
+            bitrate = Clone.bitrate;
+        }
+        object ICloneablePlus.Clone()
+        {
+            FFMpegMediaMetadata t = new FFMpegMediaMetadata(this);
+            return t;
+        }
+
+        public FFMpegMediaMetadata CloneClass()
+        {
+            return (FFMpegMediaMetadata)(this as ICloneablePlus).Clone();
+        }
+    }
+    public class FFMpegMediaMetadataMp3 : FFMpegMediaMetadata, ICloneablePlus
+    {
+        public int BitRateMp3;
+        public SamplingRateInfo SamplingRate;
+
+        public FFMpegMediaMetadataMp3()
+        {
+
+        }
+        public FFMpegMediaMetadataMp3(FFMpegMediaMetadata data):base(data)
+        {
+            if (data is FFMpegMediaMetadataMp3)
+            {
+                BitRateMp3 = (data as FFMpegMediaMetadataMp3).BitRateMp3;
+                SamplingRate = (data as FFMpegMediaMetadataMp3).SamplingRate;
+            }
+        }
+
+        object ICloneablePlus.Clone()
+        {
+            FFMpegMediaMetadataMp3 t = new FFMpegMediaMetadataMp3(this);
+            return t;
+        }
+        public new FFMpegMediaMetadataMp3 CloneClass()
+        {
+            return (FFMpegMediaMetadataMp3)(this as ICloneablePlus).Clone();
+        }
+    }
+    public class FFMpegMediaMetadataFlac : FFMpegMediaMetadata, ICloneablePlus
+    {
+        public BitInfo Bit;
+        public SamplingRateInfo SamplingRate;
+
+        public FFMpegMediaMetadataFlac()
+        {
+
+        }
+        public FFMpegMediaMetadataFlac(FFMpegMediaMetadata data):base(data)
+        {
+            if (data is FFMpegMediaMetadataFlac)
+            {
+                Bit = (data as FFMpegMediaMetadataFlac).Bit;
+                SamplingRate = (data as FFMpegMediaMetadataFlac).SamplingRate;
+            }
+        }
+
+
+        object ICloneablePlus.Clone()
+        {
+            FFMpegMediaMetadataFlac t = new FFMpegMediaMetadataFlac(this);
+            return t;
+        }
+        public new FFMpegMediaMetadataFlac CloneClass()
+        {
+            return (FFMpegMediaMetadataFlac)(this as ICloneablePlus).Clone();
+        }
+    }
+    public class FFMpegMediaMetadataWav : FFMpegMediaMetadata, ICloneablePlus
+    {
+        public SamplingRateInfo SamplingRate;
+
+        public FFMpegMediaMetadataWav()
+        {
+
+        }
+        public FFMpegMediaMetadataWav(FFMpegMediaMetadata data) : base(data)
+        {
+            if(data is FFMpegMediaMetadataWav)
+            {
+                SamplingRate = (data as FFMpegMediaMetadataWav).SamplingRate;
+            }
+        }
+
+
+        object ICloneablePlus.Clone()
+        {
+            FFMpegMediaMetadataWav t = new FFMpegMediaMetadataWav(this);
+            return t;
+        }
+        public new FFMpegMediaMetadataWav CloneClass()
+        {
+            return (FFMpegMediaMetadataWav)(this as ICloneablePlus).Clone();
+        }
+    }
+    
+
+
 
     public enum FFmpegStatus
     {
@@ -373,10 +605,40 @@ namespace ExtendCSharp.Services
         nul=0,
         DestFolderNotFound=1,
     }
-    public enum FFmpegConversionEndFormat
+
+
+
+   
+
+
+
+
+    public enum BitInfo
     {
-        mp3,
-        flac
+        nul,
+        _16 = 1,
+        _24 = 2,
+        _32 = 4
     }
+    public enum SamplingRateInfo
+    {
+        nul,
+        _8000,
+        _11025,
+        _16000,
+        _22050,
+        _24000,
+        _32000,
+        _44100,
+        _48000,
+        _64000,
+        _88200,
+        _96000,
+        _192000,
+    }
+
+
+
+
 
 }

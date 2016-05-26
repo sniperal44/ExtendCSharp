@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,35 +14,21 @@ namespace ExtendCSharp.Services
     {
         public static T Deserialize<T>(String s)
         {
-            /* MemoryStream stream = new MemoryStream();
-             StreamWriter writer = new StreamWriter(stream);
-             writer.Write(s);
-             writer.Flush();
-             stream.Position = 0;
-             DataContractJsonSerializer d = new DataContractJsonSerializer(typeof(T));
-             T t = (T)d.ReadObject(stream);
-             writer.Close();
-             writer.Dispose();
-             stream.Close();
-             stream.Dispose();
-
-
-             return t;*/
-
             try
             {
-                return JsonConvert.DeserializeObject<T>(s);
-            }catch(Exception ex) { return default(T); }
+                JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
+                return JsonConvert.DeserializeObject<T>(s, settings);
+            }
+            catch (Exception ex) { return default(T); }
         }
         public static T Deserialize<T>(Stream s)
         {
-            /*DataContractJsonSerializer d = new DataContractJsonSerializer(typeof(T));
-            return (T)d.ReadObject(s);*/
             try
             {
                 using (StreamReader sr = new StreamReader(s))
                 {
-                    return JsonConvert.DeserializeObject<T>(sr.ReadToEnd());
+                    JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
+                    return JsonConvert.DeserializeObject<T>(sr.ReadToEnd(), settings);
                 }
             }
             catch (Exception ex) { return default(T); }
@@ -51,19 +38,15 @@ namespace ExtendCSharp.Services
         {
             try
             {
-                return JsonConvert.SerializeObject(o);
+                JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
+                return JsonConvert.SerializeObject(o, settings);
             }
             catch (Exception ex) { return default(String); }
-
-            /*MemoryStream stream = new MemoryStream();
-            DataContractJsonSerializer ser = new DataContractJsonSerializer(o.GetType());
-            ser.WriteObject(stream, o);
-            stream.Position = 0;
-            StreamReader sr = new StreamReader(stream);
-            String s = sr.ReadToEnd();
-            stream.Close();
-            stream.Dispose();
-            return s;*/
         }
     }
+
+
+   
 }
+
+
