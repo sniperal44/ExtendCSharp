@@ -18,27 +18,40 @@ namespace ExtendCSharp.Services
         static String _Path;
         static String FFmpegPath { get { return _Path; } }
 
+
+        static String _PathMetaflac;
+        static String MetaflacPath { get { return _PathMetaflac; } }
+
+
         public delegate void FFmpegConvertStatusChanged(FFmpegStatus Status, String Source, String Destination);
         public delegate void FFmpegConvertProgressChanged(int Percent,String Source,String Destination,FFmpegError Error= FFmpegError.nul);
 
         public delegate void FFmpegGetMetadataEnd(String Source,FFmpegMetadata metadata);
 
-        static public bool Initialize(String Path)
+        static public bool Initialize(String PathFFmpeg,String PathMetaflac)
         {
-            if (!_Loaded && CheckValidFFmpeg(Path))
+            if (!_Loaded && CheckValidFFmpeg(PathFFmpeg) && CheckValidMetaflac(PathMetaflac))
             {
                 _Loaded = true;
-                _Path = Path;
+                _Path = PathFFmpeg;
+                _PathMetaflac = PathMetaflac;
             }
             return _Loaded;
         }
+
+       
+
         static public void Reset()
         {
             _Loaded = false;
             _Path = null;
         }
 
+        static bool CheckValidMetaflac(string pathMetaflac)
+        {
+            //TODO: implementare la check del file metaflac
 
+        }
         static bool CheckValidFFmpeg(String Path)
         {
             if (!SystemService.FileExist(Path))
@@ -98,11 +111,15 @@ namespace ExtendCSharp.Services
         {
             return false;
         }
-        static public bool FlacToMp3(String Input,String Output,bool OverrideIfExist,FFmpegConvertStatusChanged OnStatusChanged=null, FFmpegConvertProgressChanged OnProgressChanged=null, bool Async = true )
+
+      
+        static public bool FlacToMp3(String Input,String Output,FFMpegMediaMetadataMp3 ConversionParameters, bool OverrideIfExist,FFmpegConvertStatusChanged OnStatusChanged=null, FFmpegConvertProgressChanged OnProgressChanged=null, bool Async = true )
         {
             if (!_Loaded)
                 return false;
 
+            if (ConversionParameters == null || ConversionParameters.SamplingRate == SamplingRateInfo.nul || ConversionParameters.SamplingRate == 0 || ConversionParameters.BitRateMp3 == 0)
+                return false;
 
             if (CheckValidInput(Input) && CheckValidOutput(Output))
             {
@@ -114,8 +131,10 @@ namespace ExtendCSharp.Services
                         return true;
                 }
 
+               
 
-                MyProcess p = new MyProcess(_Path, "-i \"" + Input + "\" -map 0:0 -map 0:1? -c:a:0 libmp3lame  -ab 320k -map_metadata 0 -id3v2_version 3   -c:v copy \"" + Output + "\"");
+
+                MyProcess p = new MyProcess(_Path, "-i \"" + Input + "\" -map 0:0 -map 0:1? -c:a:0 libmp3lame  -ab "+ ConversionParameters.BitRateMp3 + "k -ar "+ConversionParameters.SamplingRate+" -map_metadata 0 -id3v2_version 3   -c:v copy \"" + Output + "\"");
                 if (OnStatusChanged != null)
                 {
                     p.OnStatusChanged += (ProcessStatus s) => {
@@ -195,10 +214,74 @@ namespace ExtendCSharp.Services
 
             return true;
         }
-        static public  bool ConvertTo(ConvertionEntity Source, ConvertionEntity Destination, bool OverrideIfExist, FFmpegConvertStatusChanged OnStatusChanged = null, FFmpegConvertProgressChanged OnProgressChanged = null, bool Async = true)
+
+        /// <summary>
+        /// Consente di convertire un media da un formato all'altro, di default, un file lossy in lossless ( o da un lossy peggiore ad uno migliore ) 
+        /// </summary>
+        /// <param name="Source"> File sorgente </param>
+        /// <param name="Destination"> file di destinazione ( i MediaMetadati verranno usati come parametri di conversione )</param>
+        /// <param name="ForceConvertion">permette di forzare la conversione (viene ignorato l'ottimizzazione di conversione lossy -> lossless </param>
+        /// <param name="OverrideIfExist"> permette di cancellare il file destinazione, se presente</param>
+        /// <param name="OnStatusChanged"></param>
+        /// <param name="OnProgressChanged"></param>
+        /// <param name="Async"> Lancia il comando in modalità asincrona</param>
+        /// <returns></returns>
+        static public  bool ConvertTo(ConvertionEntity Source, ConvertionEntity Destination,bool ForceConvertion, bool OverrideIfExist, FFmpegConvertStatusChanged OnStatusChanged = null, FFmpegConvertProgressChanged OnProgressChanged = null, bool Async = true)
         {
-            if (Destination.MediaMetadata is FFMpegMediaMetadataMp3)
-                return FlacToMp3(Source.Path, Destination.Path, OverrideIfExist, OnStatusChanged, OnProgressChanged,Async);
+            if (!ForceConvertion)
+            {
+                if (Source.MediaMetadata is FFMpegMediaMetadataMp3)
+                {
+                    if (Destination.MediaMetadata is FFMpegMediaMetadataMp3)
+                    {
+                        if ((Source.MediaMetadata as FFMpegMediaMetadataMp3).BitRateMp3 < (Destination.MediaMetadata as FFMpegMediaMetadataMp3).BitRateMp3)
+                        {
+                            return SystemService.CopySecure(Source.Path, Destination.Path, OverrideIfExist);
+                        }
+                    }
+                    else if (Destination.MediaMetadata is FFMpegMediaMetadataFlac)
+                    {
+                        return SystemService.CopySecure(Source.Path, SystemService.ChangeExtension(Destination.Path, "mp3"), OverrideIfExist);
+                    }
+                    else if (Destination.MediaMetadata is FFMpegMediaMetadataWav)
+                    {
+                        return SystemService.CopySecure(Source.Path, SystemService.ChangeExtension(Destination.Path, "mp3"), OverrideIfExist);
+                    }
+                }
+                else if (Source.MediaMetadata is FFMpegMediaMetadataFlac)
+                {
+                    if (Destination.MediaMetadata is FFMpegMediaMetadataFlac)
+                    {
+                        if ((Source.MediaMetadata as FFMpegMediaMetadataFlac).SamplingRate < (Destination.MediaMetadata as FFMpegMediaMetadataFlac).SamplingRate)
+                        {
+                            return SystemService.CopySecure(Source.Path, Destination.Path, OverrideIfExist);
+                        }
+                        else if ((Source.MediaMetadata as FFMpegMediaMetadataFlac).Bit < (Destination.MediaMetadata as FFMpegMediaMetadataFlac).Bit)
+                        {
+                            return SystemService.CopySecure(Source.Path, Destination.Path, OverrideIfExist);
+                        }
+                    }
+                }
+                else if (Source.MediaMetadata is FFMpegMediaMetadataWav)
+                {
+                    if (Destination.MediaMetadata is FFMpegMediaMetadataWav)
+                    {
+                        if ((Source.MediaMetadata as FFMpegMediaMetadataWav).SamplingRate < (Destination.MediaMetadata as FFMpegMediaMetadataWav).SamplingRate)
+                        {
+                            return SystemService.CopySecure(Source.Path, Destination.Path, OverrideIfExist);
+                        }
+                        
+                    }
+                }
+            }
+
+            //TODO: implementare le altre conversioni e controllo ForceConvertion
+            if ( Source.MediaMetadata is FFMpegMediaMetadataFlac)
+            {
+                if (Destination.MediaMetadata is FFMpegMediaMetadataMp3)
+                    return FlacToMp3(Source.Path, Destination.Path,(Destination.MediaMetadata as FFMpegMediaMetadataMp3), OverrideIfExist, OnStatusChanged, OnProgressChanged, Async);
+
+            }
 
             return false;
         }

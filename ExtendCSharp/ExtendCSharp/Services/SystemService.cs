@@ -67,7 +67,7 @@ namespace ExtendCSharp.Services
             return Path.Combine(paths);
         }
 
-        public static void CopySecure(String Source,String Dest, bool Override=true,CopyProgressChangedDelegate OnProgressChanged =null, CopyCompleteDelegate OnComplete=null)
+        public static bool CopySecure(String Source,String Dest, bool Override=true,CopyProgressChangedDelegate OnProgressChanged =null, CopyCompleteDelegate OnComplete=null)
         {
             byte[] buffer = new byte[1024 * 1024]; // 1MB buffer
             bool cancelFlag = false;
@@ -85,7 +85,7 @@ namespace ExtendCSharp.Services
                         {
                             if (OnComplete != null)
                                 OnComplete(true,null);
-                            return;
+                            return true;
                         }
 
                     }
@@ -120,11 +120,13 @@ namespace ExtendCSharp.Services
                 }
                 if (OnComplete != null)
                     OnComplete(true,null);
+                return true;
             }
             catch (Exception ex)
             {
                 if (OnComplete != null)
                     OnComplete(false,ex);
+                return false;
             }
         }
 
