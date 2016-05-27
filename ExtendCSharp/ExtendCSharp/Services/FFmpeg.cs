@@ -41,6 +41,8 @@ namespace ExtendCSharp.Services
 
         static bool CheckValidFFmpeg(String Path)
         {
+            if (!SystemService.FileExist(Path))
+                return false;
             MyProcess p = new MyProcess(Path);
             bool valid = false;
             p.OnNewLine += (string line) => {
@@ -61,7 +63,6 @@ namespace ExtendCSharp.Services
 
             p.Async = false;
             p.Start();
-
             return valid;
         }
 
@@ -70,10 +71,12 @@ namespace ExtendCSharp.Services
             /*ffmpeg.exe - i "07. Magic Box - Scream My Name (Radio  Edit).mp3" - map 0:1 ? -c copy OUT.jpg
                 ffmpeg.exe - i "07. Magic Box - Scream My Name (Radio  Edit).mp3" - map 0:0 - c:a: 0 flac - map_metadata 0 - id3v2_version 3  out.flac
                 metaflac --import - picture - from = "OUT.jpg" out.flac*/
+
+            return false;
         }
         static public bool Mp3ToWav()
         {
-
+            return false;
         }
 
 
@@ -81,11 +84,11 @@ namespace ExtendCSharp.Services
 
         static public bool WavtoMp3()
         {
-
+            return false;
         }
         static public bool WavtoFlac()
         {
-
+            return false;
         }
 
 
@@ -93,7 +96,7 @@ namespace ExtendCSharp.Services
 
         static public bool FlacToWav()
         {
-
+            return false;
         }
         static public bool FlacToMp3(String Input,String Output,bool OverrideIfExist,FFmpegConvertStatusChanged OnStatusChanged=null, FFmpegConvertProgressChanged OnProgressChanged=null, bool Async = true )
         {
@@ -195,7 +198,7 @@ namespace ExtendCSharp.Services
         static public  bool ConvertTo(ConvertionEntity Source, ConvertionEntity Destination, bool OverrideIfExist, FFmpegConvertStatusChanged OnStatusChanged = null, FFmpegConvertProgressChanged OnProgressChanged = null, bool Async = true)
         {
             if (Destination.MediaMetadata is FFMpegMediaMetadataMp3)
-                return ToMp3(Source.Path, Destination.Path, OverrideIfExist, OnStatusChanged, OnProgressChanged,Async);
+                return FlacToMp3(Source.Path, Destination.Path, OverrideIfExist, OnStatusChanged, OnProgressChanged,Async);
 
             return false;
         }
