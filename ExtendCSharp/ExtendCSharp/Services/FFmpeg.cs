@@ -15,13 +15,14 @@ namespace ExtendCSharp.Services
         static bool _Loaded = false;
         public static bool Loaded { get { return _Loaded; } }
 
-        static String _Path;
-        static String FFmpegPath { get { return _Path; } }
+        static String _PathFFmpeg;
+        static String FFmpegPath { get { return _PathFFmpeg; } }
 
 
         static String _PathMetaflac;
         static String MetaflacPath { get { return _PathMetaflac; } }
 
+        static String JpgNameTemp = "out.jpg";
 
         public delegate void FFmpegConvertStatusChanged(FFmpegStatus Status, String Source, String Destination);
         public delegate void FFmpegConvertProgressChanged(int Percent,String Source,String Destination,FFmpegError Error= FFmpegError.nul);
@@ -33,7 +34,7 @@ namespace ExtendCSharp.Services
             if (!_Loaded && CheckValidFFmpeg(PathFFmpeg) && CheckValidMetaflac(PathMetaflac))
             {
                 _Loaded = true;
-                _Path = PathFFmpeg;
+                _PathFFmpeg = PathFFmpeg;
                 _PathMetaflac = PathMetaflac;
             }
             return _Loaded;
@@ -44,15 +45,37 @@ namespace ExtendCSharp.Services
         static public void Reset()
         {
             _Loaded = false;
-            _Path = null;
+            _PathFFmpeg = null;
         }
 
-        static bool CheckValidMetaflac(string pathMetaflac)
+        static public bool CheckValidMetaflac(string pathMetaflac)
         {
-            //TODO: implementare la check del file metaflac
+            if (!SystemService.FileExist(pathMetaflac))
+                return false;
+            MyProcess p = new MyProcess(pathMetaflac);
+            bool valid = false;
+            p.OnNewLine += (string line) => {
+                if (line == null)
+                    return;
+                else if (line.StartsWith("metaflac - Command-line FLAC metadata editor version"))
+                {
+                    valid = true;
+                }
+            };
+
+
+            p.UseShellExecute = false;
+            p.RedirectStandardOutput = true;
+            p.RedirectStandardError = true;
+            p.CreateNoWindow = true;
+            p.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+
+            p.Async = false;
+            p.Start();
+            return valid;
 
         }
-        static bool CheckValidFFmpeg(String Path)
+        static public bool CheckValidFFmpeg(String Path)
         {
             if (!SystemService.FileExist(Path))
                 return false;
@@ -79,13 +102,141 @@ namespace ExtendCSharp.Services
             return valid;
         }
 
-        static public bool Mp3ToFlac()
+        static public bool Mp3ToFlac(String Input, String Output, FFMpegMediaMetadataFlac ConversionParameters, bool OverrideIfExist, FFmpegConvertStatusChanged OnStatusChanged = null, FFmpegConvertProgressChanged OnProgressChanged = null, bool Async = true)
         {
-            /*ffmpeg.exe - i "07. Magic Box - Scream My Name (Radio  Edit).mp3" - map 0:1 ? -c copy OUT.jpg
-                ffmpeg.exe - i "07. Magic Box - Scream My Name (Radio  Edit).mp3" - map 0:0 - c:a: 0 flac - map_metadata 0 - id3v2_version 3  out.flac
-                metaflac --import - picture - from = "OUT.jpg" out.flac*/
+            
+            if (!_Loaded)
+                return false;
 
-            return false;
+            if (ConversionParameters == null || ConversionParameters.SamplingRate == SamplingRateInfo.nul || ConversionParameters.SamplingRate == 0 || ConversionParameters.Bit == BitInfo.nul)
+                return false;
+
+            if (CheckValidInput(Input) && CheckValidOutput(Output))
+            {
+                if (File.Exists(Output))
+                {
+                    if (OverrideIfExist)
+                        File.Delete(Output);
+                    else
+                        return true;
+                }
+
+                MyProcess p = new MyProcess(_PathFFmpeg, "-i \"" + Input + "\" -map 0:1? -c copy "+ JpgNameTemp);
+                p.UseShellExecute = false;
+                p.RedirectStandardOutput = false;
+                p.RedirectStandardError = false;
+                p.CreateNoWindow = true;
+                p.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+                p.Async = false;
+                p.Start();
+
+                
+
+
+                
+
+                p = new MyProcess(_PathFFmpeg, "-i \"" + Input + "\" -map 0:0 -c:a:0 flac -map_metadata 0 -id3v2_version 3  -ar "+ ConversionParameters.SamplingRate+" \"" + Output + "\"");
+                if (OnStatusChanged != null)
+                {
+                    p.OnStatusChanged += (ProcessStatus s) => {
+                        if (s == ProcessStatus.Running)
+                            OnStatusChanged(FFmpegStatus.Running, Input, Output);
+                        else if (s == ProcessStatus.Stop)
+                            OnStatusChanged(FFmpegStatus.Stop, Input, Output);
+                    };
+                }
+
+
+                if (OnProgressChanged != null)
+                {
+                    bool AspettaLaDurata = false;
+                    bool AspettaProgress = false;
+                    long TotalMilliSec = 0;
+                    p.OnNewLine += (string line) => {
+                        if (line == null)
+                            return;
+                        else if (line.StartsWith("Input"))
+                        {
+                            AspettaLaDurata = true;
+                            AspettaProgress = false;
+                        }
+                        else if (AspettaLaDurata && line.StartsWith("  Duration:"))
+                        {
+                            line = line.RemoveLeft("  Duration: ");
+                            line = line.SplitAndGetFirst(',');
+
+                            string[] ss = line.Split(':', '.');
+                            if (ss.Length == 4)
+                            {
+                                AspettaLaDurata = false;
+                                AspettaProgress = true;
+                                TotalMilliSec = ss[3].ParseInt() * 10 + ss[2].ParseInt() * 1000 + ss[1].ParseInt() * 60000 + ss[0].ParseInt() * 3600000;
+                            }
+                            else
+                            {
+                                TotalMilliSec = -1;
+                                AspettaLaDurata = false;
+                                AspettaProgress = false;
+                            }
+                        }
+                        else if (AspettaProgress && line.Contains("No such file or directory"))
+                        {
+                            OnProgressChanged(-1, Input, Output, FFmpegError.DestFolderNotFound);
+                        }
+                        else if (AspettaProgress && (line.StartsWith("frame") || line.StartsWith("size")))
+                        {
+
+                            line = line.Substring(line.IndexOf("time=") + 5, 11);
+                            string[] ss = line.Split(':', '.');
+                            if (ss.Length == 4)
+                            {
+                                long current = ss[3].ParseInt() * 10 + ss[2].ParseInt() * 1000 + ss[1].ParseInt() * 60000 + ss[0].ParseInt() * 3600000;
+                                OnProgressChanged((int)((double)current / TotalMilliSec * 100), Input, Output);
+                            }
+                        }
+
+
+                    };
+                }
+
+                p.UseShellExecute = false;
+                p.RedirectStandardOutput = true;
+                p.RedirectStandardError = true;
+                p.CreateNoWindow = true;
+                p.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+                SystemService.CreateFolderSecure(SystemService.GetParent(Output));
+
+
+                p.Async = Async;
+                p.Start();
+
+
+                if(SystemService.FileExist(JpgNameTemp))
+                {
+                    p = new MyProcess(_PathMetaflac, "--import-picture-from=\""+ JpgNameTemp + "\" "+ Output);
+                    p.UseShellExecute = false;
+                    p.RedirectStandardOutput = false;
+                    p.RedirectStandardError = false;
+                    p.CreateNoWindow = true;
+                    p.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+                    p.Async = false;
+                    p.Start();
+                }
+
+            }
+            else
+                return false;
+
+            return true;
+
+
+            /*
+            
+            ffmpeg.exe -i "07. Magic Box - Scream My Name (Radio  Edit).mp3" -map 0:1? -c copy OUT.jpg
+            ffmpeg.exe -i "07. Magic Box - Scream My Name (Radio  Edit).mp3" -map 0:0 -c:a: 0 flac -map_metadata 0 -id3v2_version 3  out.flac
+            metaflac --import-picture-from="OUT.jpg" out.flac
+            
+             */
         }
         static public bool Mp3ToWav()
         {
@@ -134,7 +285,7 @@ namespace ExtendCSharp.Services
                
 
 
-                MyProcess p = new MyProcess(_Path, "-i \"" + Input + "\" -map 0:0 -map 0:1? -c:a:0 libmp3lame  -ab "+ ConversionParameters.BitRateMp3 + "k -ar "+ConversionParameters.SamplingRate+" -map_metadata 0 -id3v2_version 3   -c:v copy \"" + Output + "\"");
+                MyProcess p = new MyProcess(_PathFFmpeg, "-i \"" + Input + "\" -map 0:0 -map 0:1? -c:a:0 libmp3lame  -ab "+ ConversionParameters.BitRateMp3 + "k -ar "+ConversionParameters.SamplingRate+" -map_metadata 0 -id3v2_version 3   -c:v copy \"" + Output + "\"");
                 if (OnStatusChanged != null)
                 {
                     p.OnStatusChanged += (ProcessStatus s) => {
@@ -236,16 +387,16 @@ namespace ExtendCSharp.Services
                     {
                         if ((Source.MediaMetadata as FFMpegMediaMetadataMp3).BitRateMp3 < (Destination.MediaMetadata as FFMpegMediaMetadataMp3).BitRateMp3)
                         {
-                            return SystemService.CopySecure(Source.Path, Destination.Path, OverrideIfExist);
+                            return SystemService.CopySecure(Source.Path, Destination.Path, OverrideIfExist, (double percent, ref bool cancelFlag)=> { if (OnProgressChanged != null) OnProgressChanged((int)percent, Source.Path, Destination.Path); });
                         }
                     }
                     else if (Destination.MediaMetadata is FFMpegMediaMetadataFlac)
                     {
-                        return SystemService.CopySecure(Source.Path, SystemService.ChangeExtension(Destination.Path, "mp3"), OverrideIfExist);
+                        return SystemService.CopySecure(Source.Path, SystemService.ChangeExtension(Destination.Path, "mp3"), OverrideIfExist, (double percent, ref bool cancelFlag) => { if (OnProgressChanged != null) OnProgressChanged((int)percent, Source.Path, Destination.Path); });
                     }
                     else if (Destination.MediaMetadata is FFMpegMediaMetadataWav)
                     {
-                        return SystemService.CopySecure(Source.Path, SystemService.ChangeExtension(Destination.Path, "mp3"), OverrideIfExist);
+                        return SystemService.CopySecure(Source.Path, SystemService.ChangeExtension(Destination.Path, "mp3"), OverrideIfExist, (double percent, ref bool cancelFlag) => { if (OnProgressChanged != null) OnProgressChanged((int)percent, Source.Path, Destination.Path); });
                     }
                 }
                 else if (Source.MediaMetadata is FFMpegMediaMetadataFlac)
@@ -254,11 +405,11 @@ namespace ExtendCSharp.Services
                     {
                         if ((Source.MediaMetadata as FFMpegMediaMetadataFlac).SamplingRate < (Destination.MediaMetadata as FFMpegMediaMetadataFlac).SamplingRate)
                         {
-                            return SystemService.CopySecure(Source.Path, Destination.Path, OverrideIfExist);
+                            return SystemService.CopySecure(Source.Path, Destination.Path, OverrideIfExist, (double percent, ref bool cancelFlag) => { if (OnProgressChanged != null) OnProgressChanged((int)percent, Source.Path, Destination.Path); });
                         }
                         else if ((Source.MediaMetadata as FFMpegMediaMetadataFlac).Bit < (Destination.MediaMetadata as FFMpegMediaMetadataFlac).Bit)
                         {
-                            return SystemService.CopySecure(Source.Path, Destination.Path, OverrideIfExist);
+                            return SystemService.CopySecure(Source.Path, Destination.Path, OverrideIfExist, (double percent, ref bool cancelFlag) => { if (OnProgressChanged != null) OnProgressChanged((int)percent, Source.Path, Destination.Path); });
                         }
                     }
                 }
@@ -268,19 +419,52 @@ namespace ExtendCSharp.Services
                     {
                         if ((Source.MediaMetadata as FFMpegMediaMetadataWav).SamplingRate < (Destination.MediaMetadata as FFMpegMediaMetadataWav).SamplingRate)
                         {
-                            return SystemService.CopySecure(Source.Path, Destination.Path, OverrideIfExist);
+                            return SystemService.CopySecure(Source.Path, Destination.Path, OverrideIfExist, (double percent, ref bool cancelFlag) => { if (OnProgressChanged != null) OnProgressChanged((int)percent, Source.Path, Destination.Path); });
                         }
                         
                     }
                 }
             }
 
-            //TODO: implementare le altre conversioni e controllo ForceConvertion
+
+
+            //TODO: implementare le altre conversioni ( wav ) 
             if ( Source.MediaMetadata is FFMpegMediaMetadataFlac)
             {
+                FFMpegMediaMetadataFlac ts = (Source.MediaMetadata as FFMpegMediaMetadataFlac);
                 if (Destination.MediaMetadata is FFMpegMediaMetadataMp3)
                     return FlacToMp3(Source.Path, Destination.Path,(Destination.MediaMetadata as FFMpegMediaMetadataMp3), OverrideIfExist, OnStatusChanged, OnProgressChanged, Async);
+                else if (Destination.MediaMetadata is FFMpegMediaMetadataFlac)
+                {
+                    FFMpegMediaMetadataFlac td = (Destination.MediaMetadata as FFMpegMediaMetadataFlac);
+                    if (ts.Bit == td.Bit && ts.SamplingRate == td.SamplingRate)
+                    {
+                        return SystemService.CopySecure(Source.Path, Destination.Path, OverrideIfExist, (double percent, ref bool cancelFlag) => { if (OnProgressChanged != null) OnProgressChanged((int)percent, Source.Path, Destination.Path); });
+                    }
+                    else
+                    {
+                        return Mp3ToFlac(Source.Path, Destination.Path, td, OverrideIfExist, OnStatusChanged, OnProgressChanged, Async);
+                    }
+                }
+            }
+            else if (Source.MediaMetadata is FFMpegMediaMetadataMp3)
+            {
+                FFMpegMediaMetadataMp3 ts = (Source.MediaMetadata as FFMpegMediaMetadataMp3);
 
+                if (Destination.MediaMetadata is FFMpegMediaMetadataFlac)
+                    return Mp3ToFlac(Source.Path, Destination.Path, (Destination.MediaMetadata as FFMpegMediaMetadataFlac), OverrideIfExist, OnStatusChanged, OnProgressChanged, Async);
+                else if (Destination.MediaMetadata is FFMpegMediaMetadataMp3)
+                {
+                    FFMpegMediaMetadataMp3 td = (Destination.MediaMetadata as FFMpegMediaMetadataMp3);
+                    if (ts.BitRateMp3 == td.BitRateMp3 && ts.SamplingRate == td.SamplingRate)
+                    {
+                        return SystemService.CopySecure(Source.Path, Destination.Path, OverrideIfExist, (double percent, ref bool cancelFlag) => { if (OnProgressChanged != null) OnProgressChanged((int)percent, Source.Path, Destination.Path); });
+                    }
+                    else
+                    {
+                        return FlacToMp3(Source.Path, Destination.Path, td, OverrideIfExist, OnStatusChanged, OnProgressChanged, Async);
+                    }
+                }
             }
 
             return false;
@@ -300,7 +484,7 @@ namespace ExtendCSharp.Services
 
             if (CheckValidInput(Input))
             {
-                MyProcess p = new MyProcess(_Path, "-i \"" + Input + "\"");
+                MyProcess p = new MyProcess(_PathFFmpeg, "-i \"" + Input + "\"");
                 FFmpegMetadata temp = new FFmpegMetadata();
 
                 p.OnNewLine += (string line) =>
@@ -704,7 +888,8 @@ namespace ExtendCSharp.Services
         nul,
         _16 = 1,
         _24 = 2,
-        _32 = 4
+        _32 = 4,
+        _64=5,
     }
     public enum SamplingRateInfo
     {
