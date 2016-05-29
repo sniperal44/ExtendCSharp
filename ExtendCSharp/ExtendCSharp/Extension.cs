@@ -443,6 +443,17 @@ namespace ExtendCSharp
             }
 
         }
+        public static object SelectedItemInvoke(this ListBox self)
+        {
+            if (self.InvokeRequired)
+                return self.Invoke((Func<object>)delegate { return self.SelectedItem; });
+            else
+            {
+                return self.SelectedItem;
+            }
+
+        }
+
 
         public static int GetItemsCountInvoke(this ListBox self)
         {
@@ -725,6 +736,16 @@ namespace ExtendCSharp
                 self.Show();
 
         }
+        public static void ShowDialogInvoke(this Form self)
+        {
+            if (self.InvokeRequired)
+                self.Invoke((MethodInvoker)delegate { self.ShowDialog(); });
+            else
+                self.ShowDialog();
+
+        }
+
+
         public static void BringToFrontInvoke(this Form self)
         {
             if (self.InvokeRequired)
