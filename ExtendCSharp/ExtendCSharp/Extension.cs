@@ -793,7 +793,9 @@ namespace ExtendCSharp
         {
             return e is T;
         }
-      
+
+   
+       
 
         #endregion
 
