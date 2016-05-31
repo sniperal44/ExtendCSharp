@@ -104,131 +104,155 @@ namespace ExtendCSharp.Services
 
         static public bool Mp3ToFlac(String Input, String Output, FFMpegMediaMetadataFlac ConversionParameters, bool OverrideIfExist, FFmpegConvertStatusChanged OnStatusChanged = null, FFmpegConvertProgressChanged OnProgressChanged = null, bool Async = true)
         {
-            
-            if (!_Loaded)
-                return false;
-
-            if (ConversionParameters == null || ConversionParameters.SamplingRate == SamplingRateInfo.nul || ConversionParameters.SamplingRate == 0 || ConversionParameters.Bit == BitInfo.nul)
-                return false;
-
-            if (CheckValidInput(Input) && CheckValidOutput(Output))
+            bool ret = true;
+            Thread t = new Thread(() =>
             {
-                if (File.Exists(Output))
+                if (!_Loaded)
                 {
-                    if (OverrideIfExist)
-                        File.Delete(Output);
-                    else
-                        return true;
+                    ret = false; return;
+                }
+                    
+
+                if (ConversionParameters == null || ConversionParameters.SamplingRate == SamplingRateInfo.nul || ConversionParameters.SamplingRate == 0 || ConversionParameters.Bit == BitInfo.nul)
+                {
+                    ret = false; return;
                 }
 
-                MyProcess p = new MyProcess(_PathFFmpeg, "-i \"" + Input + "\" -map 0:1? -c copy "+ JpgNameTemp);
-                p.UseShellExecute = false;
-                p.RedirectStandardOutput = false;
-                p.RedirectStandardError = false;
-                p.CreateNoWindow = true;
-                p.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-                p.Async = false;
-                p.Start();
-
-                
-
-
-                
-
-                p = new MyProcess(_PathFFmpeg, "-i \"" + Input + "\" -map 0:0 -c:a:0 flac -map_metadata 0 -id3v2_version 3  -ar "+ ConversionParameters.SamplingRate+" \"" + Output + "\"");
-                if (OnStatusChanged != null)
+                if (CheckValidInput(Input) && CheckValidOutput(Output))
                 {
-                    p.OnStatusChanged += (ProcessStatus s) => {
-                        if (s == ProcessStatus.Running)
-                            OnStatusChanged(FFmpegStatus.Running, Input, Output);
-                        else if (s == ProcessStatus.Stop)
-                            OnStatusChanged(FFmpegStatus.Stop, Input, Output);
-                    };
-                }
-
-
-                if (OnProgressChanged != null)
-                {
-                    bool AspettaLaDurata = false;
-                    bool AspettaProgress = false;
-                    long TotalMilliSec = 0;
-                    p.OnNewLine += (string line) => {
-                        if (line == null)
-                            return;
-                        else if (line.StartsWith("Input"))
+                    if (File.Exists(Output))
+                    {
+                        if (OverrideIfExist)
+                            File.Delete(Output);
+                        else
                         {
-                            AspettaLaDurata = true;
-                            AspettaProgress = false;
+                            ret = false; return;
                         }
-                        else if (AspettaLaDurata && line.StartsWith("  Duration:"))
-                        {
-                            line = line.RemoveLeft("  Duration: ");
-                            line = line.SplitAndGetFirst(',');
+                    }
 
-                            string[] ss = line.Split(':', '.');
-                            if (ss.Length == 4)
-                            {
-                                AspettaLaDurata = false;
-                                AspettaProgress = true;
-                                TotalMilliSec = ss[3].ParseInt() * 10 + ss[2].ParseInt() * 1000 + ss[1].ParseInt() * 60000 + ss[0].ParseInt() * 3600000;
-                            }
-                            else
-                            {
-                                TotalMilliSec = -1;
-                                AspettaLaDurata = false;
-                                AspettaProgress = false;
-                            }
-                        }
-                        else if (AspettaProgress && line.Contains("No such file or directory"))
-                        {
-                            OnProgressChanged(-1, Input, Output, FFmpegError.DestFolderNotFound);
-                        }
-                        else if (AspettaProgress && (line.StartsWith("frame") || line.StartsWith("size")))
-                        {
-
-                            line = line.Substring(line.IndexOf("time=") + 5, 11);
-                            string[] ss = line.Split(':', '.');
-                            if (ss.Length == 4)
-                            {
-                                long current = ss[3].ParseInt() * 10 + ss[2].ParseInt() * 1000 + ss[1].ParseInt() * 60000 + ss[0].ParseInt() * 3600000;
-                                OnProgressChanged((int)((double)current / TotalMilliSec * 100), Input, Output);
-                            }
-                        }
-
-
-                    };
-                }
-
-                p.UseShellExecute = false;
-                p.RedirectStandardOutput = true;
-                p.RedirectStandardError = true;
-                p.CreateNoWindow = true;
-                p.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-                SystemService.CreateFolderSecure(SystemService.GetParent(Output));
-
-
-                p.Async = Async;
-                p.Start();
-
-
-                if(SystemService.FileExist(JpgNameTemp))
-                {
-                    p = new MyProcess(_PathMetaflac, "--import-picture-from=\""+ JpgNameTemp + "\" "+ Output);
+                    if (OnStatusChanged != null)
+                    {
+                        OnStatusChanged(FFmpegStatus.Running, Input, Output);
+                    }
+                    MyProcess p = new MyProcess(_PathFFmpeg, "-i \"" + Input + "\" -map 0:1? -c copy " + JpgNameTemp+" -y");
                     p.UseShellExecute = false;
                     p.RedirectStandardOutput = false;
                     p.RedirectStandardError = false;
+
+
                     p.CreateNoWindow = true;
                     p.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
                     p.Async = false;
                     p.Start();
+
+
+
+
+
+
+                    p = new MyProcess(_PathFFmpeg, "-i \"" + Input + "\" -map 0:0 -c:a:0 flac -map_metadata 0 -id3v2_version 3  -ar " + ConversionParameters.SamplingRate.ToStringReplace("_", "") + " \"" + Output + "\"");
+
+
+
+                    if (OnProgressChanged != null)
+                    {
+                        bool AspettaLaDurata = false;
+                        bool AspettaProgress = false;
+                        long TotalMilliSec = 0;
+                        p.OnNewLine += (string line) =>
+                        {
+                            if (line == null)
+                                return;
+                            else if (line.StartsWith("Input"))
+                            {
+                                AspettaLaDurata = true;
+                                AspettaProgress = false;
+                            }
+                            else if (AspettaLaDurata && line.StartsWith("  Duration:"))
+                            {
+                                line = line.RemoveLeft("  Duration: ");
+                                line = line.SplitAndGetFirst(',');
+
+                                string[] ss = line.Split(':', '.');
+                                if (ss.Length == 4)
+                                {
+                                    AspettaLaDurata = false;
+                                    AspettaProgress = true;
+                                    TotalMilliSec = ss[3].ParseInt() * 10 + ss[2].ParseInt() * 1000 + ss[1].ParseInt() * 60000 + ss[0].ParseInt() * 3600000;
+                                }
+                                else
+                                {
+                                    TotalMilliSec = -1;
+                                    AspettaLaDurata = false;
+                                    AspettaProgress = false;
+                                }
+                            }
+                            else if (AspettaProgress && line.Contains("No such file or directory"))
+                            {
+                                OnProgressChanged(-1, Input, Output, FFmpegError.DestFolderNotFound);
+                            }
+                            else if (AspettaProgress && (line.StartsWith("frame") || line.StartsWith("size")))
+                            {
+
+                                line = line.Substring(line.IndexOf("time=") + 5, 11);
+                                string[] ss = line.Split(':', '.');
+                                if (ss.Length == 4)
+                                {
+                                    long current = ss[3].ParseInt() * 10 + ss[2].ParseInt() * 1000 + ss[1].ParseInt() * 60000 + ss[0].ParseInt() * 3600000;
+                                    OnProgressChanged((int)((double)current / TotalMilliSec * 100), Input, Output);
+                                }
+                            }
+
+
+                        };
+                    }
+
+                    p.UseShellExecute = false;
+                    p.RedirectStandardOutput = true;
+                    p.RedirectStandardError = true;
+                    p.CreateNoWindow = true;
+                    p.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+                    SystemService.CreateFolderSecure(SystemService.GetParent(Output));
+
+
+                    p.Async = false;
+                    p.Start();
+
+
+                    if (SystemService.FileExist(JpgNameTemp))
+                    {
+                        p = new MyProcess(_PathMetaflac, "--import-picture-from=\"" + JpgNameTemp + "\" \"" + Output+"\"");
+                        p.UseShellExecute = false;
+                        p.RedirectStandardOutput = false;
+                        p.RedirectStandardError = false;
+                        p.CreateNoWindow = true;
+                        p.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+                        p.Async = false;
+                        p.Start();
+                    }
+
+                    if (OnStatusChanged != null)
+                    {
+                        OnStatusChanged(FFmpegStatus.Stop, Input, Output);
+                    }
+
+                }
+                else
+                {
+                    ret = false; return;
                 }
 
-            }
-            else
-                return false;
+                
+                ret = true; 
+                
 
-            return true;
+            });
+            t.Start();
 
+            if (!Async)
+                t.Join();
+
+            return ret;
 
             /*
             
