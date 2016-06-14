@@ -86,6 +86,10 @@
     <Compile Include="SliderForm.Designer.cs">
       <DependentUpon>SliderForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="SliderNode.cs" />
+    <Compile Include="SliderPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="TextBoxPlus.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -118,6 +122,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SliderForm.resx">
       <DependentUpon>SliderForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SliderPanel.resx">
+      <DependentUpon>SliderPanel.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

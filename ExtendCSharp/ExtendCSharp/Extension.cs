@@ -243,13 +243,32 @@ namespace ExtendCSharp
         }
 
 
-
+        public static void SetSizeInvoke(this Control t, int Width, int Height)
+        {
+            if (t.InvokeRequired)
+                t.BeginInvoke((MethodInvoker)delegate { t.SetSize(Width, Height); });
+            else
+                t.SetSize(Width, Height);
+        }
         public static Control SetSize(this Control t, int Width, int Height)
         {
             t.Size = new System.Drawing.Size(Width, Height);
             return t;
         }
 
+
+        public static void SetLocationInvoke(this Control t, int X, int Y)
+        {
+            if (t.InvokeRequired)
+                t.BeginInvoke((MethodInvoker)delegate { t.SetLocation(X, Y); });
+            else
+                t.SetLocation(X, Y);
+        }
+        public static Control SetLocation(this Control t, int X, int Y)
+        {
+            t.Location = new Point(X, Y);
+            return t;
+        }
 
 
         public static List<Control> GetControl(this Control Control, bool TuttiILivelli)

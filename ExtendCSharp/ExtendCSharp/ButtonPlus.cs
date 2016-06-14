@@ -7,12 +7,12 @@ using System.Windows.Forms;
 
 namespace ExtendCSharp
 {
-    public class ButtonPlus:Button
+    public class ButtonPlus<T>:Button
     {
-        private object _TextObject = null;
+        private T _TextObject = default(T);
 
 
-        public object TextObject
+        public T TextObject
         {
             get
             {
@@ -35,11 +35,7 @@ namespace ExtendCSharp
             get
             {
                 return base.Text;
-            }
-            set
-            {
-                TextObject = value;
-            }
+            } 
         }
     }
 }
