@@ -3,6 +3,7 @@ using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -50,6 +51,7 @@ namespace ExtendCSharp
         {
             return int.Parse(d);
         }
+
         public static bool IsFloat(this String d)
         {
             float n;
@@ -59,7 +61,15 @@ namespace ExtendCSharp
         {
             return float.Parse(d);
         }
-
+        public static bool isDouble(this String d)
+        {
+            double n;
+            return double.TryParse(d, out n);
+        }
+        public static double ParseDouble(this String d)
+        {
+            return double.Parse(d);
+        }
 
         public static List<int> AllIndexesOf(this String str, string value)
         {
@@ -355,6 +365,10 @@ namespace ExtendCSharp
         #endregion
 
         #region ListBox.ObjectCollection
+
+        
+
+
         public static void AddUnique(this ListBox.ObjectCollection self, object obj)
         {
             if(!self.Contains(obj))
@@ -430,6 +444,19 @@ namespace ExtendCSharp
             }
         }
 
+        public static void RemoveSelectedItemsInvoke(this ListBox self)
+        {
+            if (self.InvokeRequired)
+                self.Invoke((MethodInvoker)delegate { self.RemoveSelectedItemsInvoke(); });
+            else
+            {
+                while(self.SelectedItems.Count>0)
+                {
+                    self.RemoveInvoke(self.SelectedItems[0]);
+                }
+            }
+        }
+
 
         public static object GetAtInvoke(this ListBox self, int i)
         {
@@ -469,7 +496,7 @@ namespace ExtendCSharp
         public static void RemoveAtInvoke(this ListBox self, int i)
         {
             if (self.InvokeRequired)
-                self.Invoke((MethodInvoker)delegate { self.GetAtInvoke(i); });
+                self.Invoke((MethodInvoker)delegate { self.RemoveAtInvoke(i); });
             else
             {
                 if (i < self.Items.Count)
@@ -507,6 +534,16 @@ namespace ExtendCSharp
         }
 
         #endregion
+
+        #region List<T>
+
+        public static List<T> Clone<T>(this IList<T> listToClone) where T : ICloneable
+        {
+            return listToClone.Select(item => (T)item.Clone()).ToList();
+        }
+
+        #endregion
+
 
         #region DataGridView
         public static void SwapInvoke(this DataGridView self, int c1, int r1, int c2, int r2)
@@ -647,7 +684,7 @@ namespace ExtendCSharp
 
         #region Point
 
-        public static bool InPoligon(this Point[] Points, Point p )
+        public static bool InPoligon(this Point p, Point[] Points)
         {
             int i, j;
             bool c = false;
@@ -660,45 +697,146 @@ namespace ExtendCSharp
             return c;
         }
 
-
-      /*  public static bool InPoligon(this Point[] Points, Point p)
+        public static Point Rotate(this Point source, Point CentroRotazione, double Gradi)
         {
-            
-           
-            int max_point = Points.Length - 1;
-            float total_angle = GetAngle(Points[max_point].X, Points[max_point].Y, p.X, p.Y, Points[0].X, Points[0].Y);
-
-
-            for (int i = 0; i < max_point; i++)
-            {
-                total_angle += GetAngle(Points[i].X, Points[i].Y, p.X, p.Y, Points[i + 1].X, Points[i + 1].Y);
-            }
-
-            return (Math.Abs(total_angle) > 0.000001);
+            return source.Rotate(CentroRotazione.X, CentroRotazione.Y, Gradi);
+        }
+        public static Point Rotate(this Point source, int CentroRotazioneX, int CentroRotazioneY, double Gradi)
+        {
+            Gradi = GradToRad(Gradi);
+            double px = Math.Cos(Gradi) * (source.X - CentroRotazioneX) - Math.Sin(Gradi) * (source.Y - CentroRotazioneY) + CentroRotazioneX;
+            double py = Math.Sin(Gradi) * (source.X - CentroRotazioneX) + Math.Cos(Gradi) * (source.Y - CentroRotazioneY) + CentroRotazioneY;
+            return new Point((int)px, (int)py);
         }
 
-        private static float GetAngle(float Ax, float Ay, float Bx, float By, float Cx, float Cy)
+        public static double Distanza(this Point source, Point pnt)
         {
-            float dot_product = DotProduct(Ax, Ay, Bx, By, Cx, Cy);
-            float cross_product = CrossProductLength(Ax, Ay, Bx, By, Cx, Cy);
-            return (float)Math.Atan2(cross_product, dot_product);
+            return source.Distanza(pnt.X, pnt.Y);
         }
-        private static float DotProduct(float Ax, float Ay, float Bx, float By, float Cx, float Cy)
+        public static double Distanza(this Point source, int X, int Y)
         {
-            float BAx = Ax - Bx;
-            float BAy = Ay - By;
-            float BCx = Cx - Bx;
-            float BCy = Cy - By;
-            return (BAx * BCx + BAy * BCy);
+            return Math.Sqrt(Math.Pow(source.X - X, 2) + Math.Pow(source.Y - Y, 2));
         }
-        private static float CrossProductLength(float Ax, float Ay, float Bx, float By, float Cx, float Cy)
+
+
+        public static double Orientamento(this Point source, Point pnt)
         {
-            float BAx = Ax - Bx;
-            float BAy = Ay - By;
-            float BCx = Cx - Bx;
-            float BCy = Cy - By;
-            return (BAx * BCy - BAy * BCx);
-        }*/
+            return source.Orientamento(pnt.X, pnt.Y);
+        }
+        public static double Orientamento(this Point source, int X, int Y)
+        {
+            float xDiff = X - source.X;
+            float yDiff = Y - source.Y;
+            return RadToGrad(Math.Atan2(yDiff, xDiff));
+        }
+
+
+        public static Point Add(this Point source, Point pnt)
+        {
+            return source.Add(pnt.X, pnt.Y);
+        }
+        public static Point Add(this Point source, float x, float y)
+        {
+            return source.Add((int)x, (int)y);
+        }
+        public static Point Add(this Point source, double x, double y)
+        {
+            return source.Add((int)x, (int)y);
+        }
+        public static Point Add(this Point source, int x, int y)
+        {
+            return new Point(source.X + x, source.Y + y);
+        }
+
+
+
+        public static Point Sub(this Point source, Point pnt)
+        {
+            return source.Sub(pnt.X, pnt.Y);
+        }
+        public static Point Sub(this Point source, float x, float y)
+        {
+            return source.Sub((int)x, (int)y);
+        }
+        public static Point Sub(this Point source, double x, double y)
+        {
+            return source.Sub((int)x, (int)y);
+        }
+        public static Point Sub(this Point source, int x, int y)
+        {
+            return new Point(source.X - x, source.Y - y);
+        }
+
+
+        public static Point Scala(this Point source, double scala)
+        {
+            return new Point((int)(source.X * scala), (int)(source.Y * scala));
+        }
+
+
+
+        #region Point[]
+
+
+        public static Point[] Rotate(this Point[] source, Point CentroRotazione, double Gradi)
+        {
+            return source.Rotate(CentroRotazione.X, CentroRotazione.Y, Gradi);
+        }
+        public static Point[] Rotate(this Point[] source, int CentroRotazioneX, int CentroRotazioneY, double Gradi)
+        {
+            Point[] temp = (Point[])source.Clone();
+            for (int i = 0; i < temp.Length; i++)
+                temp[i] = temp[i].Rotate(CentroRotazioneX, CentroRotazioneY, Gradi);
+            return temp;
+        }
+
+        public static bool InPoligon(this Point[] Points, Point p)
+        {
+            return p.InPoligon(Points);
+        }
+
+
+        #endregion
+
+
+        /*  public static bool InPoligon(this Point[] Points, Point p)
+          {
+
+
+              int max_point = Points.Length - 1;
+              float total_angle = GetAngle(Points[max_point].X, Points[max_point].Y, p.X, p.Y, Points[0].X, Points[0].Y);
+
+
+              for (int i = 0; i < max_point; i++)
+              {
+                  total_angle += GetAngle(Points[i].X, Points[i].Y, p.X, p.Y, Points[i + 1].X, Points[i + 1].Y);
+              }
+
+              return (Math.Abs(total_angle) > 0.000001);
+          }
+
+          private static float GetAngle(float Ax, float Ay, float Bx, float By, float Cx, float Cy)
+          {
+              float dot_product = DotProduct(Ax, Ay, Bx, By, Cx, Cy);
+              float cross_product = CrossProductLength(Ax, Ay, Bx, By, Cx, Cy);
+              return (float)Math.Atan2(cross_product, dot_product);
+          }
+          private static float DotProduct(float Ax, float Ay, float Bx, float By, float Cx, float Cy)
+          {
+              float BAx = Ax - Bx;
+              float BAy = Ay - By;
+              float BCx = Cx - Bx;
+              float BCy = Cy - By;
+              return (BAx * BCx + BAy * BCy);
+          }
+          private static float CrossProductLength(float Ax, float Ay, float Bx, float By, float Cx, float Cy)
+          {
+              float BAx = Ax - Bx;
+              float BAy = Ay - By;
+              float BCx = Cx - Bx;
+              float BCy = Cy - By;
+              return (BAx * BCy - BAy * BCx);
+          }*/
         #endregion
 
         #region Uri
@@ -820,13 +958,14 @@ namespace ExtendCSharp
         }
 
 
+       
 
-       /* public static void DrawImageInvoke(this Graphics g, Image image, int x, int y, int width,int height)
-        {
-            g.DrawImage(image, x, y, width, height);
-           
-        }
-        */
+        /* public static void DrawImageInvoke(this Graphics g, Image image, int x, int y, int width,int height)
+         {
+             g.DrawImage(image, x, y, width, height);
+
+         }
+         */
 
         #endregion
 
@@ -919,8 +1058,153 @@ namespace ExtendCSharp
 
         #endregion
 
-      
 
+
+        #region Bitmap
+
+        public static Bitmap TrimBitmap(this Bitmap source)
+        {
+            int x;
+            return source.TrimBitmap(out x, out x);
+        }
+
+        public static Bitmap TrimBitmap(this Bitmap source, out int LeftCrop, out int TopCrop)
+        {
+            LeftCrop = 0;
+            TopCrop = 0;
+            Rectangle srcRect = default(Rectangle);
+            BitmapData data = null;
+            try
+            {
+                data = source.LockBits(new Rectangle(0, 0, source.Width, source.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+                byte[] buffer = new byte[data.Height * data.Stride];
+                Marshal.Copy(data.Scan0, buffer, 0, buffer.Length);
+
+                int xMin = int.MaxValue,
+                    xMax = int.MinValue,
+                    yMin = int.MaxValue,
+                    yMax = int.MinValue;
+
+                bool foundPixel = false;
+
+                // Find xMin
+                for (int x = 0; x < data.Width; x++)
+                {
+                    bool stop = false;
+                    for (int y = 0; y < data.Height; y++)
+                    {
+                        byte alpha = buffer[y * data.Stride + 4 * x + 3];
+                        if (alpha != 0)
+                        {
+                            xMin = x;
+                            stop = true;
+                            foundPixel = true;
+                            break;
+                        }
+                    }
+                    if (stop)
+                        break;
+                }
+
+                // Image is empty...
+                if (!foundPixel)
+                    return null;
+
+                // Find yMin
+                for (int y = 0; y < data.Height; y++)
+                {
+                    bool stop = false;
+                    for (int x = xMin; x < data.Width; x++)
+                    {
+                        byte alpha = buffer[y * data.Stride + 4 * x + 3];
+                        if (alpha != 0)
+                        {
+                            yMin = y;
+                            stop = true;
+                            break;
+                        }
+                    }
+                    if (stop)
+                        break;
+                }
+
+                // Find xMax
+                for (int x = data.Width - 1; x >= xMin; x--)
+                {
+                    bool stop = false;
+                    for (int y = yMin; y < data.Height; y++)
+                    {
+                        byte alpha = buffer[y * data.Stride + 4 * x + 3];
+                        if (alpha != 0)
+                        {
+                            xMax = x;
+                            stop = true;
+                            break;
+                        }
+                    }
+                    if (stop)
+                        break;
+                }
+
+                // Find yMax
+                for (int y = data.Height - 1; y >= yMin; y--)
+                {
+                    bool stop = false;
+                    for (int x = xMin; x <= xMax; x++)
+                    {
+                        byte alpha = buffer[y * data.Stride + 4 * x + 3];
+                        if (alpha != 0)
+                        {
+                            yMax = y;
+                            stop = true;
+                            break;
+                        }
+                    }
+                    if (stop)
+                        break;
+                }
+
+                TopCrop = yMin;
+                LeftCrop = xMin;
+                srcRect = Rectangle.FromLTRB(xMin, yMin, xMax + 1, yMax + 1);
+            }
+            finally
+            {
+                if (data != null)
+                    source.UnlockBits(data);
+            }
+
+            Bitmap dest = new Bitmap(srcRect.Width, srcRect.Height);
+            Rectangle destRect = new Rectangle(0, 0, srcRect.Width, srcRect.Height);
+            using (Graphics graphics = Graphics.FromImage(dest))
+            {
+                graphics.DrawImage(source, destRect, srcRect, GraphicsUnit.Pixel);
+            }
+            return dest;
+        }
+
+
+
+        #endregion
+
+
+
+
+
+        #region StaticMethod
+
+        public static double RadToGrad(double Rad)
+        {
+            return Rad * (180 / Math.PI);
+        }
+        public static double GradToRad(double Grad)
+        {
+            return (Math.PI / 180) * Grad;
+        }
+
+
+
+        #endregion
         #region DEMO
 
         #endregion
