@@ -72,6 +72,9 @@
     <Compile Include="Interfaces\ICloneablePlus.cs" />
     <Compile Include="ListPlus.cs" />
     <Compile Include="MD5Plus.cs" />
+    <Compile Include="NumericUpDownPlus.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Process.cs" />
     <Compile Include="Services\FFmpeg.cs" />
     <Compile Include="Services\Hook.cs" />
@@ -106,6 +109,9 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="TimerPlus.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="TimeSpanPlus.cs" />
     <Compile Include="ToolStripMenuItemPlus.cs">

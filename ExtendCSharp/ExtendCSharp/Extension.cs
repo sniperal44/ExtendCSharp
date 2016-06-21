@@ -736,6 +736,17 @@ namespace ExtendCSharp
         {
             return Math.Sqrt(Math.Pow(source.X - X, 2) + Math.Pow(source.Y - Y, 2));
         }
+        public static double DistanzaAlQuandrato(this Point source, Point pnt)
+        {
+            return source.DistanzaAlQuandrato(pnt.X, pnt.Y);
+        }
+        public static double DistanzaAlQuandrato(this Point source, int X, int Y)
+        {
+            int dy = source.Y - Y;
+            int dx= source.X - X;
+            return dy * dy - dx * dx;
+        }
+
 
 
         public static double Orientamento(this Point source, Point pnt)
@@ -1073,8 +1084,13 @@ namespace ExtendCSharp
         public static IEnumerable<T> Flatten<T>( this IEnumerable<T> e, Func<T, IEnumerable<T>> f)
         {
             return e.SelectMany(c => f(c).Flatten(f)).Concat(e);
-            
-
+        }
+        public static void ForEach<T>(this IEnumerable<T> enumeration, Action<T> action)
+        {
+            foreach (T item in enumeration)
+            {
+                action(item);
+            }
         }
 
         #endregion
