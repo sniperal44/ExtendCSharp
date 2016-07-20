@@ -130,6 +130,20 @@ namespace ExtendCSharp.Services
             }
         }
 
+
+        public static void Rename(String Source, String Dest, bool Override = true)
+        {
+            if (!FileExist(Source))
+                return;
+            if (!Override && File.Exists(Dest))
+                return;
+            if (!DirectoryExist(GetParent(Dest)))
+                CreateFolderSecure(GetParent(Dest));
+            File.Move(Source, Dest);
+        }
+
+
+
         public static bool FileExist(String Path)
         {
             return File.Exists(Path);
@@ -206,8 +220,11 @@ namespace ExtendCSharp.Services
             return "";
         }
 
-        
 
+        public static string GetFullPath(string path)
+        {
+            return Path.GetFullPath(path);
+        }
         public static string NormalizePath(string path)
         {
             return Path.GetFullPath(new Uri(path).LocalPath)
@@ -324,7 +341,7 @@ namespace ExtendCSharp.Services
 
 
 
-        public delegate void CopyProgressChangedDelegate(double persentage,ref bool cancelFlag);
+        public delegate void CopyProgressChangedDelegate(double percent,ref bool cancelFlag);
         public delegate void CopyCompleteDelegate(bool copiato,Exception ex);
 
     }

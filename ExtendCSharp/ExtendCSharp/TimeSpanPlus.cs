@@ -99,8 +99,11 @@ namespace ExtendCSharp
         }
 
 
-        
 
+        public TimeSpanPlus(long Tick)
+        {
+            SetTime(Tick);
+        }
         public TimeSpanPlus(int milliseconds = 0, int seconds = 0, int minutes = 0, int hours = 0, int days = 0)
         {
             SetTime(milliseconds, seconds, minutes, hours, days);
@@ -114,7 +117,15 @@ namespace ExtendCSharp
             SetTime(Time);
         }
 
-
+        public void SetTime(long Tick)
+        {
+            TimeSpan Time = TimeSpan.FromTicks(Tick);
+            _millisec = Time.Milliseconds;
+            _sec = Time.Seconds;
+            _min = Time.Minutes;
+            _hour = Time.Hours;
+            _day = Time.Days;
+        }
         public void SetTime(int milliseconds = 0, int seconds = 0, int minutes = 0, int hours = 0, int days = 0)
         {
             _millisec = milliseconds;
@@ -367,7 +378,6 @@ namespace ExtendCSharp
             t.AddTime(c2);
             return t;
         }
-
         public static TimeSpanPlus operator -(TimeSpanPlus c1, TimeSpanPlus c2)
         {
             TimeSpanPlus t = new TimeSpanPlus(c1);
@@ -375,5 +385,12 @@ namespace ExtendCSharp
             return t;
         }
 
+        public static TimeSpanPlus Now
+        {
+            get
+            {
+                return new TimeSpanPlus(DateTime.Now.Ticks);
+            }
+        }
     }
 }

@@ -411,11 +411,16 @@ namespace ExtendCSharp.Services
                     {
                         if ((Source.MediaMetadata as FFMpegMediaMetadataMp3).BitRateMp3 < (Destination.MediaMetadata as FFMpegMediaMetadataMp3).BitRateMp3)
                         {
-                            if (OnStatusChanged != null)
-                                OnStatusChanged(FFmpegStatus.Running, Source.Path, Destination.Path);
-                            bool b= SystemService.CopySecure(Source.Path, Destination.Path, OverrideIfExist, (double percent, ref bool cancelFlag)=> { if (OnProgressChanged != null) OnProgressChanged((int)percent, Source.Path, Destination.Path); });
-                            if (OnStatusChanged != null)
-                                OnStatusChanged(FFmpegStatus.Stop, Source.Path, Destination.Path);
+                            OnStatusChanged?.Invoke(FFmpegStatus.Running, Source.Path, Destination.Path);
+                            bool b= SystemService.CopySecure(Source.Path, Destination.Path, OverrideIfExist, (double percent, ref bool cancelFlag)=> { OnProgressChanged?.Invoke((int)percent, Source.Path, Destination.Path); }, (bool copiato, Exception ex)=> 
+                            {
+                                if (copiato)
+                                    OnProgressChanged?.Invoke(100, Source.Path, Destination.Path);
+                                else
+                                    OnProgressChanged?.Invoke(0, Source.Path, Destination.Path,FFmpegError.CopyError);
+
+                            });
+                            OnStatusChanged?.Invoke(FFmpegStatus.Stop, Source.Path, Destination.Path);
 
                             return b;
 
@@ -423,23 +428,32 @@ namespace ExtendCSharp.Services
                     }
                     else if (Destination.MediaMetadata is FFMpegMediaMetadataFlac)
                     {
-                        if (OnStatusChanged != null)
-                            OnStatusChanged(FFmpegStatus.Running, Source.Path, Destination.Path);
-                        bool b = SystemService.CopySecure(Source.Path, SystemService.ChangeExtension(Destination.Path, "mp3"), OverrideIfExist, (double percent, ref bool cancelFlag) => { if (OnProgressChanged != null) OnProgressChanged((int)percent, Source.Path, Destination.Path); });
 
-                        if (OnStatusChanged != null)
-                            OnStatusChanged(FFmpegStatus.Stop, Source.Path, Destination.Path);
+                        OnStatusChanged?.Invoke(FFmpegStatus.Running, Source.Path, Destination.Path);
+                        bool b = SystemService.CopySecure(Source.Path, SystemService.ChangeExtension(Destination.Path, "mp3"), OverrideIfExist, (double percent, ref bool cancelFlag) => { if (OnProgressChanged != null) OnProgressChanged((int)percent, Source.Path, Destination.Path); }, (bool copiato, Exception ex) =>
+                        {
+                            if (copiato)
+                                OnProgressChanged?.Invoke(100, Source.Path, Destination.Path);
+                            else
+                                OnProgressChanged?.Invoke(0, Source.Path, Destination.Path, FFmpegError.CopyError);
+                        });
+
+                        OnStatusChanged?.Invoke(FFmpegStatus.Stop, Source.Path, Destination.Path);
 
                         return b;
                     }
                     else if (Destination.MediaMetadata is FFMpegMediaMetadataWav)
                     {
-                        if (OnStatusChanged != null)
-                            OnStatusChanged(FFmpegStatus.Running, Source.Path, Destination.Path);
-                        bool b =  SystemService.CopySecure(Source.Path, SystemService.ChangeExtension(Destination.Path, "mp3"), OverrideIfExist, (double percent, ref bool cancelFlag) => { if (OnProgressChanged != null) OnProgressChanged((int)percent, Source.Path, Destination.Path); });
+                        OnStatusChanged?.Invoke(FFmpegStatus.Running, Source.Path, Destination.Path);
+                        bool b = SystemService.CopySecure(Source.Path, SystemService.ChangeExtension(Destination.Path, "mp3"), OverrideIfExist, (double percent, ref bool cancelFlag) => { if (OnProgressChanged != null) OnProgressChanged((int)percent, Source.Path, Destination.Path); }, (bool copiato, Exception ex) =>
+                        {
+                            if (copiato)
+                                OnProgressChanged?.Invoke(100, Source.Path, Destination.Path);
+                            else
+                                OnProgressChanged?.Invoke(0, Source.Path, Destination.Path, FFmpegError.CopyError);
+                        });
 
-                        if (OnStatusChanged != null)
-                            OnStatusChanged(FFmpegStatus.Stop, Source.Path, Destination.Path);
+                        OnStatusChanged?.Invoke(FFmpegStatus.Stop, Source.Path, Destination.Path);
 
                         return b;
                     }
@@ -450,12 +464,34 @@ namespace ExtendCSharp.Services
                     {
                         if ((Source.MediaMetadata as FFMpegMediaMetadataFlac).SamplingRate < (Destination.MediaMetadata as FFMpegMediaMetadataFlac).SamplingRate)
                         {
-                            //TODO: finire di implementare OnStatusChanged!!! ( come sopra! ) 
-                            return SystemService.CopySecure(Source.Path, Destination.Path, OverrideIfExist, (double percent, ref bool cancelFlag) => { if (OnProgressChanged != null) OnProgressChanged((int)percent, Source.Path, Destination.Path); });
+                            OnStatusChanged?.Invoke(FFmpegStatus.Running, Source.Path, Destination.Path);
+                            bool b = SystemService.CopySecure(Source.Path, Destination.Path, OverrideIfExist, (double percent, ref bool cancelFlag) => { if (OnProgressChanged != null) OnProgressChanged((int)percent, Source.Path, Destination.Path); }, (bool copiato, Exception ex) =>
+                            {
+                                if (copiato)
+                                    OnProgressChanged?.Invoke(100, Source.Path, Destination.Path);
+                                else
+                                    OnProgressChanged?.Invoke(0, Source.Path, Destination.Path, FFmpegError.CopyError);
+                            });
+
+                            OnStatusChanged?.Invoke(FFmpegStatus.Stop, Source.Path, Destination.Path);
+
+                            return b;
                         }
                         else if ((Source.MediaMetadata as FFMpegMediaMetadataFlac).Bit < (Destination.MediaMetadata as FFMpegMediaMetadataFlac).Bit)
                         {
-                            return SystemService.CopySecure(Source.Path, Destination.Path, OverrideIfExist, (double percent, ref bool cancelFlag) => { if (OnProgressChanged != null) OnProgressChanged((int)percent, Source.Path, Destination.Path); });
+                            OnStatusChanged?.Invoke(FFmpegStatus.Running, Source.Path, Destination.Path);
+                            bool b = SystemService.CopySecure(Source.Path, Destination.Path, OverrideIfExist, (double percent, ref bool cancelFlag) => { if (OnProgressChanged != null) OnProgressChanged((int)percent, Source.Path, Destination.Path); }, (bool copiato, Exception ex) =>
+                            {
+                                if (copiato)
+                                    OnProgressChanged?.Invoke(100, Source.Path, Destination.Path);
+                                else
+                                    OnProgressChanged?.Invoke(0, Source.Path, Destination.Path, FFmpegError.CopyError);
+                            });
+
+                            OnStatusChanged?.Invoke(FFmpegStatus.Stop, Source.Path, Destination.Path);
+
+                            return b;
+
                         }
                     }
                 }
@@ -465,7 +501,18 @@ namespace ExtendCSharp.Services
                     {
                         if ((Source.MediaMetadata as FFMpegMediaMetadataWav).SamplingRate < (Destination.MediaMetadata as FFMpegMediaMetadataWav).SamplingRate)
                         {
-                            return SystemService.CopySecure(Source.Path, Destination.Path, OverrideIfExist, (double percent, ref bool cancelFlag) => { if (OnProgressChanged != null) OnProgressChanged((int)percent, Source.Path, Destination.Path); });
+                            OnStatusChanged?.Invoke(FFmpegStatus.Running, Source.Path, Destination.Path);
+                            bool b = SystemService.CopySecure(Source.Path, Destination.Path, OverrideIfExist, (double percent, ref bool cancelFlag) => { if (OnProgressChanged != null) OnProgressChanged((int)percent, Source.Path, Destination.Path); }, (bool copiato, Exception ex) =>
+                            {
+                                if (copiato)
+                                    OnProgressChanged?.Invoke(100, Source.Path, Destination.Path);
+                                else
+                                    OnProgressChanged?.Invoke(0, Source.Path, Destination.Path, FFmpegError.CopyError);
+                            });
+
+                            OnStatusChanged?.Invoke(FFmpegStatus.Stop, Source.Path, Destination.Path);
+
+                            return b;
                         }
                         
                     }
@@ -485,7 +532,18 @@ namespace ExtendCSharp.Services
                     FFMpegMediaMetadataFlac td = (Destination.MediaMetadata as FFMpegMediaMetadataFlac);
                     if (ts.Bit == td.Bit && ts.SamplingRate == td.SamplingRate)
                     {
-                        return SystemService.CopySecure(Source.Path, Destination.Path, OverrideIfExist, (double percent, ref bool cancelFlag) => { if (OnProgressChanged != null) OnProgressChanged((int)percent, Source.Path, Destination.Path); });
+                        OnStatusChanged?.Invoke(FFmpegStatus.Running, Source.Path, Destination.Path);
+                        bool b = SystemService.CopySecure(Source.Path, Destination.Path, OverrideIfExist, (double percent, ref bool cancelFlag) => { if (OnProgressChanged != null) OnProgressChanged((int)percent, Source.Path, Destination.Path); }, (bool copiato, Exception ex) =>
+                        {
+                            if (copiato)
+                                OnProgressChanged?.Invoke(100, Source.Path, Destination.Path);
+                            else
+                                OnProgressChanged?.Invoke(0, Source.Path, Destination.Path, FFmpegError.CopyError);
+                        });
+
+                        OnStatusChanged?.Invoke(FFmpegStatus.Stop, Source.Path, Destination.Path);
+
+                        return b;
                     }
                     else
                     {
@@ -504,15 +562,19 @@ namespace ExtendCSharp.Services
                     FFMpegMediaMetadataMp3 td = (Destination.MediaMetadata as FFMpegMediaMetadataMp3);
                     if (ts.BitRateMp3 == td.BitRateMp3 && ts.SamplingRate == td.SamplingRate)
                     {
-                        if (OnStatusChanged != null)
-                            OnStatusChanged(FFmpegStatus.Running, Source.Path, Destination.Path);
-                        bool b = SystemService.CopySecure(Source.Path, Destination.Path, OverrideIfExist, (double percent, ref bool cancelFlag) => { if (OnProgressChanged != null) OnProgressChanged((int)percent, Source.Path, Destination.Path); });
+                        OnStatusChanged?.Invoke(FFmpegStatus.Running, Source.Path, Destination.Path);
+                        bool b = SystemService.CopySecure(Source.Path, Destination.Path, OverrideIfExist, (double percent, ref bool cancelFlag) => { if (OnProgressChanged != null) OnProgressChanged((int)percent, Source.Path, Destination.Path); }, (bool copiato, Exception ex) =>
+                        {
+                            if (copiato)
+                                OnProgressChanged?.Invoke(100, Source.Path, Destination.Path);
+                            else
+                                OnProgressChanged?.Invoke(0, Source.Path, Destination.Path, FFmpegError.CopyError);
+                        });
 
-                        if (OnStatusChanged != null)
-                            OnStatusChanged(FFmpegStatus.Stop, Source.Path, Destination.Path);
+                        OnStatusChanged?.Invoke(FFmpegStatus.Stop, Source.Path, Destination.Path);
 
                         return b;
-                    
+
                     }
                     else
                     {
@@ -845,6 +907,11 @@ namespace ExtendCSharp.Services
         {
             return (FFMpegMediaMetadata)(this as ICloneablePlus).Clone();
         }
+
+        public virtual String GetDefaultExtension()
+        {
+            return "";
+        }
     }
     public class FFMpegMediaMetadataMp3 : FFMpegMediaMetadata, ICloneablePlus
     {
@@ -872,6 +939,11 @@ namespace ExtendCSharp.Services
         public new FFMpegMediaMetadataMp3 CloneClass()
         {
             return (FFMpegMediaMetadataMp3)(this as ICloneablePlus).Clone();
+        }
+
+        public override string GetDefaultExtension()
+        {
+            return "mp3";
         }
     }
     public class FFMpegMediaMetadataFlac : FFMpegMediaMetadata, ICloneablePlus
@@ -902,6 +974,10 @@ namespace ExtendCSharp.Services
         {
             return (FFMpegMediaMetadataFlac)(this as ICloneablePlus).Clone();
         }
+        public override string GetDefaultExtension()
+        {
+            return "flac";
+        }
     }
     public class FFMpegMediaMetadataWav : FFMpegMediaMetadata, ICloneablePlus
     {
@@ -929,6 +1005,10 @@ namespace ExtendCSharp.Services
         {
             return (FFMpegMediaMetadataWav)(this as ICloneablePlus).Clone();
         }
+        public override string GetDefaultExtension()
+        {
+            return "wav";
+        }
     }
     
 
@@ -943,6 +1023,7 @@ namespace ExtendCSharp.Services
     {
         nul=0,
         DestFolderNotFound=1,
+        CopyError = 2,
     }
 
 

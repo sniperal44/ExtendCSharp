@@ -43,6 +43,17 @@ namespace ExtendCSharp.Services
                 Cursor.Position = OldP;
 
         }
+        /// <summary>
+        /// Permette di lanciare un evento del mouse in una determinata cordinata
+        /// </summary>
+        /// <param name="me">Evento</param>
+        /// <param name="position">Posizione del click</param>
+        /// <param name="BackOldPosition">True - alla fine, re-imposta le cordinate del mouse prima del click</param>
+        /// <param name="WheelDelta">Se l'evento riguarda la wheel impostare il delta dello spostamento, altrimenti lasciare 0</param>
+        public static void DoEvent(MyMouseEvent me, Point position, bool BackOldPosition = true, int WheelDelta = 0)
+        {
+            DoEvent(me, position.X, position.Y, BackOldPosition, WheelDelta);
+        }
         public static void DoEvent(MyMouseEvent me, int WheelDelta = 0)
         {
             int X = Cursor.Position.X, Y = Cursor.Position.Y;
