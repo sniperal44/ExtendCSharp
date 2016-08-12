@@ -560,6 +560,14 @@ namespace ExtendCSharp
         {
             return listToClone.Select(item => (T)item.Clone()).ToList();
         }
+        public static void Remove<T>(this IList<T> self, List<T> ToRemove)
+        {
+            foreach (T t in ToRemove)
+                self.Remove(t);
+
+        }
+
+
 
         #endregion
 
@@ -1301,5 +1309,22 @@ namespace ExtendCSharp
         #region DEMO
 
         #endregion
+    }
+
+
+
+
+    public class TupleCombinationEqualityComparer<T> : IEqualityComparer<Tuple<T, T>>
+    {
+        public bool Equals(Tuple<T, T> x, Tuple<T, T> y)
+        {
+            bool equals = new HashSet<T>(new[] { x.Item1, x.Item2 }).SetEquals(new[] { y.Item1, y.Item2 });
+            return equals;
+        }
+
+        public int GetHashCode(Tuple<T, T> obj)
+        {
+            return obj.Item1.GetHashCode() + obj.Item2.GetHashCode();
+        }
     }
 }
