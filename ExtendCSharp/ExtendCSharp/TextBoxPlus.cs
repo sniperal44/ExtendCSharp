@@ -11,6 +11,7 @@ namespace ExtendCSharp
     {
         private object _TextObject = null;
 
+        public bool AutoScroll { get; set; } = false;
 
         public object TextObject
         {
@@ -39,6 +40,36 @@ namespace ExtendCSharp
             set
             {
                 TextObject = value;
+            }
+        }
+
+        public new void AppendText(String s)
+        {
+            if (this.InvokeRequired)
+                this.BeginInvoke((MethodInvoker)delegate { this.AppendText(s); });
+            else
+                base.Text = base.Text + s;
+
+            if (AutoScroll)
+            {
+                this.SelectionStart = this.Text.Length;
+                this.ScrollToCaret();
+            }
+        }
+
+
+
+        public void SetText(String s)
+        {
+            if (this.InvokeRequired)
+                this.BeginInvoke((MethodInvoker)delegate { this.AppendText(s); });
+            else
+                base.Text =  s;
+
+            if (AutoScroll)
+            {
+                this.SelectionStart = this.Text.Length;
+                this.ScrollToCaret();
             }
         }
     }
