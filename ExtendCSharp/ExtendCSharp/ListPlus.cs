@@ -76,24 +76,41 @@ namespace ExtendCSharp
                 if (null != OnRemove)
                     OnRemove(this, null);    
         }
-        public void RemoveAt(int index)
+        public T RemoveAt(int index)
         {
             if (index < base.Count && index>=0)
             {
                 int cprima = base.Count;
+                T temp = base[index];
                 base.RemoveAt(index);
                 if (cprima != Count)
                     if (null != OnRemove)
                         OnRemove(this, null);
-            } 
+
+                return temp;
+            }
+            return default(T);
         }
-        public void RemoveLast()
+        public T RemoveLast()
         {
+            if(base.Count==0)
+            {
+                return default(T);
+            }
+
+            T temp = base[base.Count - 1];
             RemoveAt(base.Count - 1);
+            return temp;
         }
-        public void RemoveFirst()
+        public T RemoveFirst()
         {
+            if (base.Count == 0)
+            {
+                return default(T);
+            }
+            T temp = base[0];
             RemoveAt(0);
+            return temp;
         }
 
         public void RemoveRange(int index,int count)

@@ -10,8 +10,8 @@ using System.Windows.Forms;
 namespace ExtendCSharp
 {
     /// <summary>
-    /// Wraps System.Windows.Forms.OpenFileDialog to make it present
-    /// a vista-style dialog.
+    /// Racchiude un System.Windows.Forms.OpenFileDialog per farlo visualizzare come
+    /// una finestra di ricerca File
     /// </summary>
     public class FolderSelectDialog
     {

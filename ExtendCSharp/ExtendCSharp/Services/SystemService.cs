@@ -47,6 +47,11 @@ namespace ExtendCSharp.Services
             return Directory.GetDirectories(s);
         }
 
+        /// <summary>
+        /// Ritorna un array di stringhe contenente i nomi dei file nel path passato
+        /// </summary>
+        /// <param name="s">Cartella da cui leggere i file</param>
+        /// <returns></returns>
         public static String[] GetFiles(String s)
         {
             return Directory.GetFiles(s);

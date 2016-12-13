@@ -71,6 +71,12 @@
     <Compile Include="FullPrecisionNumber.cs" />
     <Compile Include="Interfaces\ICloneablePlus.cs" />
     <Compile Include="ListPlus.cs" />
+    <Compile Include="LogUtill\LogForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LogUtill\LogForm.Designer.cs">
+      <DependentUpon>LogForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="MD5Plus.cs" />
     <Compile Include="NumericUpDownPlus.cs">
       <SubType>Component</SubType>
@@ -122,6 +128,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="LogUtill\LogForm.resx">
+      <DependentUpon>LogForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

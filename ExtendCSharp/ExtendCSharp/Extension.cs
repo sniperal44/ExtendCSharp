@@ -39,6 +39,12 @@ namespace ExtendCSharp
         {
             return ((int)Math.Ceiling(d));
         }
+        public static string ToHexString(this int Number, bool upperCase = true)
+        {
+            return Number.ToString(upperCase ? "X2" : "x2");
+        }
+
+
         #endregion
 
         #region String
@@ -85,6 +91,28 @@ namespace ExtendCSharp
                     return indexes;
                 indexes.Add(index);
             }
+        }
+
+        public static String Concatenate(this String s, String Separatore, params String[] str)
+        {
+            String temp = s;
+            foreach(String ss in str)
+            {
+                if(temp!="")
+                    temp += Separatore;
+
+                temp += ss;
+            }
+            return temp;
+        }
+        public static String Concat(this String s, params String[] str)
+        {  
+            return s.Concatenate("", str);
+        }
+
+        public static String[] Split(this String s, params String[] str)
+        {
+            return s.Split(str, StringSplitOptions.None);
         }
         public static String SplitAndGet(this String s, int Index, params char[] chars)
         {
