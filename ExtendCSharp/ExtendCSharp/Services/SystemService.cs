@@ -50,11 +50,28 @@ namespace ExtendCSharp.Services
         /// <summary>
         /// Ritorna un array di stringhe contenente i nomi dei file nel path passato
         /// </summary>
-        /// <param name="s">Cartella da cui leggere i file</param>
+        /// <param name="Path">Cartella da cui leggere i file</param>
+        /// <param name="ExcludedExtension">Lista di estensioni da escludere dal GET!</param>
         /// <returns></returns>
-        public static String[] GetFiles(String s)
+        public static String[] GetFiles(String Path,params String[] ExcludedExtension)
         {
-            return Directory.GetFiles(s);
+            String[] t=Directory.GetFiles(Path);
+            ListPlus<String> lp = new ListPlus<string>();
+            foreach(String s in t)
+            {
+                bool DaEscludere = false;
+                foreach(string ext in ExcludedExtension)
+                {
+                    if(s.EndsWith(ext.OneCharStart('.')))
+                    {
+                        DaEscludere = true;
+                        break;
+                    }
+                }
+                if (!DaEscludere)
+                    lp.Add(s);                
+            }
+            return lp.ToArray();
         }
 
 
@@ -67,7 +84,7 @@ namespace ExtendCSharp.Services
             return Path.Remove(sindex) + '.' + Ext.Trim(' ', '.').ToLower();
         }
 
-        public static String Combine(params string[] paths)
+        public static String CombinePaths(params string[] paths)
         {
             return Path.Combine(paths);
         }
