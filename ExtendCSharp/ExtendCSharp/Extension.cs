@@ -1,6 +1,7 @@
 ﻿using CsQuery;
 using MySql.Data.MySqlClient;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -599,6 +600,44 @@ namespace ExtendCSharp
 
         #endregion
 
+        #region CheckedListBox
+
+        public static void RemoveChecked(this CheckedListBox self)
+        {
+            object[] indici=self.CheckedItems.toArray<object>();
+            foreach (object o in indici)
+            {
+                self.RemoveInvoke(o);
+            }
+        }
+        public static void RemoveSelected(this CheckedListBox self)
+        {
+            int i;
+            while ((i = self.SelectedIndex) != -1)
+            {
+                self.RemoveAtInvoke(i);
+            }
+        }
+
+        public static void ClearChecked(this CheckedListBox self)
+        {
+            foreach(int i in self.CheckedIndices)
+            {
+                self.SetItemChecked(i, false);
+            }
+        }
+
+
+        #endregion
+
+        #region ICollection
+
+        public static T[] toArray<T>(this ICollection self)
+        {
+            return self.OfType<T>().ToArray();
+        }
+
+        #endregion
 
         #region DataGridView
         public static void SwapInvoke(this DataGridView self, int c1, int r1, int c2, int r2)
