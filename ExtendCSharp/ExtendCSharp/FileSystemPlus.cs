@@ -101,7 +101,7 @@ namespace ExtendCSharp
         }
         public String GetFullPath(FileSystemNodePlus<T> Nodo)
         {
-            return SystemService.Combine(_RootRealPath, Nodo.GetFullPath().TrimStart('\\','/'));
+            return SystemService.CombinePaths(_RootRealPath, Nodo.GetFullPath().TrimStart('\\','/'));
         }
         public ListPlus<String> GetAllFileFullPath()
         {
