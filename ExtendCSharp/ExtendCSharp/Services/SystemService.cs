@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using Services.ExtendCSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,7 +10,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static ExtendCSharp.Extension;
-using static ExtendCSharp.MD5Plus;
 
 namespace ExtendCSharp.Services
 {

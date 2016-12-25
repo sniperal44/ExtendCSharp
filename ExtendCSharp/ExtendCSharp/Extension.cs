@@ -412,28 +412,28 @@ namespace ExtendCSharp
 
         #endregion
 
-        #region ListBox.ObjectCollection
+        #region IList
 
-        
+        //ListBox.ObjectCollection
 
 
-        public static void AddUnique(this ListBox.ObjectCollection self, object obj)
+        public static void AddUnique(this IList self, object obj)
         {
             if(!self.Contains(obj))
                 self.Add(obj);
         }
         
 
-        public static List<T> ToList<T>(this ListBox.ObjectCollection self)
+        public static List<T> ToList<T>(this IList self)
         {
-
+            
             List<T> temp = new List<T>();
             foreach(T o in self)
                 temp.Add(o);
 
             return temp;
         }
-        public static ListPlus<T> ToListPlus<T>(this ListBox.ObjectCollection self)
+        public static ListPlus<T> ToListPlus<T>(this IList self)
         {
 
             ListPlus<T> temp = new ListPlus<T>();
@@ -442,16 +442,43 @@ namespace ExtendCSharp
             return temp;
         }
 
-        public static void ClearInvoke(this ListBox self)
-        {
 
+
+        public static void SwapInvoke(this IList self, int item1, int item2)
+        {
+           
+            if (item1 < self.Count && item2 < self.Count)
+            {
+                object t = self[item1];
+                self[item1] = self[item2];
+                self[item2] = t;
+            }
+
+        }
+
+
+
+        public static void RemoveSelectedItemsInvoke(this ListBox self)
+        {
+            if (self.InvokeRequired)
+                self.Invoke((MethodInvoker)delegate { self.RemoveSelectedItemsInvoke(); });
+            else
+            {
+                while (self.SelectedItem != null)
+                {
+                    self.Items.Remove(self.SelectedItems[0]);
+                }
+            }
+        }
+
+        /*public static void ClearInvoke(this ListBox self)
+        {
             if (self.InvokeRequired)
                 self.Invoke((MethodInvoker)delegate { self.ClearInvoke(); });
             else
             {
                 self.Items.Clear();
             }
-
         }
         public static void AddInvoke(this ListBox self, object obj)
         {   
@@ -567,7 +594,9 @@ namespace ExtendCSharp
                 }
 
             }
-        }
+        }*/
+
+
         #endregion
 
         #region List<String>
@@ -607,7 +636,9 @@ namespace ExtendCSharp
             object[] indici=self.CheckedItems.toArray<object>();
             foreach (object o in indici)
             {
-                self.RemoveInvoke(o);
+                //self.RemoveInvoke(o);
+                self.Items.Remove(o);
+
             }
         }
         public static void RemoveSelected(this CheckedListBox self)
@@ -615,7 +646,8 @@ namespace ExtendCSharp
             int i;
             while ((i = self.SelectedIndex) != -1)
             {
-                self.RemoveAtInvoke(i);
+                //self.RemoveAtInvoke(i);
+                self.Items.RemoveAt(i);
             }
         }
 
@@ -627,6 +659,24 @@ namespace ExtendCSharp
             }
         }
 
+        public static void SwapInvoke(this CheckedListBox self, int item1, int item2)
+        {
+            if (self.InvokeRequired)
+                self.Invoke((MethodInvoker)delegate { self.SwapInvoke(item1, item2); });
+            else
+            {
+                if (item1 < self.Items.Count && item2 < self.Items.Count)
+                {
+                    object t = self.Items[item1];
+                    bool Check1 = self.GetItemChecked(item1);
+                    self.Items[item1] = self.Items[item2];
+                    self.SetItemChecked(item1, self.GetItemChecked(item2));
+                    self.Items[item2] = t;
+                    self.SetItemChecked(item2, Check1);
+                }
+
+            }
+        }
 
         #endregion
 
@@ -636,6 +686,11 @@ namespace ExtendCSharp
         {
             return self.OfType<T>().ToArray();
         }
+        public static int LastIndex(this ICollection self)
+        {
+            return self.Count - 1;
+        }
+
 
         #endregion
 

@@ -7,18 +7,31 @@ using System.Text;
 using System.Timers;
 
 
-namespace ExtendCSharp
+namespace ExtendCSharp.Controls
 {
-    public class CountDown :IDisposable
+    public class CountDown : Component
     {
         Timer t = null;
         TimeSpanPlus tsp = null;
-        int Interval;
+
+
+        public int Interval { get; set; }
+
+        
+
+        /// <summary>
+        /// Impostando il Tempo corrente, il timer verrà stoppato
+        /// </summary>
         public TimeSpanPlus Time
         {
             get
             {
                 return tsp;
+            }
+            set
+            {
+                Stop(StopStatus.Stopped);
+                tsp = new TimeSpanPlus(value);
             }
         }
         public bool Running
@@ -36,6 +49,13 @@ namespace ExtendCSharp
         public delegate void CountDownStopHandler(CountDown sender, StopStatus s);
         public event CountDownStopHandler Stopped;
 
+
+        public CountDown()
+        {
+            tsp = new TimeSpanPlus();
+            this.Interval = 1000;
+            InitTimer();
+        }
 
         public CountDown(int Interval=1000)
         {
@@ -80,6 +100,7 @@ namespace ExtendCSharp
         {
             Stop(StopStatus.Stopped);
             tsp = new TimeSpanPlus(TimeSpan);
+           
         }
         public void SetTime(TimeSpan TimeSpan)
         {
@@ -138,14 +159,15 @@ namespace ExtendCSharp
 
         }
 
-        public void Dispose()
+        protected override void Dispose(bool disposing)
         {
             Stop(StopStatus.Stopped);
             t.Dispose();
+            base.Dispose(disposing);
+
         }
 
 
-        
     }
     public enum StopStatus
     {

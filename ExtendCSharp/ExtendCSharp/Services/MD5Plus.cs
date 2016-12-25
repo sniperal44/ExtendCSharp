@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ExtendCSharp
+namespace Services.ExtendCSharp
 {
     public class MD5Plus:IDisposable
     {

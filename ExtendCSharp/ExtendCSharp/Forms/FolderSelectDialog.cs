@@ -7,7 +7,7 @@ using System.Windows.Forms;
 // a vista-style dialog.
 // ------------------------------------------------------------------
 
-namespace ExtendCSharp
+namespace ExtendCSharp.Forms
 {
     /// <summary>
     /// Racchiude un System.Windows.Forms.OpenFileDialog per farlo visualizzare come

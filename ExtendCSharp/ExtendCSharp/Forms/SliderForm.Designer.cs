@@ -1,4 +1,4 @@
-﻿namespace ExtendCSharp
+﻿namespace ExtendCSharp.Forms
 {
     partial class SliderForm
     {
@@ -104,7 +104,7 @@
 
         #endregion
         private System.Windows.Forms.Panel Panel_Container;
-        
+
         public System.Windows.Forms.Button button_right;
         public System.Windows.Forms.Button button_left;
         public System.Windows.Forms.Button button_top;

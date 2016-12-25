@@ -71,17 +71,17 @@
     <Compile Include="FullPrecisionNumber.cs" />
     <Compile Include="Interfaces\ICloneablePlus.cs" />
     <Compile Include="ListPlus.cs" />
-    <Compile Include="LogUtill\LogForm.cs">
+    <Compile Include="Log\LogForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="LogUtill\LogForm.Designer.cs">
+    <Compile Include="Log\LogForm.Designer.cs">
       <DependentUpon>LogForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="MD5Plus.cs" />
-    <Compile Include="NumericUpDownPlus.cs">
+    <Compile Include="Services\MD5Plus.cs" />
+    <Compile Include="Controls\NumericUpDownPlus.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Process.cs" />
+    <Compile Include="Services\ProcessPlus.cs" />
     <Compile Include="Services\FFmpeg.cs" />
     <Compile Include="Services\Hook.cs" />
     <Compile Include="Services\MouseKeyboardService.cs" />
@@ -89,56 +89,58 @@
     <Compile Include="Services\RegisteredFileType.cs" />
     <Compile Include="Services\SystemService.cs" />
     <Compile Include="Services\Zip.cs" />
-    <Compile Include="SliderForm.cs">
+    <Compile Include="Forms\SliderForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SliderForm.Designer.cs">
+    <Compile Include="Forms\SliderForm.Designer.cs">
       <DependentUpon>SliderForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="SliderNode.cs" />
-    <Compile Include="SliderPanel.cs">
+    <Compile Include="Controls\SliderNode.cs" />
+    <Compile Include="Controls\SliderPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="TextBoxPlus.cs">
+    <Compile Include="Controls\TextBoxPlus.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ButtonPlus.cs">
+    <Compile Include="Controls\ButtonPlus.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="CountDown.cs" />
+    <Compile Include="Controls\CountDown.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Extension.cs" />
-    <Compile Include="FolderSelectDialog.cs" />
+    <Compile Include="Forms\FolderSelectDialog.cs" />
     <Compile Include="Services\Json.cs" />
-    <Compile Include="MySQLext.cs" />
+    <Compile Include="Services\MySQLext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="TimerPlus.cs">
+    <Compile Include="Controls\TimerPlus.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="TimeSpanPlus.cs" />
-    <Compile Include="ToolStripMenuItemPlus.cs">
+    <Compile Include="Controls\ToolStripMenuItemPlus.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="WebBrowserPlus.cs">
+    <Compile Include="Controls\WebBrowserPlus.cs">
       <SubType>Component</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="LogUtill\LogForm.resx">
+    <EmbeddedResource Include="Log\LogForm.resx">
       <DependentUpon>LogForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="SliderForm.resx">
+    <EmbeddedResource Include="Forms\SliderForm.resx">
       <DependentUpon>SliderForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SliderPanel.resx">
+    <EmbeddedResource Include="Controls\SliderPanel.resx">
       <DependentUpon>SliderPanel.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
@@ -146,6 +148,7 @@
     <None Include="CsQuery.dll" />
     <None Include="README.md" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

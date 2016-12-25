@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ExtendCSharp;
 
-namespace ExtendCSharp.LogUtill
+namespace ExtendCSharp.Log
 {
    
     public partial class LogForm : Form
@@ -21,7 +21,7 @@ namespace ExtendCSharp.LogUtill
         }
         public void SetText(String s)
         {
-            textBoxPlus1.SetText(s);
+            textBoxPlus1.Text=s;
         }
         public void AppendText(String s)
         {
@@ -30,7 +30,7 @@ namespace ExtendCSharp.LogUtill
 
         private void button1_Click(object sender, EventArgs e)
         {
-            textBoxPlus1.SetText("");
+            textBoxPlus1.Text = "";
         }
 
         private void textBoxPlus1_KeyDown(object sender, KeyEventArgs e)

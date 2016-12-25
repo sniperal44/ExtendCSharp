@@ -5,10 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ExtendCSharp
+namespace ExtendCSharp.Controls
 {
     public class ToolStripMenuItemPlus: ToolStripMenuItem
     {
+        public ToolStripMenuItemPlus()
+        {
+            TextObject = "";
+        }
         public ToolStripMenuItemPlus(object o)
         {
             TextObject = o;

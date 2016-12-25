@@ -1,4 +1,5 @@
 ﻿using ExtendCSharp.Interfaces;
+using ExtendCSharp.Service;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -52,7 +53,7 @@ namespace ExtendCSharp.Services
         {
             if (!SystemService.FileExist(pathMetaflac))
                 return false;
-            MyProcess p = new MyProcess(pathMetaflac);
+            ProcessPlus p = new ProcessPlus(pathMetaflac);
             bool valid = false;
             p.OnNewLine += (string line) => {
                 if (line == null)
@@ -79,7 +80,7 @@ namespace ExtendCSharp.Services
         {
             if (!SystemService.FileExist(Path))
                 return false;
-            MyProcess p = new MyProcess(Path);
+            ProcessPlus p = new ProcessPlus(Path);
             bool valid = false;
             p.OnNewLine += (string line) => {
                 if (line == null)
@@ -134,7 +135,7 @@ namespace ExtendCSharp.Services
                     {
                         OnStatusChanged(FFmpegStatus.Running, Input, Output);
                     }
-                    MyProcess p = new MyProcess(_PathFFmpeg, "-i \"" + Input + "\" -map 0:1? -c copy " + JpgNameTemp+" -y");
+                    ProcessPlus p = new ProcessPlus(_PathFFmpeg, "-i \"" + Input + "\" -map 0:1? -c copy " + JpgNameTemp+" -y");
                     p.UseShellExecute = false;
                     p.RedirectStandardOutput = false;
                     p.RedirectStandardError = false;
@@ -150,7 +151,7 @@ namespace ExtendCSharp.Services
 
 
 
-                    p = new MyProcess(_PathFFmpeg, "-i \"" + Input + "\" -map 0:0 -c:a:0 flac -map_metadata 0 -id3v2_version 3  -ar " + ConversionParameters.SamplingRate.ToStringReplace("_", "") + " \"" + Output + "\"");
+                    p = new ProcessPlus(_PathFFmpeg, "-i \"" + Input + "\" -map 0:0 -c:a:0 flac -map_metadata 0 -id3v2_version 3  -ar " + ConversionParameters.SamplingRate.ToStringReplace("_", "") + " \"" + Output + "\"");
 
 
 
@@ -221,7 +222,7 @@ namespace ExtendCSharp.Services
 
                     if (SystemService.FileExist(JpgNameTemp))
                     {
-                        p = new MyProcess(_PathMetaflac, "--import-picture-from=\"" + JpgNameTemp + "\" \"" + Output+"\"");
+                        p = new ProcessPlus(_PathMetaflac, "--import-picture-from=\"" + JpgNameTemp + "\" \"" + Output+"\"");
                         p.UseShellExecute = false;
                         p.RedirectStandardOutput = false;
                         p.RedirectStandardError = false;
@@ -309,7 +310,7 @@ namespace ExtendCSharp.Services
                
 
 
-                MyProcess p = new MyProcess(_PathFFmpeg, "-i \"" + Input + "\" -map 0:0 -map 0:1? -c:a:0 libmp3lame  -ab "+ ConversionParameters.BitRateMp3 + "k -ar "+ConversionParameters.SamplingRate.ToStringReplace("_","")+" -map_metadata 0 -id3v2_version 3   -c:v copy \"" + Output + "\"");
+                ProcessPlus p = new ProcessPlus(_PathFFmpeg, "-i \"" + Input + "\" -map 0:0 -map 0:1? -c:a:0 libmp3lame  -ab "+ ConversionParameters.BitRateMp3 + "k -ar "+ConversionParameters.SamplingRate.ToStringReplace("_","")+" -map_metadata 0 -id3v2_version 3   -c:v copy \"" + Output + "\"");
                 if (OnStatusChanged != null)
                 {
                     p.OnStatusChanged += (ProcessStatus s) => {
@@ -600,7 +601,7 @@ namespace ExtendCSharp.Services
 
             if (CheckValidInput(Input))
             {
-                MyProcess p = new MyProcess(_PathFFmpeg, "-i \"" + Input + "\"");
+                ProcessPlus p = new ProcessPlus(_PathFFmpeg, "-i \"" + Input + "\"");
                 FFmpegMetadata temp = new FFmpegMetadata();
 
                 p.OnNewLine += (string line) =>

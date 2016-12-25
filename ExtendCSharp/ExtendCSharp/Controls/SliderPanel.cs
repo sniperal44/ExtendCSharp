@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ExtendCSharp.Forms;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ExtendCSharp
+namespace ExtendCSharp.Controls
 {
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<SliderPanel, UserControl>))]
     public abstract class SliderPanel:UserControl

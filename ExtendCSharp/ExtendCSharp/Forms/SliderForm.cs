@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ExtendCSharp.Controls;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -9,7 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ExtendCSharp
+namespace ExtendCSharp.Forms
 {
     public partial class SliderForm : Form
     {

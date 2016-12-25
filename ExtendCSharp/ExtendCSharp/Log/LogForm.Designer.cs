@@ -1,4 +1,6 @@
-﻿namespace ExtendCSharp.LogUtill
+﻿using ExtendCSharp.Controls;
+
+namespace ExtendCSharp.Log
 {
     partial class LogForm
     {
@@ -28,7 +30,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.textBoxPlus1 = new ExtendCSharp.TextBoxPlus();
+            this.textBoxPlus1 = new TextBoxPlus();
             this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
@@ -74,7 +76,7 @@
 
         #endregion
 
-        private ExtendCSharp.TextBoxPlus textBoxPlus1;
+        private TextBoxPlus textBoxPlus1;
         private System.Windows.Forms.Button button1;
     }
 }

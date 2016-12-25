@@ -22,14 +22,14 @@ Esempio utilizzo Funzioni MySQL
 
   foreach(object[] o in res)
   {
-      textBox1.Text += o[0]._Cast<int>()+" - " + o[1]._Cast<String>()+" - " + o[2]._Cast<DateTime>().ToString();
-     textBox1.Text += "\r\n";
+      textBoxPlus1.Text += o[0]._Cast<int>()+" - " + o[1]._Cast<String>()+" - " + o[2]._Cast<DateTime>().ToString();
+     textBoxPlus1.Text += "\r\n";
   }
 
 
 
 
-  textBox1.Text += "\r\n\r\n\r\n\r\n\r\n";
+  textBoxPlus1.Text += "\r\n\r\n\r\n\r\n\r\n";
 
 
 
@@ -49,13 +49,13 @@ Esempio utilizzo Funzioni MySQL
       {
           foreach (KeyValuePair<String, object> oo in o)
           {
-              textBox1.Text += oo.Key + " - ";
+              textBoxPlus1.Text += oo.Key + " - ";
           }
-          textBox1.Text += "\r\n";
+          textBoxPlus1.Text += "\r\n";
           prima = false;
       }
-      textBox1.Text += o["ID"]._Cast<int>() + " - " + o["Nome"]._Cast<String>() + " - " + o["Data di Nascita"]._Cast<DateTime>().ToString();
-      textBox1.Text += "\r\n";
+      textBoxPlus1.Text += o["ID"]._Cast<int>() + " - " + o["Nome"]._Cast<String>() + " - " + o["Data di Nascita"]._Cast<DateTime>().ToString();
+      textBoxPlus1.Text += "\r\n";
   }
 
 

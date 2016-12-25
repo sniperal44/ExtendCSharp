@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ExtendCSharp
+namespace ExtendCSharp.Service
 {
-    public class MyProcess
+    public class ProcessPlus
     {
 	
         public ProcessStatus _Status;
@@ -37,7 +37,7 @@ namespace ExtendCSharp
 
 
 
-        public MyProcess(String Command, String Params = "")
+        public ProcessPlus(String Command, String Params = "")
         {
             _Command = Command;
             _Params = Params;

@@ -8,6 +8,10 @@ namespace ExtendCSharp
 {
     public class TimeSpanPlus
     {
+        public static implicit operator TimeSpanPlus(TimeSpan v) { return new TimeSpanPlus(v); }
+
+
+
         private int _millisec, _sec, _min, _hour, _day;
         public TimeSpan Time
         {
