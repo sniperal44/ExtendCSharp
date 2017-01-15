@@ -66,10 +66,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\LabelPlus.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\PictureBoxPlus.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ExtendedClass\ObjectPlus.cs" />
     <Compile Include="FileSystemPlus.cs" />
     <Compile Include="FullPrecisionNumber.cs" />
     <Compile Include="Interfaces\ICloneablePlus.cs" />
+    <Compile Include="Interfaces\IUpdater.cs" />
     <Compile Include="ListPlus.cs" />
     <Compile Include="Log\LogForm.cs">
       <SubType>Form</SubType>

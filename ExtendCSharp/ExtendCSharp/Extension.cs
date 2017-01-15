@@ -1,4 +1,5 @@
 ﻿using CsQuery;
+using ExtendCSharp.Controls;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections;
@@ -310,7 +311,7 @@ namespace ExtendCSharp
         }
 
 
-        public static List<Control> GetControl(this Control Control, bool TuttiILivelli)
+        public static List<Control> GetSubControls(this Control Control, bool TuttiILivelli)
         {
             List<Control> temp = new List<Control>();
 
@@ -318,7 +319,7 @@ namespace ExtendCSharp
             {
                 foreach (Control cont in Control.Controls)
                 {
-                    temp.AddRange(GetControl(cont, true));
+                    temp.AddRange(GetSubControls(cont, true));
                     temp.Add(cont);
                 }
                 return temp;
@@ -329,6 +330,13 @@ namespace ExtendCSharp
                     temp.Add(cont);
                 return temp;
             }
+        }
+
+
+        public static void RemoveFromParent(this Control self)
+        {
+            if (self.Parent != null)
+                self.Parent.Controls.Remove(self);
         }
 
         #endregion
@@ -1119,8 +1127,48 @@ namespace ExtendCSharp
             g.FillEllipse(brush, centerX - radius, centerY - radius,radius + radius, radius + radius);
         }
 
+        /// <summary>
+        /// Permette di disegnare una PictureBoxPlus in base alle proprie cordinate/dimensioni
+        /// </summary>
+        /// <param name="g">Graphics</param>
+        /// <param name="pictureBox">PictureBoxPlus da disegnare</param>
+        public static void DrawPictureBoxPlus(this Graphics g, PictureBoxPlus pictureBox, bool trasparentBackground=true)
+        {
+            g.DrawPictureBoxPlus(pictureBox, pictureBox.X, pictureBox.Y, false, trasparentBackground);
+        }
 
-       
+        /// <summary>
+        /// Permette di disegnare una PictureBoxPlus nelle cordinate fornite
+        /// </summary>
+        /// <param name="g"></param>
+        /// <param name="pictureBox"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="Center">Serve per definire se le cordinate si riferiscono al centro della picture box</param>
+        public static void DrawPictureBoxPlus(this Graphics g, PictureBoxPlus pictureBox, int x, int y,bool Center= false,bool trasparentBackground= true)
+        {
+            if (pictureBox == null)
+                return;
+
+            if ( Center)
+            {
+                x -= pictureBox.Width / 2;
+                y -= pictureBox.Height / 2;
+            }
+            if (trasparentBackground)
+            {
+                //pictureBox.DrawOverGraphics(g, x, y);
+                g.DrawImage((Image)pictureBox.Foreground, x, y, pictureBox.Foreground.Width, pictureBox.Foreground.Height);
+            }
+            else
+            {
+                g.DrawImage((Image)pictureBox.UnitedBitmap, x, y, pictureBox.UnitedBitmap.Width, pictureBox.UnitedBitmap.Height);
+            }
+
+            
+
+        }
+
 
         /* public static void DrawImageInvoke(this Graphics g, Image image, int x, int y, int width,int height)
          {
@@ -1428,7 +1476,24 @@ namespace ExtendCSharp
 
 
         #endregion
-        #region DEMO
+
+
+        //TODO: implementare gli altri ToPlus
+        #region ToPlus
+
+        public static PictureBoxPlus ToPlus(this PictureBox self)
+        {
+            PictureBoxPlus temp = new PictureBoxPlus();
+            temp._disableBitmapCreation = true;
+            temp.Bounds = self.Bounds;
+            temp.Size = self.Size;
+            temp.BackgroundImageLayout = self.BackgroundImageLayout;
+            temp.SizeMode = self.SizeMode;
+            temp._disableBitmapCreation = false;
+            temp.BackgroundImage = self.BackgroundImage;
+            temp.Image = self.Image;
+            return temp;
+        }
 
         #endregion
     }

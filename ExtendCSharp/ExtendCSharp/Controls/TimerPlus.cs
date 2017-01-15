@@ -98,6 +98,7 @@ namespace ExtendCSharp.Controls
 
         public void Ciclo()
         {
+
             while(_Status==TimerPlusStatus.Running || _Status==TimerPlusStatus.Paused)
             {
                 while (_Pause)
@@ -105,7 +106,9 @@ namespace ExtendCSharp.Controls
                 if (OnTick != null)
                 {
                     if (OnTick.Target is Control)
+                    {
                         (OnTick.Target as Control).Invoke(OnTick);
+                    }
                     else
                         OnTick();
                 }
