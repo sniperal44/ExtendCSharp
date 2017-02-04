@@ -75,6 +75,7 @@
     <Compile Include="Controls\ProgessBarPlus.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\SaveFileDialogPlus.cs" />
     <Compile Include="ExtendedClass\ObjectPlus.cs" />
     <Compile Include="ExtendedClass\ThreadPlus.cs" />
     <Compile Include="FileSystemPlus.cs" />

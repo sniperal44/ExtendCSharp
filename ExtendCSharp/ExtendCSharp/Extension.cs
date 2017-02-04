@@ -206,7 +206,7 @@ namespace ExtendCSharp
                         repeat = true;
                     } 
             }
-            while (repeat == true && str.Length > 1);
+            while (repeat == true && s.Length > 1);
             return st;
         }
 
@@ -237,7 +237,7 @@ namespace ExtendCSharp
         {
             String t = s;
             while(t.EndsWith(c))
-                t.RemoveRight(c);
+                t=t.RemoveRight(c);
   
             return t + c;
         }

@@ -140,5 +140,10 @@ namespace ExtendCSharp.ExtendedClass
             }
         }
 
+
+        public void SetApartmentState(ApartmentState state)
+        {
+            t.SetApartmentState(state);
+        }
     }
 }

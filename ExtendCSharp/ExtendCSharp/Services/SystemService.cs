@@ -75,8 +75,29 @@ namespace ExtendCSharp.Services
         }
 
 
-        
-
+        /// <summary>
+        /// Ritorna la directory corrente della cartella ( se viene passata una cartella, ritorna la cartella stessa ) 
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static String GetDirectoryName(String s)
+        {
+            if( FileExist(s))
+            {
+                return GetParent(s);
+            }
+            else if (DirectoryExist(s))
+            {
+                return s;
+            }
+            else
+            {
+                if(GetExtension(s)=="")//cartella
+                    return s;
+                else
+                    return GetParent(s);
+            }
+        }
 
 
 
@@ -241,6 +262,35 @@ namespace ExtendCSharp.Services
         }
 
 
+        /// <summary>
+        /// Permette di cancellare in maniera sicura un file o cartella ritornando l'esito dell'operazione
+        /// </summary>
+        /// <param name="Path"></param>
+        public static bool DeleteSecure(String Path)
+        { 
+            if (FileExist(Path))
+            {
+                try
+                {
+                    File.Delete(Path);
+                }
+                catch (Exception e) { }
+
+                return !FileExist(Path);
+            }
+            else if(DirectoryExist(Path))
+            {
+                try
+                {
+                    Directory.Delete(Path);
+                }
+                catch (Exception e){}
+
+                return !DirectoryExist(Path);
+            }
+
+            return true;
+        }
 
 
         public static bool FileExist(String Path)
