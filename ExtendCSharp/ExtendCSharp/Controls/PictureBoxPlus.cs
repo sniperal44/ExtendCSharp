@@ -308,10 +308,25 @@ namespace ExtendCSharp.Controls
         {
             ListaAnimazioni.Add(b);
         }
+        public void AddAnimazioneFromGif(Image gif)
+        {
+            FrameDimension dim = new FrameDimension(gif.FrameDimensionsList[0]);
+            int frames = gif.GetFrameCount(dim);
+
+            for (int i = 0; i < frames; i++)
+            {
+                gif.SelectActiveFrame(dim, i);
+                Bitmap t = new Bitmap(gif.Width, gif.Height);
+                Graphics.FromImage(t).DrawImage(gif,0,0);
+                ListaAnimazioni.Add(t);
+            }
+
+        }
+
+
 
         public void NextAnimazione()
         {
-
             if (ListaAnimazioni.Count == 0)
                 return;
 
@@ -321,6 +336,8 @@ namespace ExtendCSharp.Controls
 
             Image = ListaAnimazioni[Current];
         }
+
+
         public void SettaAnimazione(int i)
         {
             if (i > ListaAnimazioni.Count)

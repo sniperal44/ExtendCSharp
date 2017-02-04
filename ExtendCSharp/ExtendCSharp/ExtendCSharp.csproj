@@ -72,10 +72,16 @@
     <Compile Include="Controls\PictureBoxPlus.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\ProgessBarPlus.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ExtendedClass\ObjectPlus.cs" />
+    <Compile Include="ExtendedClass\ThreadPlus.cs" />
     <Compile Include="FileSystemPlus.cs" />
     <Compile Include="FullPrecisionNumber.cs" />
+    <Compile Include="Interfaces\IBinarySerializer.cs" />
     <Compile Include="Interfaces\ICloneablePlus.cs" />
+    <Compile Include="Interfaces\ISerializer.cs" />
     <Compile Include="Interfaces\IUpdater.cs" />
     <Compile Include="ListPlus.cs" />
     <Compile Include="Log\LogForm.cs">
@@ -84,6 +90,7 @@
     <Compile Include="Log\LogForm.Designer.cs">
       <DependentUpon>LogForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Services\FormService.cs" />
     <Compile Include="Services\MD5Plus.cs" />
     <Compile Include="Controls\NumericUpDownPlus.cs">
       <SubType>Component</SubType>

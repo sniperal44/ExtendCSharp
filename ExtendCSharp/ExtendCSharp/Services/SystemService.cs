@@ -42,9 +42,9 @@ namespace ExtendCSharp.Services
             return Directory.GetParent(s).FullName;
         }
 
-        public static String[] GetDirectories(String s)
+        public static String[] GetDirectories(String path)
         {
-            return Directory.GetDirectories(s);
+            return Directory.GetDirectories(path);
         }
 
         /// <summary>
@@ -75,6 +75,10 @@ namespace ExtendCSharp.Services
         }
 
 
+        
+
+
+
 
         public static String ChangeExtension(String Path,String Ext)
         {
@@ -85,9 +89,81 @@ namespace ExtendCSharp.Services
         }
 
         public static String CombinePaths(params string[] paths)
-        {
-            return Path.Combine(paths);
+        { 
+            String p= Path.Combine(paths);
+            if (p.EndsWith(":"))
+                p += "\\";
+            return p;
         }
+        /// <summary>
+        /// Restituisce un path relativo partendo dalla AbsolutePath sulla base di BasePath
+        /// </summary>
+        /// <param name="AbsolutePath"></param>
+        /// <param name="BasePath"></param>
+        /// <returns></returns>
+        public static String RelativePathFromBase(String AbsolutePath, String BasePath)
+        {
+            String[] abs = AbsolutePath.Split('\\', '/');
+            String[] bas = BasePath.Split('\\', '/');
+
+            int max = Math.Min(abs.Length, bas.Length);
+
+            int i = 0;
+            while(i< max)
+            {
+                if(abs[i].ToUpperInvariant()!=bas[i].ToUpperInvariant())
+                {
+                    break;
+                }
+                i++;
+            }
+            String[] Rel = abs.SubArray(i);
+            return CombinePaths(Rel);
+            
+        }
+
+
+
+        public static String GetCommonPath(string path1, string path2)
+        {
+            String p1 = GetFullPath(path1).ToUpperInvariant();
+            String p2 = GetFullPath(path2).ToUpperInvariant();
+
+            string[] a1 = p1.Split('\\', '/');
+            string[] a2 = p2.Split('\\', '/');
+
+            int n = a1.Length < a2.Length ? a1.Length : a2.Length;
+            int i = 0;
+            String FinalPath = "";
+            for(;i<n;i++)
+            {
+                if(a1[i]==a2[i])
+                    FinalPath=CombinePaths(FinalPath, a1[i]);
+                else
+                    break;
+            }
+            return FinalPath;
+        }
+        public static String GetCommonPath(params string[] paths)
+        {
+            if (paths.Length == 0)
+                return null;
+            else if (paths.Length == 1)
+                return paths[0];
+            else
+            { 
+                String Common= GetCommonPath(paths[0], paths[1]);
+                for (int i=2;i<paths.Length;i++)
+                {
+                    Common = GetCommonPath(Common, paths[i]);
+                }
+                return Common;
+            }
+
+        }
+
+
+
 
         public static bool CopySecure(String Source,String Dest, bool Override=true,CopyProgressChangedDelegate OnProgressChanged =null, CopyCompleteDelegate OnComplete=null)
         {
@@ -166,6 +242,7 @@ namespace ExtendCSharp.Services
 
 
 
+
         public static bool FileExist(String Path)
         {
             return File.Exists(Path);
@@ -184,36 +261,28 @@ namespace ExtendCSharp.Services
             return FileExist(Path) || DirectoryExist(Path);
         }
 
+
+
+
+        public static bool DirectoryIsEmpty(string path)
+        {
+            return !Directory.EnumerateFileSystemEntries(path).Any();
+        }
         public static long FileSize(String Path)
         {
             return new FileInfo(Path).Length;
         }
 
 
-
-
-        /*/// <summary>
-        /// DEPRECATO!!!
-        /// </summary>
-        /// <param name="Path"></param>
-        /// <returns></returns>
-        public static String GetMD5(String Path)
+        public static DriveInfo GetDriveInfo(String path)
         {
-            try
-            {
-                using (var md5 = MD5.Create())
-                {
-                    using (var stream = File.OpenRead(Path))
-                    {
-                        return md5.ComputeHash(stream).ToHexString(true);  
-                    }
-                }
-            }
-            catch(Exception)
-            {
-                return "";
-            }
-        }*/
+            return new DriveInfo(Path.GetPathRoot(path));
+        }
+
+
+
+
+
         public static String GetMD5(String Path, MD5BlockTransformEventHandler OnMD5BlockTransform, MD5ComputeHashFinishEventHandler OnMD5ComputeHashFinish,bool Async=true)
         {
             try

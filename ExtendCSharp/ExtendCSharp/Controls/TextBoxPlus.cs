@@ -9,6 +9,16 @@ namespace ExtendCSharp.Controls
 {
     public class TextBoxPlus : TextBoxPlus<String>
     {      
+        public TextBoxPlus():base()
+        {
+            KeyDownPlus -= EnterSendChecker;
+            KeyDownPlus += EnterSendCheckerDefault;
+
+            
+        }
+
+
+
         public override string Text
         {
             get
@@ -20,6 +30,26 @@ namespace ExtendCSharp.Controls
                 TextObject = value;
             }
         }
+        private void EnterSendCheckerDefault(TextBoxPlus<String> sender, KeyEventArgs e)
+        {
+            if (e.KeyData == Keys.Enter)
+            {
+                bool Suppress = false;
+                OnEnterSend?.Invoke(this, e, ref Suppress);
+                if (Suppress)
+                {
+                    e.SuppressKeyPress = true;
+                    e.Handled = true;
+                }
+            }
+        }
+
+
+        public delegate void EnterSendEventHandlerDefault(TextBoxPlus sender, KeyEventArgs e, ref bool Suppress);
+        public new event EnterSendEventHandlerDefault OnEnterSend;
+
+
+
     }
     public class TextBoxPlus<T> : TextBox
     {
@@ -30,37 +60,22 @@ namespace ExtendCSharp.Controls
                 KeyDownPlus?.Invoke(this, e);
             };
             KeyDownPlus += Ctrl_A_Checker;
-
+            KeyDownPlus += EnterSendChecker;
         }
         public bool AutoScroll { get; set; } = false;
 
-        private bool _EnterSend = false;
-        public bool EnterSend
-        {
-            get
-            {
-                return _EnterSend;
-            }
-            set
-            {
-                _EnterSend = value;
-                if (value)
-                    KeyDownPlus += EnterSendChecker;
-                else
-                    KeyDownPlus -= EnterSendChecker;
-            }
-        }
 
-
-
-
-        private void EnterSendChecker(TextBoxPlus<T> sender, KeyEventArgs e)
+        protected void EnterSendChecker(TextBoxPlus<T> sender, KeyEventArgs e)
         {
             if(e.KeyData==Keys.Enter)
             {
-                e.SuppressKeyPress = true;
-                e.Handled = true;
-                OnEnterSend(this);
+                bool Suppress = false;
+                OnEnterSend?.Invoke(this,e,ref Suppress);
+                if (Suppress)
+                {
+                    e.SuppressKeyPress = true;
+                    e.Handled = true;
+                }
             }
         }
 
@@ -138,7 +153,11 @@ namespace ExtendCSharp.Controls
         public delegate void KeyPlusEventHandler(TextBoxPlus<T> sender, KeyEventArgs e);
         public event KeyPlusEventHandler KeyDownPlus;
 
-        public delegate void EnterSendEventHandler(TextBoxPlus<T> sender);
+        /// <summary>
+        /// Evento generato quando viene premuto in tasto Enter
+        /// </summary>
+        /// <param name="sender"></param>
+        public delegate void EnterSendEventHandler(TextBoxPlus<T> sender, KeyEventArgs e, ref bool Suppress);
         public event EnterSendEventHandler OnEnterSend;
 
     }

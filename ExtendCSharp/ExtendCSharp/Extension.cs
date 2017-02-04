@@ -46,6 +46,27 @@ namespace ExtendCSharp
             return Number.ToString(upperCase ? "X2" : "x2");
         }
 
+        public static byte[] ToByteArray(this int n)
+        {
+            return BitConverter.GetBytes(n);
+        }
+        public static byte[] ToByteArray(this long n)
+        {
+            return BitConverter.GetBytes(n);
+        }
+        public static byte[] ToByteArray(this double n)
+        {
+            return BitConverter.GetBytes(n);
+        }
+        public static byte[] ToByteArray(this float n)
+        {
+            return BitConverter.GetBytes(n);
+        }
+        public static byte[] ToByteArrayASCII(this String n)
+        {
+            return Encoding.ASCII.GetBytes(n);
+        }
+        
 
         #endregion
 
@@ -206,11 +227,27 @@ namespace ExtendCSharp
         }
 
 
+        /// <summary>
+        /// permette di andare a rimuovere tutte le ripetizioni di una determinata sequeza di carattere alla fine di una stringa e di aggiungerla una volta sola
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public static String OneStringEnd(this String s, String c)
+        {
+            String t = s;
+            while(t.EndsWith(c))
+                t.RemoveRight(c);
+  
+            return t + c;
+        }
         public static String OneCharEnd(this String s,char c)
         {
             s.TrimEnd(c);
             return s + c;
         }
+
+
         public static String OneCharStart(this String s, char c)
         {
             s.TrimStart(c);
@@ -240,7 +277,10 @@ namespace ExtendCSharp
             return result.ToString();
 
         }
-
+        public static String ToASCIIString(this byte[] s)
+        {
+            return Encoding.ASCII.GetString(s);
+        }
         #endregion
 
         #region Control
@@ -463,7 +503,7 @@ namespace ExtendCSharp
             }
 
         }
-
+        
 
 
         public static void RemoveSelectedItemsInvoke(this ListBox self)
@@ -1273,7 +1313,26 @@ namespace ExtendCSharp
 
         #endregion
 
+        #region Array
 
+        public static T[] SubArray<T>(this T[] data, int index, int length)
+        {
+            T[] result = new T[length];
+            Array.Copy(data, index, result, 0, length);
+            return result;
+        }
+        public static T[] SubArray<T>(this T[] data, int index)
+        {
+            int length = data.Count() - index;
+            if (length == 0)
+                return null;
+
+            T[] result = new T[length];
+            Array.Copy(data, index, result, 0, length);
+            return result;
+        }
+
+        #endregion
 
         #region Bitmap
 
@@ -1460,7 +1519,13 @@ namespace ExtendCSharp
 
         #endregion
 
-
+        #region BinaryReader
+        public static bool EOF(this BinaryReader binaryReader)
+        {
+            var bs = binaryReader.BaseStream;
+            return (bs.Position == bs.Length);
+        }
+        #endregion
 
         #region StaticMethod
 
