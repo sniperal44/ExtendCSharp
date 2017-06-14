@@ -1,4 +1,5 @@
 ﻿using ExtendCSharp.ExtendedClass;
+using ExtendCSharp.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,11 +9,11 @@ using System.Windows.Forms;
 
 namespace ExtendCSharp.Services
 {
-    public class FormService
+    public class FormService : IService
     {
-        static Dictionary<Form, ThreadPlus> ListThread = new Dictionary<Form, ThreadPlus>();
+        Dictionary<Form, ThreadPlus> ListThread = new Dictionary<Form, ThreadPlus>();
 
-        public static void StartFormThread(Func<Form> FunzioneCreazione)
+        public void StartFormThread(Func<Form> FunzioneCreazione)
         {
             ThreadPlus t = new ThreadPlus((object CurrentThread) =>
             {
@@ -24,7 +25,7 @@ namespace ExtendCSharp.Services
             t.Start(t);
 
         }
-        public static void StopThread(Form f)
+        public void StopThread(Form f)
         {
             if(ListThread.ContainsKey(f))
             {

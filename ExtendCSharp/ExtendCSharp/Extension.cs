@@ -1,9 +1,11 @@
 ﻿using CsQuery;
 using ExtendCSharp.Controls;
+using ExtendCSharp.Services;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -460,6 +462,29 @@ namespace ExtendCSharp
 
         #endregion
 
+        #region ComboBox
+
+        public static void FillWithEnum<T>(this ComboBox comboBox) where T : struct
+        {
+            Type type = typeof(T);
+            if (!type.IsEnum)
+            {
+                throw new ArgumentException("T deve essere un Enum", "enumerationValue");
+            }
+
+            EnumService es = ServicesManager.GetOrSet(()=> { return new EnumService(); });
+
+
+            comboBox.DataSource = new BindingSource(es.GetIEnumerable<T>(), null);
+
+            comboBox.ValueMember = "Item1";     //in Item1 c'è il value
+            comboBox.DisplayMember = "Item2"; //in Item2 c'è la stringa
+
+        }
+
+
+        #endregion
+
         #region IList
 
         //ListBox.ObjectCollection
@@ -674,6 +699,20 @@ namespace ExtendCSharp
         }
 
 
+
+        #endregion
+
+        #region Dictionary<>
+
+        public static Dictionary<TKey, TValue> Clone<TKey, TValue>(this Dictionary<TKey, TValue> original) where TValue : ICloneable
+        {
+            Dictionary<TKey, TValue> ret = new Dictionary<TKey, TValue>(original.Count, original.Comparer);
+            foreach (KeyValuePair<TKey, TValue> entry in original)
+            {
+                ret.Add(entry.Key, (TValue)entry.Value.Clone());
+            }
+            return ret;
+        }
 
         #endregion
 
@@ -1140,8 +1179,39 @@ namespace ExtendCSharp
             return e is T;
         }
 
-   
-       
+        /// <summary>
+        /// Utilizzo la notazione [Description("Nome da visualizzare")] sulla enum per specificare un testo
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="enumerationValue"></param>
+        /// <returns></returns>
+        public static string ToStringEnum<T>(this T enumerationValue) where T : struct
+        {
+            Type type = enumerationValue.GetType();
+            if (!type.IsEnum)
+            {
+                throw new ArgumentException("EnumerationValue deve essere un Enum", "enumerationValue");
+            }
+
+            //Tries to find a DescriptionAttribute for a potential friendly name
+            //for the enum
+            MemberInfo[] memberInfo = type.GetMember(enumerationValue.ToString());
+            if (memberInfo != null && memberInfo.Length > 0)
+            {
+                object[] attrs = memberInfo[0].GetCustomAttributes(typeof(DescriptionAttribute), false);
+
+                if (attrs != null && attrs.Length > 0)
+                {
+                    //Pull out the description value
+                    return (attrs[0] as DescriptionAttribute).Description;
+                }
+            }
+            //If we have no description attribute, just return the ToString of the enum
+            return enumerationValue.ToString();
+        }
+
+
+
 
         #endregion
 

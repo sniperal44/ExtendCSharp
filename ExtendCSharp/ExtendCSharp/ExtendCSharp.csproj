@@ -22,6 +22,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,6 +32,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -41,6 +43,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CsQuery">
@@ -49,9 +52,9 @@
     <Reference Include="MySql.Data">
       <HintPath>.\MySql.Data.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+    <Reference Include="Newtonsoft.Json_45, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>.\Newtonsoft.Json_45.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -62,7 +65,6 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -76,6 +78,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\SaveFileDialogPlus.cs" />
+    <Compile Include="Exceptions\MissingServiceException.cs" />
     <Compile Include="ExtendedClass\ObjectPlus.cs" />
     <Compile Include="ExtendedClass\ThreadPlus.cs" />
     <Compile Include="FileSystemPlus.cs" />
@@ -83,7 +86,9 @@
     <Compile Include="Interfaces\IBinarySerializer.cs" />
     <Compile Include="Interfaces\ICloneablePlus.cs" />
     <Compile Include="Interfaces\ISerializer.cs" />
+    <Compile Include="Interfaces\IService.cs" />
     <Compile Include="Interfaces\IUpdater.cs" />
+    <Compile Include="Interfaces\IValid.cs" />
     <Compile Include="ListPlus.cs" />
     <Compile Include="Log\LogForm.cs">
       <SubType>Form</SubType>
@@ -91,19 +96,21 @@
     <Compile Include="Log\LogForm.Designer.cs">
       <DependentUpon>LogForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Services\FormService.cs" />
-    <Compile Include="Services\MD5Plus.cs" />
+    <Compile Include="Log\Services\EnumService.cs" />
+    <Compile Include="Log\Services\_ServicesManager.cs" />
+    <Compile Include="Log\Services\FormService.cs" />
+    <Compile Include="Log\Services\MD5Service.cs" />
     <Compile Include="Controls\NumericUpDownPlus.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Services\ProcessPlus.cs" />
-    <Compile Include="Services\FFmpeg.cs" />
-    <Compile Include="Services\Hook.cs" />
-    <Compile Include="Services\MouseKeyboardService.cs" />
-    <Compile Include="Services\ProcessMemory.cs" />
-    <Compile Include="Services\RegisteredFileType.cs" />
-    <Compile Include="Services\SystemService.cs" />
-    <Compile Include="Services\Zip.cs" />
+    <Compile Include="Log\Services\ProcessPlus.cs" />
+    <Compile Include="Log\Services\FFmpeg.cs" />
+    <Compile Include="Log\Services\Hook.cs" />
+    <Compile Include="Log\Services\MouseKeyboardService.cs" />
+    <Compile Include="Log\Services\ProcessMemory.cs" />
+    <Compile Include="Log\Services\RegisteredFileType.cs" />
+    <Compile Include="Log\Services\SystemService.cs" />
+    <Compile Include="Log\Services\ZipService.cs" />
     <Compile Include="Forms\SliderForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -125,8 +132,8 @@
     </Compile>
     <Compile Include="Extension.cs" />
     <Compile Include="Forms\FolderSelectDialog.cs" />
-    <Compile Include="Services\Json.cs" />
-    <Compile Include="Services\MySQLext.cs" />
+    <Compile Include="Log\Services\JsonService.cs" />
+    <Compile Include="Log\Services\MySQLext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

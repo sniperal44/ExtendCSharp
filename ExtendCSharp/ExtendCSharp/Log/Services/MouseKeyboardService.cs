@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ExtendCSharp.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -10,7 +11,7 @@ using static ExtendCSharp.Services.HookService;
 
 namespace ExtendCSharp.Services
 {
-    public static class MouseService
+    public class MouseService : IService
     {
         [DllImport("user32.dll")]
         private static extern void mouse_event(int dwFlags, int dx, int dy, int dwData, int dwExtraInfo);
@@ -23,7 +24,7 @@ namespace ExtendCSharp.Services
         /// <param name="Y">Cordinata Y</param>
         /// <param name="BackOldPosition">True - alla fine, re-imposta le cordinate del mouse prima del click</param>
         /// <param name="WheelDelta">Se l'evento riguarda la wheel impostare il delta dello spostamento, altrimenti lasciare 0</param>
-        public static void DoEvent(MyMouseEvent me, int X, int Y,bool BackOldPosition = true,int WheelDelta=0)
+        public void DoEvent(MyMouseEvent me, int X, int Y,bool BackOldPosition = true,int WheelDelta=0)
         {
             Point OldP = Cursor.Position;
             if (me.Event==MyMouseEvent.MouseEvent.Click)
@@ -50,11 +51,11 @@ namespace ExtendCSharp.Services
         /// <param name="position">Posizione del click</param>
         /// <param name="BackOldPosition">True - alla fine, re-imposta le cordinate del mouse prima del click</param>
         /// <param name="WheelDelta">Se l'evento riguarda la wheel impostare il delta dello spostamento, altrimenti lasciare 0</param>
-        public static void DoEvent(MyMouseEvent me, Point position, bool BackOldPosition = true, int WheelDelta = 0)
+        public void DoEvent(MyMouseEvent me, Point position, bool BackOldPosition = true, int WheelDelta = 0)
         {
             DoEvent(me, position.X, position.Y, BackOldPosition, WheelDelta);
         }
-        public static void DoEvent(MyMouseEvent me, int WheelDelta = 0)
+        public void DoEvent(MyMouseEvent me, int WheelDelta = 0)
         {
             int X = Cursor.Position.X, Y = Cursor.Position.Y;
             if (me.Event == MyMouseEvent.MouseEvent.Click)
@@ -73,7 +74,7 @@ namespace ExtendCSharp.Services
         }
 
     }
-    public static class KeyboardService
+    public class KeyboardService : IService
     {
         private const uint KEYEVENTF_EXTENDEDKEY = 0x0001; //Key down flag
 
@@ -86,28 +87,28 @@ namespace ExtendCSharp.Services
         private static extern short GetAsyncKeyState(Keys vKey);
 
 
-        public static MyKeyboardEvent GetKeyState(int vKey)
+        public MyKeyboardEvent GetKeyState(int vKey)
         {
             return new MyKeyboardEvent((GetAsyncKeyStateStatus)GetAsyncKeyState(vKey));
         }
-        public static MyKeyboardEvent GetKeyState(Keys vKey)
+        public MyKeyboardEvent GetKeyState(Keys vKey)
         {
             return new MyKeyboardEvent((GetAsyncKeyStateStatus)GetAsyncKeyState(vKey));
         }
 
 
-        public static void SendKeyEvent(MyKeyboardEvent ke, Keys k)
+        public void SendKeyEvent(MyKeyboardEvent ke, Keys k)
         {
             keybd_event((byte)k, 0x45, KEYEVENTF_EXTENDEDKEY | (uint)ke.ToSendKeyEventInternal().Value, 0);
         }
-        public static void SendKeyUpDown(Keys k)
+        public void SendKeyUpDown(Keys k)
         {
             MyKeyboardEvent ke = new MyKeyboardEvent(MyKeyboardEvent.KeyStatus.Up);
             SendKeyEvent(ke, k);
             ke.KeyStat = MyKeyboardEvent.KeyStatus.Down;
             SendKeyEvent(ke, k);
         }
-        public static void SendKeyDownUp(Keys k)
+        public void SendKeyDownUp(Keys k)
         {
             MyKeyboardEvent ke = new MyKeyboardEvent(MyKeyboardEvent.KeyStatus.Down);
             SendKeyEvent(ke, k);

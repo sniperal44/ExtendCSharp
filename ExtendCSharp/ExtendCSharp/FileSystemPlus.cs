@@ -45,10 +45,13 @@ namespace ExtendCSharp
 
         #endregion
 
+        [JsonIgnore]
+        SystemService ss = null;
+
         protected FileSystemPlus()
         {
             _Root = new FileSystemNodePlus<T>();
-            
+            ss = ServicesManager.GetOrSet(() => { return new SystemService(); });
         }
         public FileSystemPlus(String FakeRootPath)
         {
@@ -57,6 +60,8 @@ namespace ExtendCSharp
                 FakeRootPath += "\\";
             _RootRealPath = FakeRootPath;
             _Root = new FileSystemNodePlus<T>(FakeRootPath.SplitAndGetLast('\\', '/'), FileSystemNodePlusType.Directory,null);
+
+            ss = ServicesManager.GetOrSet(() => { return new SystemService(); });
         }
 
         public FileSystemPlus(String RootPath, FileSystemPlusLoadOption option = null)
@@ -71,6 +76,9 @@ namespace ExtendCSharp
             }
             else
                 throw new DirectoryNotFoundException("la cartella specificata deve essere una directory valida\r\n" + RootPath);
+
+            ss = ServicesManager.GetOrSet(() => { return new SystemService(); });
+            
         }
 
         public void Merge(FileSystemPlus<T> OtherFileSystem)
@@ -101,7 +109,7 @@ namespace ExtendCSharp
         }
         public String GetFullPath(FileSystemNodePlus<T> Nodo)
         {
-            return SystemService.CombinePaths(_RootRealPath, Nodo.GetFullPath().TrimStart('\\','/'));
+            return ss.CombinePaths(_RootRealPath, Nodo.GetFullPath().TrimStart('\\','/'));
         }
         public ListPlus<String> GetAllFileFullPath()
         {
