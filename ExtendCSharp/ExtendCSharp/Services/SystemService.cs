@@ -1,6 +1,5 @@
 ﻿using ExtendCSharp.ExtendedClass;
 using Microsoft.Win32;
-using Services.ExtendCSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ExtendCSharp.Interfaces;
+using Services.ExtendCSharp;
 
 namespace ExtendCSharp.Services
 {
@@ -82,7 +82,7 @@ namespace ExtendCSharp.Services
         /// <param name="PathEl">Elemento da analizzare ( file o cartella ) </param>
         /// <returns></returns>
 
-        public String GetDirectoryName(String s)
+        public String GetDirectoryName(String PathEl)
         {
             if( FileExist(PathEl))
             {

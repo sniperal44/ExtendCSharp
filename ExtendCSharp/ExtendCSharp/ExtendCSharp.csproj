@@ -1,5 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -91,20 +90,20 @@
     <Compile Include="Interfaces\IUpdater.cs" />
     <Compile Include="ExtendedClass\ListPlus.cs" />
     <Compile Include="Interfaces\IValid.cs" />
-    <Compile Include="ListPlus.cs" />
     <Compile Include="Log\LogForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Log\LogForm.Designer.cs">
       <DependentUpon>LogForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Log\Services\EnumService.cs" />
-    <Compile Include="Log\Services\_ServicesManager.cs" />
-    <Compile Include="Log\Services\FormService.cs" />
-    <Compile Include="Log\Services\MD5Service.cs" />
     <Compile Include="Controls\NumericUpDownPlus.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Services\EnumService.cs" />
+    <Compile Include="Services\FormService.cs" />
+    <Compile Include="Services\JsonService.cs" />
+    <Compile Include="Services\MD5Service.cs" />
+    <Compile Include="Services\MySQLext.cs" />
     <Compile Include="Services\ProcessPlus.cs" />
     <Compile Include="Services\FFmpeg.cs" />
     <Compile Include="Services\Hook.cs" />
@@ -113,7 +112,6 @@
     <Compile Include="Services\RegisteredFileType.cs" />
     <Compile Include="Services\SerialServices.cs" />
     <Compile Include="Services\SystemService.cs" />
-    <Compile Include="Services\Zip.cs" />
     <Compile Include="Forms\SliderForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -135,8 +133,6 @@
     </Compile>
     <Compile Include="Extension.cs" />
     <Compile Include="Forms\FolderSelectDialog.cs" />
-    <Compile Include="Log\Services\JsonService.cs" />
-    <Compile Include="Log\Services\MySQLext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -146,6 +142,8 @@
     <Compile Include="Controls\TimerPlus.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Services\ZipService.cs" />
+    <Compile Include="Services\_ServicesManager.cs" />
     <Compile Include="TimeSpanPlus.cs" />
     <Compile Include="Controls\ToolStripMenuItemPlus.cs">
       <SubType>Component</SubType>
