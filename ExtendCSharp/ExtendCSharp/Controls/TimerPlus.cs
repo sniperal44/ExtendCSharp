@@ -61,6 +61,10 @@ namespace ExtendCSharp.Controls
             _Interval = DefaultMillisec;
         }
 
+        /// <summary>
+        /// Crea un oggetto TimerPlus
+        /// </summary>
+        /// <param name="Millisec">Intervallo di tempo tra un Tick e l'altro espresso in millisecondi</param>
         public TimerPlus(int Millisec)
         {
             _Interval = Millisec;
@@ -107,7 +111,9 @@ namespace ExtendCSharp.Controls
                 {
                     if (OnTick.Target is Control)
                     {
-                        (OnTick.Target as Control).Invoke(OnTick);
+                        Control c = (OnTick.Target as Control);
+                        if(!c.IsDisposed && !c.Disposing)
+                           (OnTick.Target as Control).Invoke(OnTick);
                     }
                     else
                         OnTick();

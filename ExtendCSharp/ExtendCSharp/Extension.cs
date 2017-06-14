@@ -1,5 +1,6 @@
 ﻿using CsQuery;
 using ExtendCSharp.Controls;
+using ExtendCSharp.ExtendedClass;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections;
@@ -80,7 +81,10 @@ namespace ExtendCSharp
         {
             return int.Parse(d);
         }
-
+        public static long ParseLong(this String d)
+        {
+            return long.Parse(d);
+        }
         public static bool IsFloat(this String d)
         {
             float n;
@@ -519,7 +523,8 @@ namespace ExtendCSharp
             }
         }
 
-        /*public static void ClearInvoke(this ListBox self)
+
+        public static void ClearInvoke(this ListBox self)
         {
             if (self.InvokeRequired)
                 self.Invoke((MethodInvoker)delegate { self.ClearInvoke(); });
@@ -567,18 +572,7 @@ namespace ExtendCSharp
             }
         }
 
-        public static void RemoveSelectedItemsInvoke(this ListBox self)
-        {
-            if (self.InvokeRequired)
-                self.Invoke((MethodInvoker)delegate { self.RemoveSelectedItemsInvoke(); });
-            else
-            {
-                while(self.SelectedItems.Count>0)
-                {
-                    self.RemoveInvoke(self.SelectedItems[0]);
-                }
-            }
-        }
+       
 
 
         public static object GetAtInvoke(this ListBox self, int i)
@@ -642,7 +636,7 @@ namespace ExtendCSharp
                 }
 
             }
-        }*/
+        }
 
 
         #endregion
@@ -1161,6 +1155,15 @@ namespace ExtendCSharp
         {
             g.DrawEllipse(pen, centerX - radius, centerY - radius,radius + radius, radius + radius);
         }
+        public static void DrawCircle(this Graphics g, Pen pen, PointF Center, float radius)
+        {
+            g.DrawEllipse(pen, Center.X - radius, Center.Y - radius, radius + radius, radius + radius);
+        }
+
+        public static void DrawRectangle(this Graphics g, Pen pen, Point TopLeft, Size size)
+        {
+            g.DrawRectangle(pen, TopLeft.X , TopLeft.Y, size.Width, size.Height);
+        }
 
         public static void FillCircle(this Graphics g, Brush brush,float centerX, float centerY, float radius)
         {
@@ -1216,6 +1219,21 @@ namespace ExtendCSharp
 
          }
          */
+
+        #endregion
+
+        #region Image
+        public static Image CloneFast(this Image img)
+        {
+            int Width = img.Width;
+            int Height = img.Height;
+            Bitmap bmp = new Bitmap(Width, Height);
+            using (Graphics g = Graphics.FromImage(bmp))
+            {
+                g.DrawImage(img, 0, 0, Width, Height);
+            }
+            return bmp;
+        }
 
         #endregion
 

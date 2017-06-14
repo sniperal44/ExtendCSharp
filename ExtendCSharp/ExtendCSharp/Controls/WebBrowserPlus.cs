@@ -527,18 +527,18 @@ namespace ExtendCSharp.Controls
             {
                 try
                 {
-                    while (ReadyState != WebBrowserReadyState.Complete)
+                    
+                    while (ReadyState != WebBrowserReadyState.Complete && ReadyState != WebBrowserReadyState.Interactive)
                     {
+                        //Log.Log.AddLog(ReadyState.ToString());
                         Application.DoEvents();
                         Thread.Sleep(100);
+                        
                     }
                 }
                 catch(Exception ex) { }
             }
         }
-
-
-   
 
 
         public new void Dispose()
@@ -554,11 +554,21 @@ namespace ExtendCSharp.Controls
 
         public static void SetupIEVersion(IEVersion v)
         {
+            
             try
             { 
                 var IEVAlue = v; // can be: 9999 , 9000, 8888, 8000, 7000
                 var targetApplication = Process.GetCurrentProcess().ProcessName + ".exe";
-                RegistryKey rk = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Internet Explorer\MAIN\FeatureControl", true);
+                RegistryKey rk;
+                if (Environment.Is64BitOperatingSystem)
+                    rk = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\\Wow6432Node\\Microsoft\\Internet Explorer\\MAIN\\FeatureControl\\FEATURE_BROWSER_EMULATION", true);
+                else  //For 32 bit machine
+                    rk = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\\Microsoft\\Internet Explorer\\Main\\FeatureControl\\FEATURE_BROWSER_EMULATION", true);
+
+
+
+                //RegistryKey rk = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Internet Explorer\MAIN\FeatureControl", true);
+
                 RegistryKey f = rk.CreateSubKey("FEATURE_BROWSER_EMULATION", RegistryKeyPermissionCheck.ReadWriteSubTree);
                 f.SetValue(targetApplication, IEVAlue, RegistryValueKind.DWord);
                 f = rk.CreateSubKey("FEATURE_AJAX_CONNECTIONEVENTS", RegistryKeyPermissionCheck.ReadWriteSubTree);

@@ -22,6 +22,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -84,7 +85,7 @@
     <Compile Include="Interfaces\ICloneablePlus.cs" />
     <Compile Include="Interfaces\ISerializer.cs" />
     <Compile Include="Interfaces\IUpdater.cs" />
-    <Compile Include="ListPlus.cs" />
+    <Compile Include="ExtendedClass\ListPlus.cs" />
     <Compile Include="Log\LogForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -102,6 +103,7 @@
     <Compile Include="Services\MouseKeyboardService.cs" />
     <Compile Include="Services\ProcessMemory.cs" />
     <Compile Include="Services\RegisteredFileType.cs" />
+    <Compile Include="Services\SerialServices.cs" />
     <Compile Include="Services\SystemService.cs" />
     <Compile Include="Services\Zip.cs" />
     <Compile Include="Forms\SliderForm.cs">

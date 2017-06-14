@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ExtendCSharp;
+using ExtendCSharp.Services;
+using ExtendCSharp.ExtendedClass;
 
 namespace ExtendCSharp.Log
 {
@@ -25,7 +27,11 @@ namespace ExtendCSharp.Log
         }
         public void AppendText(String s)
         {
-            textBoxPlus1.AppendText(s.TrimEnd('\r','\n')+"\r\n");
+            if (this.InvokeRequired)
+                this.BeginInvoke((MethodInvoker)delegate { this.AppendText(s); });
+            else
+                textBoxPlus1.AppendText(s.TrimEnd('\r', '\n') + "\r\n");
+
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -42,14 +48,58 @@ namespace ExtendCSharp.Log
 
     public class Log
     {
-        static LogForm l = new LogForm();
+        static ThreadPlus tp =null;
+        static LogForm l;
+        static bool Inizializzato = false;
+
+        static String Pre = "";
+        public static void AddIndent(String Indent= "\t")
+        {
+            Pre += "\t";
+        }
+        public static void RemoveIndent()
+        {
+            if (Pre.Length == 0)
+                return;
+            else if (Pre.Length == 1)
+                Pre = "";
+            else
+                Pre = Pre.Substring(0, Pre.Length - 1);
+        }
+
         public static void AddLog(String s)
         {
-            l.AppendText(s);
+            if(tp==null)
+            {
+                tp = new ThreadPlus(RunLogForm);
+                tp.Start();
+            }
+            
+            while(!Inizializzato)
+            {
+                Application.DoEvents();
+            }
+
+            l.AppendText(Pre+s);
         }
         static Log()
         {
             
+        }
+
+
+        
+        private static void RunLogForm()
+        {
+            FormService.StartFormThread(() => {  l = new LogForm(); Inizializzato = true; return l; });
+
+        }
+
+
+        public static void Close()
+        {
+            FormService.StopThread(l);
+
         }
     }
 }

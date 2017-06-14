@@ -14,18 +14,34 @@ namespace ExtendCSharp.Services
 
         public static void StartFormThread(Func<Form> FunzioneCreazione)
         {
+            
             ThreadPlus t = new ThreadPlus((object CurrentThread) =>
             {
+                bool Finito = false;
                 Form f = FunzioneCreazione();
                 ListThread.Add(f, (ThreadPlus)CurrentThread);
 
-                f.ShowDialog();
+                f.Show();
+                f.FormClosed += (object sender, FormClosedEventArgs e)=>
+                {
+                    Finito = true;
+                };
+                while (!Finito)
+                    Application.DoEvents();
+
+
             });
             t.Start(t);
 
         }
+
+       
+
         public static void StopThread(Form f)
         {
+            if (f == null)
+                return;
+
             if(ListThread.ContainsKey(f))
             {
                 try

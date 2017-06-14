@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using ExtendCSharp.ExtendedClass;
+using Microsoft.Win32;
 using Services.ExtendCSharp;
 using System;
 using System.Collections.Generic;
@@ -76,26 +77,26 @@ namespace ExtendCSharp.Services
 
 
         /// <summary>
-        /// Ritorna la directory corrente della cartella ( se viene passata una cartella, ritorna la cartella stessa ) 
+        /// Ritorna la directory dove è posizionato il file  ( se viene passata una cartella, ritorna la cartella stessa ) 
         /// </summary>
-        /// <param name="s"></param>
+        /// <param name="PathEl">Elemento da analizzare ( file o cartella ) </param>
         /// <returns></returns>
-        public static String GetDirectoryName(String s)
+        public static String GetDirectoryName(String PathEl)
         {
-            if( FileExist(s))
+            if( FileExist(PathEl))
             {
-                return GetParent(s);
+                return GetParent(PathEl);
             }
-            else if (DirectoryExist(s))
+            else if (DirectoryExist(PathEl))
             {
-                return s;
+                return PathEl;
             }
             else
             {
-                if(GetExtension(s)=="")//cartella
-                    return s;
+                if(GetExtension(PathEl)=="")//cartella
+                    return PathEl;
                 else
-                    return GetParent(s);
+                    return GetParent(PathEl);
             }
         }
 
@@ -282,7 +283,23 @@ namespace ExtendCSharp.Services
             {
                 try
                 {
-                    Directory.Delete(Path);
+
+
+                    string[] files = GetFiles(Path);
+                    string[] dirs = GetDirectories(Path);
+
+                    foreach (string file in files)
+                    {
+                        File.SetAttributes(file, FileAttributes.Normal);
+                        DeleteSecure(file);
+                    }
+
+                    foreach (string dir in dirs)
+                    {
+                        DeleteSecure(dir);
+                    }
+
+                    Directory.Delete(Path, false);
                 }
                 catch (Exception e){}
 
