@@ -1,5 +1,6 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿
+using ExtendCSharp.Interfaces;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,10 +11,11 @@ using System.Threading.Tasks;
 
 namespace ExtendCSharp.Services
 {
-    public class Json
+    public class JsonService :IService
     {
-        public static T Deserialize<T>(String s)
+        public T Deserialize<T>(String s)
         {
+            
             try
             {
                 JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
@@ -21,7 +23,7 @@ namespace ExtendCSharp.Services
             }
             catch (Exception ex) { return default(T); }
         }
-        public static T Deserialize<T>(Stream s)
+        public T Deserialize<T>(Stream s)
         {
             try
             {
@@ -34,7 +36,7 @@ namespace ExtendCSharp.Services
             catch (Exception ex) { return default(T); }
         }
 
-        public static String Serialize(object o)
+        public String Serialize(object o)
         {
             try
             {

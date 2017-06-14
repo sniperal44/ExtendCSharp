@@ -10,13 +10,13 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static ExtendCSharp.Extension;
+using ExtendCSharp.Interfaces;
 
 namespace ExtendCSharp.Services
 {
-    public static class SystemService
+    public class SystemService : IService
     {
-        public static bool  CreateFolderSecure(String Path)
+        public bool  CreateFolderSecure(String Path)
         {
             if(Directory.Exists(Path))
                 return true;
@@ -25,25 +25,25 @@ namespace ExtendCSharp.Services
 
 
 
-        public static String GetFileName(String s)
+        public String GetFileName(String s)
         {
            return Path.GetFileName(s);
         }
-        public static String GetFileNameWithoutExtension(String s)
+        public String GetFileNameWithoutExtension(String s)
         {
             return Path.GetFileNameWithoutExtension(s);
         }
-        public static String GetExtension(String s)
+        public String GetExtension(String s)
         {
             return Path.GetExtension(s);
         }
 
-        public static String GetParent(String s)
+        public String GetParent(String s)
         {
             return Directory.GetParent(s).FullName;
         }
 
-        public static String[] GetDirectories(String path)
+        public String[] GetDirectories(String path)
         {
             return Directory.GetDirectories(path);
         }
@@ -54,7 +54,7 @@ namespace ExtendCSharp.Services
         /// <param name="Path">Cartella da cui leggere i file</param>
         /// <param name="ExcludedExtension">Lista di estensioni da escludere dal GET!</param>
         /// <returns></returns>
-        public static String[] GetFiles(String Path,params String[] ExcludedExtension)
+        public String[] GetFiles(String Path,params String[] ExcludedExtension)
         {
             String[] t=Directory.GetFiles(Path);
             ListPlus<String> lp = new ListPlus<string>();
@@ -81,7 +81,8 @@ namespace ExtendCSharp.Services
         /// </summary>
         /// <param name="PathEl">Elemento da analizzare ( file o cartella ) </param>
         /// <returns></returns>
-        public static String GetDirectoryName(String PathEl)
+
+        public String GetDirectoryName(String s)
         {
             if( FileExist(PathEl))
             {
@@ -102,7 +103,7 @@ namespace ExtendCSharp.Services
 
 
 
-        public static String ChangeExtension(String Path,String Ext)
+        public String ChangeExtension(String Path,String Ext)
         {
             int sindex = Path.LastIndexOf('.');
             if (sindex == -1)
@@ -110,7 +111,7 @@ namespace ExtendCSharp.Services
             return Path.Remove(sindex) + '.' + Ext.Trim(' ', '.').ToLower();
         }
 
-        public static String CombinePaths(params string[] paths)
+        public String CombinePaths(params string[] paths)
         { 
             String p= Path.Combine(paths);
             if (p.EndsWith(":"))
@@ -123,7 +124,7 @@ namespace ExtendCSharp.Services
         /// <param name="AbsolutePath"></param>
         /// <param name="BasePath"></param>
         /// <returns></returns>
-        public static String RelativePathFromBase(String AbsolutePath, String BasePath)
+        public String RelativePathFromBase(String AbsolutePath, String BasePath)
         {
             String[] abs = AbsolutePath.Split('\\', '/');
             String[] bas = BasePath.Split('\\', '/');
@@ -146,7 +147,7 @@ namespace ExtendCSharp.Services
 
 
 
-        public static String GetCommonPath(string path1, string path2)
+        public String GetCommonPath(string path1, string path2)
         {
             String p1 = GetFullPath(path1).ToUpperInvariant();
             String p2 = GetFullPath(path2).ToUpperInvariant();
@@ -166,7 +167,7 @@ namespace ExtendCSharp.Services
             }
             return FinalPath;
         }
-        public static String GetCommonPath(params string[] paths)
+        public String GetCommonPath(params string[] paths)
         {
             if (paths.Length == 0)
                 return null;
@@ -187,7 +188,7 @@ namespace ExtendCSharp.Services
 
 
 
-        public static bool CopySecure(String Source,String Dest, bool Override=true,CopyProgressChangedDelegate OnProgressChanged =null, CopyCompleteDelegate OnComplete=null)
+        public bool CopySecure(String Source,String Dest, bool Override=true,CopyProgressChangedDelegate OnProgressChanged =null, CopyCompleteDelegate OnComplete=null)
         {
             byte[] buffer = new byte[1024 * 1024]; // 1MB buffer
             bool cancelFlag = false;
@@ -210,7 +211,7 @@ namespace ExtendCSharp.Services
 
                     }
 
-                    SystemService.CreateFolderSecure(SystemService.GetParent(Dest));
+                    CreateFolderSecure(GetParent(Dest));
                     using (FileStream dest = new FileStream(Dest, FileMode.CreateNew, FileAccess.Write))
                     {
                         long totalBytes = 0;
@@ -250,8 +251,15 @@ namespace ExtendCSharp.Services
             }
         }
 
+        public void Write(String Path,String Contents, bool Append)
+        {
+            if (Append)
+                File.AppendAllText(Path, Contents);
+            else
+                File.WriteAllText(Path, Contents);
+        }
 
-        public static void Rename(String Source, String Dest, bool Override = true)
+        public void Rename(String Source, String Dest, bool Override = true)
         {
             if (!FileExist(Source))
                 return;
@@ -267,7 +275,7 @@ namespace ExtendCSharp.Services
         /// Permette di cancellare in maniera sicura un file o cartella ritornando l'esito dell'operazione
         /// </summary>
         /// <param name="Path"></param>
-        public static bool DeleteSecure(String Path)
+        public bool DeleteSecure(String Path)
         { 
             if (FileExist(Path))
             {
@@ -310,11 +318,11 @@ namespace ExtendCSharp.Services
         }
 
 
-        public static bool FileExist(String Path)
+        public bool FileExist(String Path)
         {
             return File.Exists(Path);
         }
-        public static bool DirectoryExist(String Path)
+        public bool DirectoryExist(String Path)
         {
             return Directory.Exists(Path);
         }
@@ -323,7 +331,7 @@ namespace ExtendCSharp.Services
         /// </summary>
         /// <param name="Path"></param>
         /// <returns></returns>
-        public static bool Exist(String Path)
+        public bool Exist(String Path)
         {
             return FileExist(Path) || DirectoryExist(Path);
         }
@@ -331,17 +339,17 @@ namespace ExtendCSharp.Services
 
 
 
-        public static bool DirectoryIsEmpty(string path)
+        public bool DirectoryIsEmpty(string path)
         {
             return !Directory.EnumerateFileSystemEntries(path).Any();
         }
-        public static long FileSize(String Path)
+        public long FileSize(String Path)
         {
             return new FileInfo(Path).Length;
         }
 
 
-        public static DriveInfo GetDriveInfo(String path)
+        public DriveInfo GetDriveInfo(String path)
         {
             return new DriveInfo(Path.GetPathRoot(path));
         }
@@ -350,23 +358,24 @@ namespace ExtendCSharp.Services
 
 
 
-        public static String GetMD5(String Path, MD5BlockTransformEventHandler OnMD5BlockTransform, MD5ComputeHashFinishEventHandler OnMD5ComputeHashFinish,bool Async=true)
+        public String GetMD5(String Path, MD5BlockTransformEventHandler OnMD5BlockTransform, MD5ComputeHashFinishEventHandler OnMD5ComputeHashFinish,bool Async=true)
         {
+            
+            
             try
             {
                 byte[] HashReturn=null;
-                MD5Plus md5 = new MD5Plus();
+                MD5Service md5 = new MD5Service();
                 var stream = File.OpenRead(Path);
                 md5.OnMD5BlockTransformEventHandler += OnMD5BlockTransform;
                 md5.OnMD5ComputeHashFinishEventHandler += OnMD5ComputeHashFinish;
                 md5.OnMD5ComputeHashFinishEventHandler += (byte[] Hash)=>
                 {
                     stream.Close();
-                    stream.Dispose();
-                    
+                    stream.Dispose();   
                 };
 
-                md5.ComputeHashMultiBlockAsync(stream).Join();
+                md5.ComputeHashMultiBlockThread(stream).Join();
                 if (HashReturn != null)
                     return HashReturn.ToHexString(); 
 
@@ -379,11 +388,11 @@ namespace ExtendCSharp.Services
         }
 
 
-        public static string GetFullPath(string path)
+        public string GetFullPath(string path)
         {
             return Path.GetFullPath(path);
         }
-        public static string NormalizePath(string path)
+        public string NormalizePath(string path)
         {
             return Path.GetFullPath(new Uri(path).LocalPath)
                        .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
@@ -393,7 +402,7 @@ namespace ExtendCSharp.Services
 
         #region Extension - File Association
 
-        public static void SetAssociationFileExtention(string Extension, string ApplicationName, string AppPath, string FileDescription,string Icon=null)
+        public void SetAssociationFileExtention(string Extension, string ApplicationName, string AppPath, string FileDescription,string Icon=null)
         {
             Extension = "." + Extension.Trim('.').ToLowerInvariant();
             RegistryKey BaseKey;
@@ -449,7 +458,7 @@ namespace ExtendCSharp.Services
             // Tell explorer the file association has been changed
             SHChangeNotify(0x08000000, 0x0000, IntPtr.Zero, IntPtr.Zero);
         }
-        public static string FileExtentionInfo(AssocStr assocStr, string Extension)
+        public string FileExtentionInfo(AssocStr assocStr, string Extension)
         {
             Extension = "." + Extension.Trim('.').ToLowerInvariant();
             uint pcchOut = 0;

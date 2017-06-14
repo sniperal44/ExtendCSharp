@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ExtendCSharp.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -8,8 +9,9 @@ using System.Threading.Tasks;
 
 namespace ExtendCSharp.Services
 {
-    public static class ZipService
+    public class ZipService : IService
     {
+        
         /*public static String Zip(String Soruce)
         {
             try
@@ -84,7 +86,7 @@ namespace ExtendCSharp.Services
         }
         */
 
-        public static String Zip(String Soruce)
+        public String Zip(String Soruce)
         {
             try
             {
@@ -107,7 +109,7 @@ namespace ExtendCSharp.Services
                 return "";
             }
         }
-        public static String UnZip(String Soruce)
+        public String UnZip(String Soruce)
         {
 
             try
@@ -129,7 +131,7 @@ namespace ExtendCSharp.Services
                 return "";
             }
         }
-        private static void CopyTo(Stream src, Stream dest)
+        private void CopyTo(Stream src, Stream dest)
         {
             byte[] bytes = new byte[4096];
             int cnt;

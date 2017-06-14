@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ExtendCSharp.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -31,7 +32,7 @@ namespace ExtendCSharp.Services
         bool Disable();
 
     }
-    public class HookMouse : Hook
+    public class HookMouse : Hook, IService
     {
         public delegate void HookProcMouse(int nCode, MyMouseEvent wParam, IntPtr lParam, ref bool Suppress);
         public event HookProcMouse EventDispatcher = null;
@@ -60,7 +61,7 @@ namespace ExtendCSharp.Services
             return HookService.UnhookWindowsHookEx(Hook);
         }
     }
-    public class HookKeyboard : Hook
+    public class HookKeyboard : Hook, IService
     {
         public delegate void HookProcKeyboard(int nCode, MyKeyboardEvent wParam, Keys key, ref bool Suppress);
         public event HookProcKeyboard EventDispatcher = null;
@@ -92,7 +93,7 @@ namespace ExtendCSharp.Services
 
 
 
-    public class HookManager
+    public class HookManager : IService
     {
         public List<Hook> Hooks;
         public HookManager()
