@@ -258,6 +258,13 @@ namespace ExtendCSharp.Services
             else
                 File.WriteAllText(Path, Contents);
         }
+        public String Read(String Path)
+        {
+            return File.ReadAllText(Path);
+        }
+
+
+
 
         public void Rename(String Source, String Dest, bool Override = true)
         {

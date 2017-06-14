@@ -52,9 +52,8 @@
     <Reference Include="MySql.Data">
       <HintPath>.\MySql.Data.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json_45, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>.\Newtonsoft.Json_45.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>.\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -85,6 +84,7 @@
     <Compile Include="FullPrecisionNumber.cs" />
     <Compile Include="Interfaces\IBinarySerializer.cs" />
     <Compile Include="Interfaces\ICloneablePlus.cs" />
+    <Compile Include="Interfaces\IResolvible.cs" />
     <Compile Include="Interfaces\ISerializer.cs" />
     <Compile Include="Interfaces\IService.cs" />
     <Compile Include="Interfaces\IUpdater.cs" />
@@ -110,6 +110,7 @@
     <Compile Include="Services\MouseKeyboardService.cs" />
     <Compile Include="Services\ProcessMemory.cs" />
     <Compile Include="Services\RegisteredFileType.cs" />
+    <Compile Include="Services\SerialComunicationService.cs" />
     <Compile Include="Services\SerialServices.cs" />
     <Compile Include="Services\SystemService.cs" />
     <Compile Include="Forms\SliderForm.cs">

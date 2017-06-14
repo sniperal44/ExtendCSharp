@@ -479,10 +479,13 @@ namespace ExtendCSharp
             EnumService es = ServicesManager.GetOrSet(()=> { return new EnumService(); });
 
 
-            comboBox.DataSource = new BindingSource(es.GetIEnumerable<T>(), null);
 
-            comboBox.ValueMember = "Item1";     //in Item1 c'è il value
-            comboBox.DisplayMember = "Item2"; //in Item2 c'è la stringa
+           
+
+            comboBox.ValueMember = "Value";     //in Item1 c'è il value
+            comboBox.DisplayMember = "Key"; //in Item2 c'è la stringa
+
+            comboBox.DataSource = new BindingSource(es.GetIEnumerable<T>(), null);
 
         }
 

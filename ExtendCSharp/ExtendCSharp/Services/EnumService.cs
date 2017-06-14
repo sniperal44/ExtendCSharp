@@ -24,10 +24,9 @@ namespace ExtendCSharp.Services
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public IEnumerable<Tuple<T, String>> GetIEnumerable<T>() where T : struct
+        public Dictionary<String, T> GetIEnumerable<T>() where T : struct
         {
-            return Enum.GetValues(typeof(T)).Cast<T>().Select(e => new Tuple<T, String>(e, e.ToStringEnum()));
- 
+            return Enum.GetValues(typeof(T)).Cast<T>().ToDictionary(e => e.ToStringEnum());
         }
       
 
