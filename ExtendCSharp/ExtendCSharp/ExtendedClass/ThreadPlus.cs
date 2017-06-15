@@ -71,7 +71,7 @@ namespace ExtendCSharp.ExtendedClass
             {
                 WhaitEnd.Abort();
             }
-            catch (Exception ex) { }
+            catch (Exception ) { }
         }
 
 
@@ -113,7 +113,7 @@ namespace ExtendCSharp.ExtendedClass
 
 
 
-        public void Resume()
+       /* public void Resume()
         {
             t.Resume();
         }
@@ -122,7 +122,7 @@ namespace ExtendCSharp.ExtendedClass
             t.Suspend();
             
         }
-
+        */
 
 
         public ThreadState ThreadState

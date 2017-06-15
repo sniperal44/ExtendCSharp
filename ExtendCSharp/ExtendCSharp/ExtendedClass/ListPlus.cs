@@ -32,12 +32,9 @@ namespace ExtendCSharp.ExtendedClass
             base.AddRange(source);
         }
 
-        public void Add(T item)
+        public new void Add(T item)
         {
-            if (null != OnAdd)
-            {
-                OnAdd(this, null);
-            }
+            OnAdd?.Invoke(this, null);
             base.Add(item);
         }
         public void AddUnique(T item)
@@ -45,8 +42,7 @@ namespace ExtendCSharp.ExtendedClass
             if (!base.Contains(item))
             {
                 base.Add(item);
-                if (null != OnAdd)
-                    OnAdd(this, null);
+                OnAdd?.Invoke(this, null);
             }
         }
         public void AddUnique(ListPlus<T> items)
@@ -56,27 +52,24 @@ namespace ExtendCSharp.ExtendedClass
                 if (!base.Contains(t))
                     base.Add(t);
             if (cprima != Count)
-                if (null != OnAdd)
-                    OnAdd(this, null);
+                OnAdd?.Invoke(this, null);
         }
 
-        public void Remove(T item)
+        public new void Remove(T item)
         {
             int cprima = base.Count;
             base.Remove(item);
             if (cprima != Count)
-                if (null != OnRemove)
-                    OnRemove(this, null);  
+                OnRemove?.Invoke(this, null);
         }
-        public void RemoveAll(Predicate<T> match)
+        public new void RemoveAll(Predicate<T> match)
         {
             int cprima = base.Count;
             base.RemoveAll(match);
             if (cprima != Count)
-                if (null != OnRemove)
-                    OnRemove(this, null);    
+                OnRemove?.Invoke(this, null);
         }
-        public T RemoveAt(int index)
+        public new T RemoveAt(int index)
         {
             if (index < base.Count && index>=0)
             {
@@ -84,8 +77,7 @@ namespace ExtendCSharp.ExtendedClass
                 T temp = base[index];
                 base.RemoveAt(index);
                 if (cprima != Count)
-                    if (null != OnRemove)
-                        OnRemove(this, null);
+                    OnRemove?.Invoke(this, null);
 
                 return temp;
             }
@@ -113,13 +105,12 @@ namespace ExtendCSharp.ExtendedClass
             return temp;
         }
 
-        public void RemoveRange(int index,int count)
+        public new void RemoveRange(int index,int count)
         {
             int cprima = base.Count;
             base.RemoveRange(index, count);
             if(cprima!= Count)
-                if (null != OnRemove)
-                    OnRemove(this, null);
+                OnRemove?.Invoke(this, null);
         }
         public void RemoveRange(ListPlus<T> list)
         {
@@ -127,8 +118,7 @@ namespace ExtendCSharp.ExtendedClass
             foreach(T t in list)
                 base.Remove(t);
             if (cprima != Count)
-                if (null != OnRemove)
-                    OnRemove(this, null);
+                OnRemove?.Invoke(this, null);
         }
         public void RemoveNotInRange(ListPlus<T> list)
         {

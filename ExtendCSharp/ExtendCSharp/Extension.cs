@@ -76,8 +76,7 @@ namespace ExtendCSharp
         #region String
         public static bool IsInt(this String d)
         {
-            int n;
-            return int.TryParse(d, out n);
+            return int.TryParse(d, out int n);
         }
         public static int ParseInt(this String d)
         {
@@ -89,17 +88,15 @@ namespace ExtendCSharp
         }
         public static bool IsFloat(this String d)
         {
-            float n;
-            return float.TryParse(d, out n);
+            return float.TryParse(d, out float n);
         }
         public static float ParseFloat(this String d)
         {
             return float.Parse(d);
         }
-        public static bool isDouble(this String d)
+        public static bool IsDouble(this String d)
         {
-            double n;
-            return double.TryParse(d, out n);
+            return double.TryParse(d, out double n);
         }
         public static double ParseDouble(this String d)
         {
@@ -717,7 +714,7 @@ namespace ExtendCSharp
 
         public static void RemoveChecked(this CheckedListBox self)
         {
-            object[] indici=self.CheckedItems.toArray<object>();
+            object[] indici=self.CheckedItems.ToArray<object>();
             foreach (object o in indici)
             {
                 //self.RemoveInvoke(o);
@@ -766,7 +763,7 @@ namespace ExtendCSharp
 
         #region ICollection
 
-        public static T[] toArray<T>(this ICollection self)
+        public static T[] ToArray<T>(this ICollection self)
         {
             return self.OfType<T>().ToArray();
         }
@@ -1350,7 +1347,7 @@ namespace ExtendCSharp
             {
                 throw e;
             }
-            return null;
+            
         }
         #endregion
 
@@ -1429,8 +1426,7 @@ namespace ExtendCSharp
 
         public static Bitmap TrimBitmap(this Bitmap source)
         {
-            int x;
-            return source.TrimBitmap(out x, out x);
+            return source.TrimBitmap(out int x, out x);
         }
 
         public static Bitmap TrimBitmap(this Bitmap source, out int LeftCrop, out int TopCrop)
@@ -1639,12 +1635,14 @@ namespace ExtendCSharp
 
         public static PictureBoxPlus ToPlus(this PictureBox self)
         {
-            PictureBoxPlus temp = new PictureBoxPlus();
-            temp._disableBitmapCreation = true;
-            temp.Bounds = self.Bounds;
-            temp.Size = self.Size;
-            temp.BackgroundImageLayout = self.BackgroundImageLayout;
-            temp.SizeMode = self.SizeMode;
+            PictureBoxPlus temp = new PictureBoxPlus()
+            {
+                _disableBitmapCreation = true,
+                Bounds = self.Bounds,
+                Size = self.Size,
+                BackgroundImageLayout = self.BackgroundImageLayout,
+                SizeMode = self.SizeMode
+            };
             temp._disableBitmapCreation = false;
             temp.BackgroundImage = self.BackgroundImage;
             temp.Image = self.Image;

@@ -47,7 +47,7 @@ namespace ExtendCSharp.Services
                     OnLineReceived?.Invoke(t);
                 }
             }
-            catch (Exception ex)
+            catch (Exception )
             {
 
             }

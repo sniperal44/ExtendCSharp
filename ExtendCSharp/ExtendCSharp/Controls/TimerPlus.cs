@@ -96,7 +96,7 @@ namespace ExtendCSharp.Controls
                     t.Abort();
                     t.Join();
                 }
-                catch(Exception e){ }
+                catch(Exception ){ }
             }
         }
 

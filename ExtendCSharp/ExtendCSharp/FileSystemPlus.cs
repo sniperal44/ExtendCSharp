@@ -97,9 +97,11 @@ namespace ExtendCSharp
         }
         public FileSystemPlus<T> Clone()
         {
-            FileSystemPlus<T> n = new FileSystemPlus<T>();
-            n._RootRealPath = _RootRealPath;
-            n._Root = _Root.Clone();
+            FileSystemPlus<T> n = new FileSystemPlus<T>()
+            {
+                _RootRealPath = _RootRealPath,
+                _Root = _Root.Clone()
+            };
             n.Root.SetParentOnAllChild(FileSystemNodePlusLevelType.FirstLevel);
             return n;
         }
@@ -387,7 +389,7 @@ namespace ExtendCSharp
 
         public int GetNodeCount(FileSystemNodePlusLevelType Level, FileSystemNodePlusType Type)
         {
-            int i = 0;
+
             if (Level==FileSystemNodePlusLevelType.FirstLevel)
                  return  _FileSystem.Where(x => (Type & x.Value.Type) == x.Value.Type).Count();
             else
@@ -509,9 +511,11 @@ namespace ExtendCSharp
         {
             if(!_FileSystem.ContainsKey(Nome))
             {
-                FileSystemNodePlus<T> tt = new FileSystemNodePlus<T>(this);
-                tt._Name = Nome;
-                tt._Type = Type;
+                FileSystemNodePlus<T> tt = new FileSystemNodePlus<T>(this)
+                {
+                    _Name = Nome,
+                    _Type = Type
+                };
                 _FileSystem.Add(Nome,tt );
                 return tt;
             }
@@ -523,11 +527,13 @@ namespace ExtendCSharp
 
         public FileSystemNodePlus<T> Clone(String Name=null)
         {
-            FileSystemNodePlus<T> n = new FileSystemNodePlus<T>();
-            n._Type = _Type;  
-            n._Name = Name==null?_Name: Name;
-            n.AddittionalData = AddittionalData.Clone()._Cast<T>();
-            n._FileSystem = new Dictionary<string, FileSystemNodePlus<T>>();
+            FileSystemNodePlus<T> n = new FileSystemNodePlus<T>()
+            {
+                _Type = _Type,
+                _Name = Name == null ? _Name : Name,
+                AddittionalData = AddittionalData.Clone()._Cast<T>(),
+                _FileSystem = new Dictionary<string, FileSystemNodePlus<T>>()
+            };
             foreach (KeyValuePair<String, FileSystemNodePlus<T>> kv in _FileSystem)
                 n._FileSystem.Add(kv.Key, kv.Value.Clone());
             n.SetParentOnAllChild(FileSystemNodePlusLevelType.FirstLevel);

@@ -125,7 +125,7 @@ namespace ExtendCSharp.Services
                     return Encoding.UTF8.GetString(mso.ToArray());
                 }
             }
-            catch (Exception ec)
+            catch (Exception )
             {
 
                 return "";

@@ -235,7 +235,7 @@ namespace ExtendCSharp.Controls
 
 
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
 
                 }
@@ -257,14 +257,16 @@ namespace ExtendCSharp.Controls
         public PictureBoxPlus Clone()
         {
 
-            PictureBoxPlus temp = new PictureBoxPlus();
-            temp._disableBitmapCreation = true;
-            temp.BackgroundImage = BackgroundImage;
-            temp.Image = Image;
-            temp.BackgroundImageLayout = BackgroundImageLayout;
-            temp.SizeMode = SizeMode;
-            temp.Size = Size;
-            temp.Bounds = Bounds;
+            PictureBoxPlus temp = new PictureBoxPlus()
+            {
+                _disableBitmapCreation = true,
+                BackgroundImage = BackgroundImage,
+                Image = Image,
+                BackgroundImageLayout = BackgroundImageLayout,
+                SizeMode = SizeMode,
+                Size = Size,
+                Bounds = Bounds
+            };
             foreach (Bitmap b in ListaAnimazioni)
                 temp.ListaAnimazioni.Add((Bitmap)b.Clone());
 

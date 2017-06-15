@@ -536,7 +536,7 @@ namespace ExtendCSharp.Controls
                         
                     }
                 }
-                catch(Exception ex) { }
+                catch(Exception ) { }
             }
         }
 
@@ -627,7 +627,7 @@ namespace ExtendCSharp.Controls
                 f.Dispose();
 
             }
-            catch (Exception ex)
+            catch (Exception )
             {
                 MessageBox.Show("NOTE: you need to run this under no UAC");
             }

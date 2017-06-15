@@ -47,7 +47,7 @@ namespace ExtendCSharp.Services
                 {
                     ListThread[f].Abort();
                 }
-                catch(Exception ex)
+                catch(Exception )
                 {
 
                 }

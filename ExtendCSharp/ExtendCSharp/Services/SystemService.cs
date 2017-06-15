@@ -204,8 +204,7 @@ namespace ExtendCSharp.Services
                             File.Delete(Dest);
                         else
                         {
-                            if (OnComplete != null)
-                                OnComplete(true,null);
+                            OnComplete?.Invoke(true, null);
                             return true;
                         }
 
@@ -239,14 +238,12 @@ namespace ExtendCSharp.Services
                             File.Delete(Dest);
 
                 }
-                if (OnComplete != null)
-                    OnComplete(true,null);
+                OnComplete?.Invoke(true, null);
                 return true;
             }
             catch (Exception ex)
             {
-                if (OnComplete != null)
-                    OnComplete(false,ex);
+                OnComplete?.Invoke(false, ex);
                 return false;
             }
         }
@@ -290,7 +287,7 @@ namespace ExtendCSharp.Services
                 {
                     File.Delete(Path);
                 }
-                catch (Exception e) { }
+                catch (Exception ) { }
 
                 return !FileExist(Path);
             }
@@ -316,7 +313,7 @@ namespace ExtendCSharp.Services
 
                     Directory.Delete(Path, false);
                 }
-                catch (Exception e){}
+                catch (Exception ){}
 
                 return !DirectoryExist(Path);
             }
@@ -387,7 +384,7 @@ namespace ExtendCSharp.Services
                     return HashReturn.ToHexString(); 
 
             }
-            catch (Exception ex)
+            catch (Exception )
             {
                 OnMD5ComputeHashFinish?.Invoke(null);
             }

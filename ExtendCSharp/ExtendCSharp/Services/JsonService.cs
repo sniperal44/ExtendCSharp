@@ -21,7 +21,7 @@ namespace ExtendCSharp.Services
                 JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
                 return JsonConvert.DeserializeObject<T>(s, settings);
             }
-            catch (Exception ex) { return default(T); }
+            catch (Exception ) { return default(T); }
         }
         public T Deserialize<T>(Stream s)
         {
@@ -33,7 +33,7 @@ namespace ExtendCSharp.Services
                     return JsonConvert.DeserializeObject<T>(sr.ReadToEnd(), settings);
                 }
             }
-            catch (Exception ex) { return default(T); }
+            catch (Exception ) { return default(T); }
         }
 
         public String Serialize(object o)
@@ -43,7 +43,7 @@ namespace ExtendCSharp.Services
                 JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
                 return JsonConvert.SerializeObject(o, settings);
             }
-            catch (Exception ex) { return default(String); }
+            catch (Exception ) { return default(String); }
         }
     }
 

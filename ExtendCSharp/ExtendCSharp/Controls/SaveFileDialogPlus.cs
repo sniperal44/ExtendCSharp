@@ -55,7 +55,7 @@ namespace ExtendCSharp.Controls
             inter.Reset();
         }
 
-        public String ToString()
+        public override String ToString()
         {
             return inter.ToString();
         }
@@ -90,17 +90,17 @@ namespace ExtendCSharp.Controls
             return inter.CreateObjRef(requestedType);
         }
 
-        public Boolean Equals(object obj)
+        public override Boolean Equals(object obj)
         {
             return inter.Equals(obj);
         }
 
-        public Int32 GetHashCode()
+        public override Int32 GetHashCode()
         {
             return inter.GetHashCode();
         }
 
-        public Type GetType()
+        public new Type GetType()
         {
             return inter.GetType();
         }
