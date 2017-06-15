@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ExtendCSharp.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ExtendCSharp.Services
 {
-    public static class ProcessMemory
+    public class ProcessMemoryService:IService
     {
         [DllImport("kernel32.dll")]
         private static extern IntPtr OpenProcess(ProcessAccessFlags dwDesiredAccess, [MarshalAs(UnmanagedType.Bool)] bool bInheritHandle, int dwProcessId);
@@ -24,7 +25,7 @@ namespace ExtendCSharp.Services
 
 
 
-        public static int WriteMem(Process p, IntPtr address, params byte[] v)
+        public int WriteMem(Process p, IntPtr address, params byte[] v)
         {
             var hProc = OpenProcess(ProcessAccessFlags.All, false, p.Id);
             int wtf = 0;
@@ -33,12 +34,12 @@ namespace ExtendCSharp.Services
             CloseHandle(hProc);
             return wtf;
         }
-        public static int WriteMem(String ProcessName, IntPtr address, params byte[] v)
+        public int WriteMem(String ProcessName, IntPtr address, params byte[] v)
         {
             return WriteMem(Process.GetProcessesByName(ProcessName).FirstOrDefault(), address, v);
         }
 
-        public static byte[] ReadMem(Process p, IntPtr address, long v)
+        public byte[] ReadMem(Process p, IntPtr address, long v)
         {
             IntPtr processHandle = OpenProcess(ProcessAccessFlags.VMRead, false, p.Id);
 
@@ -48,7 +49,7 @@ namespace ExtendCSharp.Services
 
             return buffer;
         }
-        public static byte[] ReadMem(String ProcessName, IntPtr address, long v)
+        public byte[] ReadMem(String ProcessName, IntPtr address, long v)
         {
             return ReadMem(Process.GetProcessesByName(ProcessName).FirstOrDefault(), address, v);
         }

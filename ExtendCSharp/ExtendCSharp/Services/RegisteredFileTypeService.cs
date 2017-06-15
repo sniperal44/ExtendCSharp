@@ -5,6 +5,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using Microsoft.Win32;
 using System.Drawing;
+using ExtendCSharp.Interfaces;
 
 namespace ExtendCSharp.Services
 {
@@ -17,7 +18,7 @@ namespace ExtendCSharp.Services
         public int IconIndex;
     }
 
-    public class RegisteredFileType
+    public class RegisteredFileTypeService :IService
     {
 
         static private Hashtable iconsInfo = null;
@@ -48,7 +49,7 @@ namespace ExtendCSharp.Services
             {
                 string fileAndParam = o.ToString();
                 if (!String.IsNullOrEmpty(fileAndParam))
-                    return RegisteredFileType.ExtractIconFromFile(fileAndParam, true); 
+                    return RegisteredFileTypeService.ExtractIconFromFile(fileAndParam, true); 
             }
 
             return null;

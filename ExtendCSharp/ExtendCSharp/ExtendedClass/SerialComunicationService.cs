@@ -1,4 +1,5 @@
 ﻿using ExtendCSharp.Interfaces;
+using ExtendCSharp.Struct;
 using System;
 using System.Collections.Generic;
 using System.IO.Ports;
@@ -7,9 +8,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ExtendCSharp.Services
+namespace ExtendCSharp.ExtendedClass
 {
-    public class SerialComunicationService : IDisposable,IService
+    public class SerialComunicationPlus : IDisposable
     {
         private SerialPort serialPort;
         public SerialPort BaseSerialPort
@@ -26,7 +27,7 @@ namespace ExtendCSharp.Services
 
 
 
-        public SerialComunicationService(String port)
+        public SerialComunicationPlus(String port)
         {
             serialPort = new SerialPort(port);
             serialPort.Open();
@@ -34,6 +35,16 @@ namespace ExtendCSharp.Services
             t = new Thread(ListenLine);
             t.Start();
         }
+        public SerialComunicationPlus(SerialComunicationSetting setting)
+        {
+            serialPort = new SerialPort(setting.Port,setting.Speed,setting.Parity,setting.DataBits,setting.StopBits);
+            serialPort.Open();
+
+            t = new Thread(ListenLine);
+            t.Start();
+        }
+
+
 
         void ListenLine()
         {

@@ -7,7 +7,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ExtendCSharp
+namespace ExtendCSharp.ExtendedClass
 {
     public class FullPrecisionNumber
     {

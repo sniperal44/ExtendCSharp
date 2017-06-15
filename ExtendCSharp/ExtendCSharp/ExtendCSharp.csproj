@@ -80,8 +80,8 @@
     <Compile Include="Exceptions\MissingServiceException.cs" />
     <Compile Include="ExtendedClass\ObjectPlus.cs" />
     <Compile Include="ExtendedClass\ThreadPlus.cs" />
-    <Compile Include="FileSystemPlus.cs" />
-    <Compile Include="FullPrecisionNumber.cs" />
+    <Compile Include="ExtendedClass\FileSystemPlus.cs" />
+    <Compile Include="ExtendedClass\FullPrecisionNumber.cs" />
     <Compile Include="Interfaces\IBinarySerializer.cs" />
     <Compile Include="Interfaces\ICloneablePlus.cs" />
     <Compile Include="Interfaces\IResolvible.cs" />
@@ -103,14 +103,14 @@
     <Compile Include="Services\FormService.cs" />
     <Compile Include="Services\JsonService.cs" />
     <Compile Include="Services\MD5Service.cs" />
-    <Compile Include="Services\MySQLext.cs" />
-    <Compile Include="Services\ProcessPlus.cs" />
+    <Compile Include="Services\MySQLService.cs" />
+    <Compile Include="ExtendedClass\ProcessPlus.cs" />
     <Compile Include="Services\FFmpeg.cs" />
     <Compile Include="Services\Hook.cs" />
     <Compile Include="Services\MouseKeyboardService.cs" />
-    <Compile Include="Services\ProcessMemory.cs" />
-    <Compile Include="Services\RegisteredFileType.cs" />
-    <Compile Include="Services\SerialComunicationService.cs" />
+    <Compile Include="Services\ProcessMemoryService.cs" />
+    <Compile Include="Services\RegisteredFileTypeService.cs" />
+    <Compile Include="ExtendedClass\SerialComunicationService.cs" />
     <Compile Include="Services\SerialServices.cs" />
     <Compile Include="Services\SystemService.cs" />
     <Compile Include="Forms\SliderForm.cs">
@@ -145,7 +145,8 @@
     </Compile>
     <Compile Include="Services\ZipService.cs" />
     <Compile Include="Services\_ServicesManager.cs" />
-    <Compile Include="TimeSpanPlus.cs" />
+    <Compile Include="Struct\SerialComunicationSetting.cs" />
+    <Compile Include="ExtendedClass\TimeSpanPlus.cs" />
     <Compile Include="Controls\ToolStripMenuItemPlus.cs">
       <SubType>Component</SubType>
     </Compile>

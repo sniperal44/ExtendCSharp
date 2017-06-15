@@ -1,4 +1,6 @@
-﻿using MySql.Data.MySqlClient;
+﻿using ExtendCSharp.ExtendedClass;
+using ExtendCSharp.Interfaces;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -10,12 +12,12 @@ using System.Windows.Forms;
 
 namespace ExtendCSharp.Services
 {
-    public class MySQLext
+    public class MySQLService : IService
     {
         public MySqlConnection c;
         public Exception LastException { get; private set; }
 
-        public MySQLext(String IpServer, String DBname, String User, String Pass)
+        public MySQLService(String IpServer, String DBname, String User, String Pass)
         {
             Connect(IpServer, DBname, User, Pass);
         }

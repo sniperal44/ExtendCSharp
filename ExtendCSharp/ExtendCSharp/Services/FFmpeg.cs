@@ -1,5 +1,5 @@
-﻿using ExtendCSharp.Interfaces;
-using ExtendCSharp.Service;
+﻿using ExtendCSharp.ExtendedClass;
+using ExtendCSharp.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;

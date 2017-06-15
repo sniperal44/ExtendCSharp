@@ -1,4 +1,6 @@
-﻿using ExtendCSharp.Interfaces;
+﻿using ExtendCSharp.ExtendedClass;
+using ExtendCSharp.Interfaces;
+using ExtendCSharp.Struct;
 using System;
 using System.Collections.Generic;
 using System.IO.Ports;
@@ -13,9 +15,9 @@ namespace ExtendCSharp.Services
 
     public class SerialServices : IService
     {
-        public SerialComunicationService StartCommunication(String port)
+        public SerialComunicationPlus  StartCommunication(SerialComunicationSetting setting)
         {
-            return new SerialComunicationService(port);
+            return new SerialComunicationPlus(setting);
         }
 
         public bool IsValidPort(String port)
