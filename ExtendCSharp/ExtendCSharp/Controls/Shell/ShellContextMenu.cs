@@ -23,6 +23,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using GongSolutions.Shell.Interop;
+using ExtendCSharp.Controls.Shell;
 
 namespace GongSolutions.Shell
 {
@@ -213,7 +214,7 @@ namespace GongSolutions.Shell
         {
             RemoveShellMenuItems(menu);
             m_ComInterface.QueryContextMenu(menu.Handle, 0,
-                m_CmdFirst, int.MaxValue, CMF.EXPLORE);
+                m_CmdFirst, int.MaxValue, CMF.EXPLORE|CMF.CANRENAME);
         }
 
         /// <summary>
@@ -243,6 +244,35 @@ namespace GongSolutions.Shell
                 }
             }
         }
+        public bool IsRenamedWithForm = false;
+        public void ShowContextMenu(Control control, Point pos,String Path)
+        {
+            using (ContextMenu menu = new ContextMenu())
+            {
+                pos = control.PointToScreen(pos);
+                Populate(menu);
+                int command = User32.TrackPopupMenuEx(menu.Handle,
+                    TPM.TPM_RETURNCMD, pos.X, pos.Y, m_MessageWindow.Handle,
+                    IntPtr.Zero);
+                if (command > 0)
+                {
+                    command-= m_CmdFirst;
+                    if( command==18)//rinomina
+                    {
+                        IsRenamedWithForm = false;
+                        FolderRenameForm r = new FolderRenameForm(Path, pos);
+                        r.ShowDialog();
+                        if(r.IsRenamed)
+                        {
+                            IsRenamedWithForm = true;
+                        }
+                    }
+                    else
+                        InvokeCommand(command);
+                }
+            }
+        }
+
 
         /// <summary>
         /// Gets the underlying COM <see cref="IContextMenu"/> interface.

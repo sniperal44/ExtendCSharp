@@ -76,7 +76,8 @@ namespace ExtendCSharp
         #region String
         public static bool IsInt(this String d)
         {
-            return int.TryParse(d, out int n);
+            int n;
+            return int.TryParse(d, out n);
         }
         public static int ParseInt(this String d)
         {
@@ -88,7 +89,8 @@ namespace ExtendCSharp
         }
         public static bool IsFloat(this String d)
         {
-            return float.TryParse(d, out float n);
+            float n;
+            return float.TryParse(d, out n);
         }
         public static float ParseFloat(this String d)
         {
@@ -96,7 +98,8 @@ namespace ExtendCSharp
         }
         public static bool IsDouble(this String d)
         {
-            return double.TryParse(d, out double n);
+            double n;
+            return double.TryParse(d, out n);
         }
         public static double ParseDouble(this String d)
         {
@@ -1426,7 +1429,8 @@ namespace ExtendCSharp
 
         public static Bitmap TrimBitmap(this Bitmap source)
         {
-            return source.TrimBitmap(out int x, out x);
+            int x;
+            return source.TrimBitmap(out x, out x);
         }
 
         public static Bitmap TrimBitmap(this Bitmap source, out int LeftCrop, out int TopCrop)

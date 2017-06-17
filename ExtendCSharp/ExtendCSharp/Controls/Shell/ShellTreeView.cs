@@ -721,7 +721,10 @@ namespace GongSolutions.Shell
                 if ((node != null) && (node == m_RightClickNode))
                 {
                     ShellItem folder = (ShellItem)node.Tag;
-                    new ShellContextMenu(folder).ShowContextMenu(m_TreeView, e.Location);
+                    ShellContextMenu s = new ShellContextMenu(folder);
+                    s.ShowContextMenu(m_TreeView, e.Location,folder.FileSystemPath);
+                    if(s.IsRenamedWithForm)
+                        RefreshItem(node.Parent);
                 }
             }
         }

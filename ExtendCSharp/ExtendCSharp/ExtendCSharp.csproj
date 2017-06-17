@@ -99,6 +99,12 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\Shell\FilterItem.cs" />
+    <Compile Include="Controls\Shell\FolderRenameForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\Shell\FolderRenameForm.Designer.cs">
+      <DependentUpon>FolderRenameForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Shell\Interop\BHID.cs" />
     <Compile Include="Controls\Shell\Interop\CoClass.cs" />
     <Compile Include="Controls\Shell\Interop\ComCtl32.cs" />
@@ -242,6 +248,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\Shell\FileDialogToolbar.resx">
       <DependentUpon>FileDialogToolbar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Shell\FolderRenameForm.resx">
+      <DependentUpon>FolderRenameForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\Shell\PlacesToolbar.resx">
       <DependentUpon>PlacesToolbar.cs</DependentUpon>

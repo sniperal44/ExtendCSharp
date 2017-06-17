@@ -265,13 +265,20 @@ namespace ExtendCSharp.Services
 
         public void Rename(String Source, String Dest, bool Override = true)
         {
-            if (!FileExist(Source))
-                return;
-            if (!Override && File.Exists(Dest))
-                return;
-            if (!DirectoryExist(GetParent(Dest)))
-                CreateFolderSecure(GetParent(Dest));
-            File.Move(Source, Dest);
+            if (FileExist(Source))
+            {
+                if (!Override && FileExist(Dest))
+                    return;
+                if (!DirectoryExist(GetParent(Dest)))
+                    CreateFolderSecure(GetParent(Dest));
+                File.Move(Source, Dest);
+            }
+            else if ( DirectoryExist(Source))
+            {
+                if (!DirectoryExist(GetParent(Dest)))
+                    CreateFolderSecure(GetParent(Dest));
+                Directory.Move(Source, Dest);
+            }
         }
 
 
