@@ -29,6 +29,8 @@ using Microsoft.Win32;
 using GongSolutions.Shell.Interop;
 using Interop = GongSolutions.Shell.Interop;
 using ComTypes = System.Runtime.InteropServices.ComTypes;
+using ExtendCSharp;
+using ExtendCSharp.Controls.Shell;
 
 namespace GongSolutions.Shell
 {
@@ -63,8 +65,12 @@ namespace GongSolutions.Shell
             m_TreeView.ItemDrag += new ItemDragEventHandler(m_TreeView_ItemDrag);
             m_TreeView.MouseDown += new MouseEventHandler(m_TreeView_MouseDown);
             m_TreeView.MouseUp += new MouseEventHandler(m_TreeView_MouseUp);
+            m_TreeView.KeyDown += M_TreeView_KeyDown;
+
             m_ScrollTimer.Interval = 250;
             m_ScrollTimer.Tick += new EventHandler(m_ScrollTimer_Tick);
+
+
             Size = new Size(120, 100);
             SystemImageList.UseSystemImageList(m_TreeView);
 
@@ -88,6 +94,8 @@ namespace GongSolutions.Shell
 
             CreateItems();
         }
+
+       
 
         /// <summary>
         /// Refreses the contents of the <see cref="ShellTreeView"/>.
@@ -722,7 +730,14 @@ namespace GongSolutions.Shell
                 {
                     ShellItem folder = (ShellItem)node.Tag;
                     ShellContextMenu s = new ShellContextMenu(folder);
-                    s.ShowContextMenu(m_TreeView, e.Location,folder.FileSystemPath);
+                    String path = null;
+                    try
+                    {
+                        path = folder.FileSystemPath;
+                    }
+                    catch (Exception) { }
+
+                    s.ShowContextMenu(m_TreeView, e.Location, path);
                     if(s.IsRenamedWithForm)
                         RefreshItem(node.Parent);
                 }
@@ -755,6 +770,32 @@ namespace GongSolutions.Shell
                 m_Navigating = false;
             }
         }
+        private void M_TreeView_KeyDown(object sender, KeyEventArgs e)
+        {
+            if( e.KeyCode==Keys.F5)
+            {        
+                RefreshItem(m_TreeView.SelectedNode.FirstParent());
+            }
+            else if ( e.KeyCode==Keys.F2)
+            {
+                //IsRenamedWithForm = false;
+                if(m_TreeView.SelectedNode.Tag is ShellItem)
+                {
+                    String p = m_TreeView.SelectedNode.Tag._Cast<ShellItem>().FileSystemPath;
+                    FolderRenameForm r = new FolderRenameForm(p, PointToScreen( m_TreeView.SelectedNode.Bounds.GetLocation(ContentAlignment.BottomRight)));
+                    r.ShowDialog();
+                    if (r.IsRenamed)
+                    {
+                        RefreshItem(m_TreeView.SelectedNode.FirstParent());
+                    }
+                }
+            }
+            else if (e.KeyCode == Keys.Delete)
+            {
+               //TODO: implementare il cancellamento di un file
+            }
+        }
+
 
         enum ScrollDirection
         {

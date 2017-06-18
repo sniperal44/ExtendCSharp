@@ -214,7 +214,14 @@ namespace GongSolutions.Shell
         {
             RemoveShellMenuItems(menu);
             m_ComInterface.QueryContextMenu(menu.Handle, 0,
-                m_CmdFirst, int.MaxValue, CMF.EXPLORE|CMF.CANRENAME);
+                m_CmdFirst, int.MaxValue, CMF.EXPLORE);
+        }
+        public void Populate(Menu menu,bool Rename)
+        {
+            RemoveShellMenuItems(menu);
+            
+            m_ComInterface.QueryContextMenu(menu.Handle, 0,
+                m_CmdFirst, int.MaxValue, CMF.EXPLORE | (Rename ? CMF.CANRENAME : 0));
         }
 
         /// <summary>
@@ -250,14 +257,15 @@ namespace GongSolutions.Shell
             using (ContextMenu menu = new ContextMenu())
             {
                 pos = control.PointToScreen(pos);
-                Populate(menu);
+                Populate(menu,Path!=null);
                 int command = User32.TrackPopupMenuEx(menu.Handle,
                     TPM.TPM_RETURNCMD, pos.X, pos.Y, m_MessageWindow.Handle,
                     IntPtr.Zero);
                 if (command > 0)
                 {
                     command-= m_CmdFirst;
-                    if( command==18)//rinomina
+                        
+                    if( command==18 && Path!=null)//rinomina
                     {
                         IsRenamedWithForm = false;
                         FolderRenameForm r = new FolderRenameForm(Path, pos);
@@ -297,7 +305,11 @@ namespace GongSolutions.Shell
                 {
                     if (items[n] == ShellItem.Desktop)
                     {
-                        parent = ShellItem.Desktop;
+                        if(items[n].Parent==null)
+                            parent = ShellItem.Desktop;
+                        else
+                           parent = items[n].Parent;
+                        //return; //crasha se clicco con il dx sul desktop che si trova sotto c:/User/Luca
                     }
                     else
                     {

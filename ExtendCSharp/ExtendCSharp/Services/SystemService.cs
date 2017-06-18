@@ -277,7 +277,12 @@ namespace ExtendCSharp.Services
             {
                 if (!DirectoryExist(GetParent(Dest)))
                     CreateFolderSecure(GetParent(Dest));
-                Directory.Move(Source, Dest);
+                try
+                {
+                    Directory.Move(Source, Dest);
+                }
+                catch(Exception)
+                { }
             }
         }
 

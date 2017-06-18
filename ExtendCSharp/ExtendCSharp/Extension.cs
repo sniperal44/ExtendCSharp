@@ -18,6 +18,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 
 namespace ExtendCSharp
 {
@@ -1633,7 +1634,87 @@ namespace ExtendCSharp
 
         #endregion
 
+        #region TreeNode
+        public static TreeNode FirstParent(this TreeNode node)
+        {
+            if (node.Parent == null)
+                return node;
+            return node.Parent.FirstParent();
+        }
+        #endregion
 
+
+        #region Rectangle
+        public static Point GetLocation(this Rectangle rect, System.Drawing.ContentAlignment Alignment=System.Drawing.ContentAlignment.TopLeft)
+        {
+            VerticalAlignment v = Alignment.GetVertical();
+            HorizontalAlignment h = Alignment.GetHorizontal();
+
+            int x = 0;
+            if (h == HorizontalAlignment.Right)
+            {
+                x = rect.Size.Width;
+            }
+            else if (h == HorizontalAlignment.Center)
+            {
+                x = rect.Size.Width/2;
+            }
+
+
+            int y = 0;
+            if (v == VerticalAlignment.Bottom)
+            {
+                y = rect.Size.Height;
+            }
+            else if (v == VerticalAlignment.Center)
+            {
+                y = rect.Size.Height / 2;
+            }
+
+
+            return new Point(rect.Left + x, rect.Top + y);
+        }
+        public static VerticalAlignment GetVertical(this System.Drawing.ContentAlignment Alignment)
+        {
+            switch(Alignment)
+            {
+                case System.Drawing.ContentAlignment.BottomCenter:
+                case System.Drawing.ContentAlignment.BottomLeft:
+                case System.Drawing.ContentAlignment.BottomRight:
+                    return VerticalAlignment.Bottom;
+                case System.Drawing.ContentAlignment.TopCenter:
+                case System.Drawing.ContentAlignment.TopLeft:
+                case System.Drawing.ContentAlignment.TopRight:
+                    return VerticalAlignment.Top;
+                case System.Drawing.ContentAlignment.MiddleCenter:
+                case System.Drawing.ContentAlignment.MiddleLeft:
+                case System.Drawing.ContentAlignment.MiddleRight:
+                    return VerticalAlignment.Center;
+
+            }
+            return VerticalAlignment.Top;
+        }
+        public static HorizontalAlignment GetHorizontal(this System.Drawing.ContentAlignment Alignment)
+        {
+            switch (Alignment)
+            {
+                case System.Drawing.ContentAlignment.BottomCenter:
+                case System.Drawing.ContentAlignment.TopCenter:
+                case System.Drawing.ContentAlignment.MiddleCenter:
+                    return HorizontalAlignment.Center;
+                case System.Drawing.ContentAlignment.TopLeft:
+                case System.Drawing.ContentAlignment.MiddleLeft:
+                case System.Drawing.ContentAlignment.BottomLeft:
+                    return HorizontalAlignment.Left;
+                case System.Drawing.ContentAlignment.MiddleRight:
+                case System.Drawing.ContentAlignment.TopRight:
+                case System.Drawing.ContentAlignment.BottomRight:
+                    return HorizontalAlignment.Right;
+
+            }
+            return HorizontalAlignment.Left ;
+        }
+        #endregion
         //TODO: implementare gli altri ToPlus
         #region ToPlus
 
