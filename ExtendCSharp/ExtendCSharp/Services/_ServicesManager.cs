@@ -12,7 +12,7 @@ using ExtendCSharp.Interfaces;
 using System;
 using System.Collections.Generic;
 
-namespace ExtendCSharp
+namespace ExtendCSharp.Services
 {
     /// <summary>
     /// Description of ServicesManager.

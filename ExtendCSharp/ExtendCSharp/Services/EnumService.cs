@@ -24,12 +24,17 @@ namespace ExtendCSharp.Services
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public Dictionary<String, T> GetIEnumerable<T>() where T : struct
+        public Dictionary<String, T> GetDictionary<T>() where T : struct
         {
             return Enum.GetValues(typeof(T)).Cast<T>().ToDictionary(e => e.ToStringEnum());
         }
-      
 
-
+        public IEnumerable<T> GetIEnumerable<T>() where T : struct
+        {
+            foreach (T flag in Enum.GetValues(typeof(T)).Cast<T>())
+            {
+                yield return flag;
+            }
+        }
     }
 }

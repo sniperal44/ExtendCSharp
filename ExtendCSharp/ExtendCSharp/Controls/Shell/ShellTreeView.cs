@@ -31,6 +31,7 @@ using Interop = GongSolutions.Shell.Interop;
 using ComTypes = System.Runtime.InteropServices.ComTypes;
 using ExtendCSharp;
 using ExtendCSharp.Controls.Shell;
+using ExtendCSharp.Services;
 
 namespace GongSolutions.Shell
 {
@@ -792,8 +793,17 @@ namespace GongSolutions.Shell
             }
             else if (e.KeyCode == Keys.Delete)
             {
-               //TODO: implementare il cancellamento di un file
+                //TODO: implementare il cancellamento di un file
+                String Path = m_TreeView.SelectedNode.Tag._Cast<ShellItem>().FileSystemPath;
+                ServicesManager.GetOrSet(() => new SystemService()).DeleteToRecicleBin(Path,SystemService.FileOperationFlags.FOF_WANTNUKEWARNING);
             }
+            else if ( e.KeyCode==Keys.Enter || e.KeyCode==Keys.Escape)
+            {
+                //Rimuove il beep
+                e.Handled = e.SuppressKeyPress = true;
+            }
+
+            
         }
 
 

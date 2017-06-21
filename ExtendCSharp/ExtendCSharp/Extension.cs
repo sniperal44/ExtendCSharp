@@ -486,7 +486,7 @@ namespace ExtendCSharp
             comboBox.ValueMember = "Value";     //in Item1 c'è il value
             comboBox.DisplayMember = "Key"; //in Item2 c'è la stringa
 
-            comboBox.DataSource = new BindingSource(es.GetIEnumerable<T>(), null);
+            comboBox.DataSource = new BindingSource(es.GetDictionary<T>(), null);
 
         }
 
@@ -1161,7 +1161,7 @@ namespace ExtendCSharp
         #region Enum
         public static String ToStringSpace(this Enum e)
         {
-            return e.ToString().Replace("_", " ");
+            return e.ToStringReplace("_", " ");
         }
         public static String ToStringReplace(this Enum e, String find, String replace)
         {
@@ -1177,6 +1177,80 @@ namespace ExtendCSharp
             return e is T;
         }
 
+        private static void CheckIsEnum<T>(bool withFlags)
+        {
+            if (!typeof(T).IsEnum)
+                throw new ArgumentException(string.Format("Type '{0}' is not an enum", typeof(T).FullName));
+            if (withFlags && !Attribute.IsDefined(typeof(T), typeof(FlagsAttribute)))
+                throw new ArgumentException(string.Format("Type '{0}' doesn't have the 'Flags' attribute", typeof(T).FullName));
+        }
+        public static bool IsEnum<T>(this T e, bool withFlags) where T : struct
+        {
+            if (!typeof(T).IsEnum)
+                throw new ArgumentException(string.Format("Il tipo '{0}' non è un enum", typeof(T).FullName));
+            if (withFlags && !Attribute.IsDefined(typeof(T), typeof(FlagsAttribute)))
+                throw new ArgumentException(string.Format("Il tipo '{0}' non ha l'attributo 'Flags'", typeof(T).FullName));
+
+            return true;
+        }
+
+        public static IEnumerable<T> GetFlags<T>(this T value) where T : struct
+        {
+            value.IsEnum(true);
+            foreach (T flag in Enum.GetValues(typeof(T)).Cast<T>())
+            {
+                if (value.IsFlagSet(flag))
+                    yield return flag;
+            }
+        }
+        public static bool IsFlagSet<T>(this T value, T flag) where T : struct
+        {
+            value.IsEnum(true);
+            long lValue = Convert.ToInt64(value);
+            long lFlag = Convert.ToInt64(flag);
+            return (lValue & lFlag) != 0;
+        }
+
+        public static T SetFlags<T>(this T value, T flags, bool on) where T : struct
+        {
+            value.IsEnum(true);
+            long lValue = Convert.ToInt64(value);
+            long lFlag = Convert.ToInt64(flags);
+            if (on)
+            {
+                lValue |= lFlag;
+            }
+            else
+            {
+                lValue &= (~lFlag);
+            }
+            return (T)Enum.ToObject(typeof(T), lValue);
+        }
+
+        public static T SetFlags<T>(this T value, T flags) where T : struct
+        {
+            return value.SetFlags(flags, true);
+        }
+
+        public static T ClearFlags<T>(this T value, T flags) where T : struct
+        {
+            return value.SetFlags(flags, false);
+        }
+
+
+        public static T CombineFlags<T>(this IEnumerable<T> flags) where T : struct
+        {
+            CheckIsEnum<T>(true);
+            long lValue = 0;
+            foreach (T flag in flags)
+            {
+                long lFlag = Convert.ToInt64(flag);
+                lValue |= lFlag;
+            }
+            return (T)Enum.ToObject(typeof(T), lValue);
+        }
+
+
         /// <summary>
         /// Utilizzo la notazione [Description("Nome da visualizzare")] sulla enum per specificare un testo
         /// </summary>
@@ -1185,11 +1259,10 @@ namespace ExtendCSharp
         /// <returns></returns>
         public static string ToStringEnum<T>(this T enumerationValue) where T : struct
         {
+
+            enumerationValue.IsEnum(false);
+
             Type type = enumerationValue.GetType();
-            if (!type.IsEnum)
-            {
-                throw new ArgumentException("EnumerationValue deve essere un Enum", "enumerationValue");
-            }
 
             //Tries to find a DescriptionAttribute for a potential friendly name
             //for the enum
