@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ExtendCSharp.Interfaces;
 using Services.ExtendCSharp;
+using System.Reflection;
 
 namespace ExtendCSharp.Services
 {
@@ -101,7 +102,10 @@ namespace ExtendCSharp.Services
             }
         }
 
-
+        public String GetExecutingDirectory()
+        {
+            return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        }
 
         public String ChangeExtension(String Path,String Ext)
         {
