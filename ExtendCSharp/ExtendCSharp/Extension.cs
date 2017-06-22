@@ -291,6 +291,32 @@ namespace ExtendCSharp
         #endregion
 
         #region Control
+
+        public static void Enable(this Control t)
+        {
+            if (t.InvokeRequired)
+                t.BeginInvoke((MethodInvoker)delegate { t.Enable(); });
+
+            else
+                t.Enabled = true;
+        }
+        public static void Disable(this Control t)
+        {
+            if (t.InvokeRequired)
+                t.BeginInvoke((MethodInvoker)delegate { t.Disable(); });
+
+            else
+                t.Enabled = false;
+        }
+        public static void ChangeState(this Control t)
+        {
+            if (t.InvokeRequired)
+                t.BeginInvoke((MethodInvoker)delegate { t.ChangeState(); });
+
+            else
+                t.Enabled = !t.Enabled;
+        }
+
         public static void SetTextInvoke(this Control t, string s)
         {
             if (t.InvokeRequired)
