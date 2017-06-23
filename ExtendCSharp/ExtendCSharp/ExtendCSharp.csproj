@@ -67,6 +67,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\ButtonMenu.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ButtonMenu.Designer.cs">
+      <DependentUpon>ButtonMenu.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ExplorerTree.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -240,6 +246,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Controls\ButtonMenu.resx">
+      <DependentUpon>ButtonMenu.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\ExplorerTree.resx">
       <DependentUpon>ExplorerTree.cs</DependentUpon>
     </EmbeddedResource>
