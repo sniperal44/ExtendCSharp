@@ -28,21 +28,21 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.button = new System.Windows.Forms.Button();
+            this.button_int = new System.Windows.Forms.Button();
             this.button_arrow = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // button
+            // button_int
             // 
-            this.button.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.button_int.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.button.Location = new System.Drawing.Point(0, 0);
-            this.button.Name = "button";
-            this.button.Size = new System.Drawing.Size(72, 48);
-            this.button.TabIndex = 0;
-            this.button.Text = "button";
-            this.button.UseVisualStyleBackColor = true;
+            this.button_int.Location = new System.Drawing.Point(0, 0);
+            this.button_int.Name = "button_int";
+            this.button_int.Size = new System.Drawing.Size(72, 48);
+            this.button_int.TabIndex = 0;
+            this.button_int.Text = "button";
+            this.button_int.UseVisualStyleBackColor = true;
             // 
             // button_arrow
             // 
@@ -62,7 +62,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.button_arrow);
-            this.Controls.Add(this.button);
+            this.Controls.Add(this.button_int);
             this.Name = "ButtonMenu";
             this.Size = new System.Drawing.Size(92, 48);
             this.ResumeLayout(false);
@@ -71,6 +71,6 @@
 
         #endregion
         private System.Windows.Forms.Button button_arrow;
-        public System.Windows.Forms.Button button;
+        public System.Windows.Forms.Button button_int;
     }
 }
