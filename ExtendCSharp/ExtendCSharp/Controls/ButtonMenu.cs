@@ -34,6 +34,8 @@ namespace ExtendCSharp.Controls
                 _contextMenuStrip = value;
                 if (_contextMenuStrip != null)
                 {
+                    _contextMenuStrip.ItemRemoved += _contextMenuStrip_ItemAdded_Removed;
+                    _contextMenuStrip.ItemAdded += _contextMenuStrip_ItemAdded_Removed;
                     _contextMenuStrip.Opened += ContextMenuStrip_Opened;
                     _contextMenuStrip.Closed += ContextMenuStrip_Closed;
                     _contextMenuStrip.Closing += _contextMenuStrip_Closing;
@@ -41,6 +43,15 @@ namespace ExtendCSharp.Controls
             }
 
         }
+
+        private void _contextMenuStrip_ItemAdded_Removed(object sender, ToolStripItemEventArgs e)
+        {
+            if (_contextMenuStrip == null || _contextMenuStrip.Items.Count == 0)
+                button_arrow.Disable();
+            else
+                button_arrow.Enable();
+        }
+
 
         public ButtonMenuWrapper buttonMenu = null;
        
@@ -50,6 +61,10 @@ namespace ExtendCSharp.Controls
         {
             InitializeComponent();
             buttonMenu = new ButtonMenuWrapper(button_int);
+            if (_contextMenuStrip == null || _contextMenuStrip.Items.Count == 0)
+                button_arrow.Disable();
+            else
+                button_arrow.Enable();
         }
 
         
@@ -104,6 +119,12 @@ namespace ExtendCSharp.Controls
 
             System.Windows.Forms.Button inter;
 
+
+
+            public Control GetControl()
+            {
+                return inter._Cast<Control>();
+            }
             public ButtonMenuWrapper()
             {
                 inter = new System.Windows.Forms.Button();

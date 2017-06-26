@@ -71,6 +71,6 @@
 
         #endregion
         private System.Windows.Forms.Button button_arrow;
-        public System.Windows.Forms.Button button_int;
+        private System.Windows.Forms.Button button_int;
     }
 }
