@@ -24,14 +24,23 @@ namespace ExtendCSharp.ExtendedClass
         public delegate void LineReceivedEventArgs(String Line);
         public event LineReceivedEventArgs OnLineReceived;
 
-
+        public bool RtsEnable {
+            get
+            {
+                return serialPort.RtsEnable;
+            }
+            set
+            {
+                serialPort.RtsEnable= value;
+            }
+        }
 
 
         public SerialComunicationPlus(String port)
         {
             serialPort = new SerialPort(port);
             serialPort.Open();
-
+           
             t = new Thread(ListenLine);
             t.Start();
         }
@@ -42,6 +51,7 @@ namespace ExtendCSharp.ExtendedClass
 
             t = new Thread(ListenLine);
             t.Start();
+            
         }
 
 
@@ -50,8 +60,6 @@ namespace ExtendCSharp.ExtendedClass
         {
             try
             {
-
-
                 while (true)
                 {
                     String t = serialPort.ReadLine();
