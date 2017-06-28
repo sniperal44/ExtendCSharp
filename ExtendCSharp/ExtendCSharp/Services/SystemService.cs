@@ -13,6 +13,7 @@ using ExtendCSharp.Interfaces;
 using Services.ExtendCSharp;
 using System.Reflection;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace ExtendCSharp.Services
 {
@@ -260,11 +261,23 @@ namespace ExtendCSharp.Services
             else
                 File.WriteAllText(Path, Contents);
         }
+
+        public void Write(String Path, String Contents, Encoding encoding, bool Append)
+        {
+            if (Append)
+                File.AppendAllText(Path, Contents, encoding);
+            else
+                File.WriteAllText(Path, Contents, encoding);
+        }
+
+        public String Read(String Path, Encoding encoding)
+        {
+            return File.ReadAllText(Path, encoding);
+        }
         public String Read(String Path)
         {
             return File.ReadAllText(Path);
         }
-
 
 
 
@@ -357,6 +370,26 @@ namespace ExtendCSharp.Services
             return FileExist(Path) || DirectoryExist(Path);
         }
 
+        
+        public String[] Find(String Path,String pattern)
+        {
+            return Directory.GetFiles(Path, pattern);
+        }
+        public String[] FindRegex(String Path, String pattern)
+        {
+            String[] Files= Directory.GetFiles(Path);
+            List<String> ReturnStrings = new List<string>();
+
+            Regex rgx = new Regex(pattern, RegexOptions.Singleline);
+
+            foreach (String file in Files )
+            {
+                if (rgx.IsMatch(GetFileName(file)))
+                    ReturnStrings.Add(file);
+            }
+            
+            return ReturnStrings.ToArray();
+        }
 
 
 

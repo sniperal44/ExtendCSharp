@@ -170,6 +170,7 @@
     <Compile Include="Controls\Shell\SystemImageList.cs" />
     <Compile Include="Exceptions\MissingServiceException.cs" />
     <Compile Include="ExtendedClass\ObjectPlus.cs" />
+    <Compile Include="ExtendedClass\StringCollectionManager.cs" />
     <Compile Include="ExtendedClass\ThreadPlus.cs" />
     <Compile Include="ExtendedClass\FileSystemPlus.cs" />
     <Compile Include="ExtendedClass\FullPrecisionNumber.cs" />
@@ -190,9 +191,11 @@
     <Compile Include="Controls\NumericUpDownPlus.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Services\BitmapService.cs" />
     <Compile Include="Services\EnumService.cs" />
     <Compile Include="Services\FormService.cs" />
     <Compile Include="Services\JsonService.cs" />
+    <Compile Include="Services\MathService.cs" />
     <Compile Include="Services\MD5Service.cs" />
     <Compile Include="Services\MySQLService.cs" />
     <Compile Include="ExtendedClass\ProcessPlus.cs" />

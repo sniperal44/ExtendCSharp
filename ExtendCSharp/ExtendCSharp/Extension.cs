@@ -15,6 +15,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -95,7 +96,8 @@ namespace ExtendCSharp
         }
         public static float ParseFloat(this String d)
         {
-            return float.Parse(d);
+            
+            return float.Parse(d.Replace('.',','));
         }
         public static bool IsDouble(this String d)
         {
@@ -259,6 +261,17 @@ namespace ExtendCSharp
         {
             s.TrimStart(c);
             return c+s;
+        }
+
+        public static bool RegexIsMatch(this String s, String pattern,RegexOptions o)
+        {
+            Regex r = new Regex(pattern, o);
+            return r.IsMatch(s);
+        }
+        public static Match RegexMatch(this String s, String pattern, RegexOptions o)
+        {
+            Regex r = new Regex(pattern, o);
+            return r.Match(s);
         }
 
         #endregion
@@ -963,7 +976,8 @@ namespace ExtendCSharp
         }
         public static Point Rotate(this Point source, int CentroRotazioneX, int CentroRotazioneY, double Gradi)
         {
-            Gradi = GradToRad(Gradi);
+            MathService ms = ServicesManager.GetOrSet(() => { return new MathService(); });
+            Gradi = ms.GradToRad(Gradi);
             double px = Math.Cos(Gradi) * (source.X - CentroRotazioneX) - Math.Sin(Gradi) * (source.Y - CentroRotazioneY) + CentroRotazioneX;
             double py = Math.Sin(Gradi) * (source.X - CentroRotazioneX) + Math.Cos(Gradi) * (source.Y - CentroRotazioneY) + CentroRotazioneY;
             return new Point((int)px, (int)py);
@@ -996,9 +1010,10 @@ namespace ExtendCSharp
         }
         public static double Orientamento(this Point source, int X, int Y)
         {
+            MathService ms = ServicesManager.GetOrSet(() => { return new MathService(); });
             float xDiff = X - source.X;
-            float yDiff = Y - source.Y;
-            return RadToGrad(Math.Atan2(yDiff, xDiff));
+            float yDiff = Y - source.Y;  
+            return ms.RadToGrad(Math.Atan2(yDiff, xDiff));
         }
 
 
@@ -1342,6 +1357,14 @@ namespace ExtendCSharp
         {
             g.FillEllipse(brush, centerX - radius, centerY - radius,radius + radius, radius + radius);
         }
+
+        public static void DrawArc(this Graphics g,Pen pen, float xCenter,float yCenter, float radius,float StartAngle,float SweepAngle)
+        {
+
+            g.DrawArc(pen, xCenter - radius, yCenter - radius, radius *2, radius *2,StartAngle, SweepAngle);
+        }
+
+
 
         /// <summary>
         /// Permette di disegnare una PictureBoxPlus in base alle proprie cordinate/dimensioni
@@ -1718,20 +1741,7 @@ namespace ExtendCSharp
         }
         #endregion
 
-        #region StaticMethod
 
-        public static double RadToGrad(double Rad)
-        {
-            return Rad * (180 / Math.PI);
-        }
-        public static double GradToRad(double Grad)
-        {
-            return (Math.PI / 180) * Grad;
-        }
-
-
-
-        #endregion
 
         #region TreeNode
         public static TreeNode FirstParent(this TreeNode node)
