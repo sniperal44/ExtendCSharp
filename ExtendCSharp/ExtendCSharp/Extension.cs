@@ -1035,6 +1035,22 @@ namespace ExtendCSharp
         }
 
 
+        public static PointF Add(this PointF source, double x, double y)
+        {
+            return source.Add(x, y);
+        }
+        public static PointF Add(this PointF source, PointF pnt)
+        {
+            return source.Add(pnt.X, pnt.Y);
+        }
+        public static PointF Add(this PointF source, float x, float y)
+        {
+            return new PointF(source.X + x, source.Y + y);
+        }
+        
+
+
+
 
         public static Point Sub(this Point source, Point pnt)
         {
@@ -1057,6 +1073,10 @@ namespace ExtendCSharp
         public static Point Scala(this Point source, double scala)
         {
             return new Point((int)(source.X * scala), (int)(source.Y * scala));
+        }
+        public static PointF Scala(this PointF source, double scala)
+        {
+            return new PointF((float)(source.X * scala), (float)(source.Y * scala));
         }
 
 
@@ -1123,6 +1143,19 @@ namespace ExtendCSharp
               float BCy = Cy - By;
               return (BAx * BCy - BAy * BCx);
           }*/
+        #endregion
+
+        #region Size
+
+        public static Size Scala(this Size source, double scala)
+        {
+            return new Size((int)(source.Width * scala), (int)(source.Height * scala));
+        }
+        public static SizeF Scala(this SizeF source, double scala)
+        {
+            return new SizeF((float)(source.Width * scala), (float)(source.Height * scala));
+        }
+
         #endregion
 
         #region Uri
@@ -1823,6 +1856,22 @@ namespace ExtendCSharp
             }
             return HorizontalAlignment.Left ;
         }
+
+        public static Rectangle Round(this RectangleF rect)
+        {
+            return Rectangle.Round(rect);      
+        }
+        public static Rectangle Truncate(this RectangleF rect)
+        {
+            return Rectangle.Truncate(rect);
+        }
+        public static RectangleF Offset(this RectangleF rect,float offset)
+        {
+            return new RectangleF(rect.X - offset, rect.Y - offset, rect.Width + (offset * 2), rect.Height + (offset * 2));
+        }
+
+
+
         #endregion
         //TODO: implementare gli altri ToPlus
         #region ToPlus
