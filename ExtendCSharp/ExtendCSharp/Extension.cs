@@ -1004,11 +1004,11 @@ namespace ExtendCSharp
 
 
 
-        public static double Orientamento(this Point source, Point pnt)
+        public static double Orientamento(this PointF source, PointF pnt)
         {
             return source.Orientamento(pnt.X, pnt.Y);
         }
-        public static double Orientamento(this Point source, int X, int Y)
+        public static double Orientamento(this PointF source, float X, float Y)
         {
             MathService ms = ServicesManager.GetOrSet(() => { return new MathService(); });
             float xDiff = X - source.X;

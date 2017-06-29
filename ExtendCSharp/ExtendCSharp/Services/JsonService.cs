@@ -43,7 +43,8 @@ namespace ExtendCSharp.Services
                 JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All };
                 return JsonConvert.SerializeObject(o, settings);
             }
-            catch (Exception ) { return default(String); }
+            catch (Exception ex) { return default(String); }
+            //TODO- errore setting qua!! pen...
         }
     }
 
