@@ -129,6 +129,64 @@ namespace ExtendCSharp.Controls
             return new RectangleF(t, r.Size);
         }
 
+        /// <summary>
+        /// Permette di covertire un point relativo al control CartesianPlan in un Point relativo al background image a dimensioni reali in modalità cartesiana
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        public Point ConvertToCartesianBackground(Point p)
+        {
+            Point t = ConvertToCartesian(p);
+            Rectangle rect=GetBackgroundRect();
+
+            t.X -= rect.X;
+            t.Y -= rect.Y;
+
+            t.X = (int)(t.X/GetBackgroundWidthProportion());
+            t.Y = (int)(t.Y / GetBackgroundHeightProportion());
+
+            return t;
+        }
+        public PointF ConvertToCartesianBackground(PointF p)
+        {
+            PointF t = ConvertToCartesian(p);
+            RectangleF rect = GetBackgroundRect();
+
+            t.X -= rect.X;
+            t.Y -= rect.Y;
+
+            t.X = (float)(t.X * GetBackgroundWidthProportion());
+            t.Y = (float)(t.Y * GetBackgroundWidthProportion());
+
+            return t;
+        }
+
+
+        //TODO: controllo
+        public Rectangle ConvertToCartesianBackground(Rectangle r)
+        {
+            Point t = ConvertToCartesianBackground(r.Location);
+            t.Y -= r.Height;
+
+            Size s = r.Size;
+            s.Width = (int)(s.Width/GetBackgroundWidthProportion());
+            s.Height = (int)(s.Width / GetBackgroundWidthProportion());
+
+            return new Rectangle(t, s);
+        }
+        public RectangleF ConvertToCartesianBackground(RectangleF r)
+        {
+            PointF t = ConvertToCartesianBackground(r.Location);
+            t.Y -= r.Height;
+
+            SizeF s = r.Size;
+            s.Width = (float)(s.Width / GetBackgroundWidthProportion());
+            s.Height = (float)(s.Width / GetBackgroundWidthProportion());
+
+            return new RectangleF(t, s);
+        }
+
+
     }
 
 
@@ -188,6 +246,9 @@ namespace ExtendCSharp.Controls
         }
     }
 
+
+
+    //TODO: termino le CartesianAction
 
     public class CartesianActionLines : CartesianAction
     {
