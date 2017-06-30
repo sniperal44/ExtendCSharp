@@ -44,7 +44,7 @@ namespace ExtendCSharp.Services
                 return JsonConvert.SerializeObject(o, settings);
             }
             catch (Exception ex) { return default(String); }
-            //TODO- errore setting qua!! pen...
+
         }
     }
 

@@ -1079,6 +1079,14 @@ namespace ExtendCSharp
             return new PointF((float)(source.X * scala), (float)(source.Y * scala));
         }
 
+        public static Point Round(this PointF source)
+        {
+            return Point.Round(source);
+        }
+        public static Point Truncate(this PointF source)
+        {
+            return Point.Truncate(source);
+        }
 
 
         #region Point[]
@@ -1787,6 +1795,36 @@ namespace ExtendCSharp
 
 
         #region Rectangle
+
+        public static PointF GetLocation(this RectangleF rect, System.Drawing.ContentAlignment Alignment = System.Drawing.ContentAlignment.TopLeft)
+        {
+            VerticalAlignment v = Alignment.GetVertical();
+            HorizontalAlignment h = Alignment.GetHorizontal();
+
+            float x = 0;
+            if (h == HorizontalAlignment.Right)
+            {
+                x = rect.Size.Width;
+            }
+            else if (h == HorizontalAlignment.Center)
+            {
+                x = rect.Size.Width / 2;
+            }
+
+
+            float y = 0;
+            if (v == VerticalAlignment.Bottom)
+            {
+                y = rect.Size.Height;
+            }
+            else if (v == VerticalAlignment.Center)
+            {
+                y = rect.Size.Height / 2;
+            }
+
+
+            return new PointF(rect.Left + x, rect.Top + y);
+        }
         public static Point GetLocation(this Rectangle rect, System.Drawing.ContentAlignment Alignment=System.Drawing.ContentAlignment.TopLeft)
         {
             VerticalAlignment v = Alignment.GetVertical();
@@ -1864,6 +1902,10 @@ namespace ExtendCSharp
         public static Rectangle Truncate(this RectangleF rect)
         {
             return Rectangle.Truncate(rect);
+        }
+        public static Rectangle Offset(this Rectangle rect, float offset)
+        {
+            return new Rectangle((int)(rect.X - offset), (int)(rect.Y - offset), (int)(rect.Width + (offset * 2)), (int)(rect.Height + (offset * 2)));
         }
         public static RectangleF Offset(this RectangleF rect,float offset)
         {

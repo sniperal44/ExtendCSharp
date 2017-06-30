@@ -73,11 +73,23 @@
     <Compile Include="Controls\ButtonMenu.Designer.cs">
       <DependentUpon>ButtonMenu.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\CartesianPlan.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\CartesianPlan.Designer.cs">
+      <DependentUpon>CartesianPlan.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ExplorerTree.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\LabelPlus.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\PanelPlus.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\PanelPlus.Designer.cs">
+      <DependentUpon>PanelPlus.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\PictureBoxPlus.cs">
       <SubType>Component</SubType>
@@ -247,6 +259,8 @@
     <Compile Include="Controls\WebBrowserPlus.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Wrapper\PenDataObject.cs" />
+    <Compile Include="Wrapper\PointReadOnly.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Controls\ButtonMenu.resx">
