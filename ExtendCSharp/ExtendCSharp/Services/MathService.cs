@@ -37,5 +37,129 @@ namespace ExtendCSharp.Services
         }
 
 
+       /* public int Max(params int[] values)
+        {
+            if (values.Length == 0)
+                throw new ArgumentException("Passare almeno un elemento");
+            else if (values.Length == 1)
+                return values[0];
+            else
+            {
+                int? max=null;
+
+                foreach(int v in values)
+                {
+                    if (max == null || v > max)
+                        max = v;
+                }
+
+                return max.Value;
+
+            }
+        }
+
+        public float Max(params float[] values)
+        {
+            if (values.Length == 0)
+                throw new ArgumentException("Passare almeno un elemento");
+            else if (values.Length == 1)
+                return values[0];
+            else
+            {
+                float? max = null;
+
+                foreach (float v in values)
+                {
+                    if (max == null || v > max)
+                        max = v;
+                }
+
+                return max.Value;
+
+            }
+        }*/
+
+        public decimal Max(params decimal[] values)
+        {
+            if (values.Length == 0)
+                throw new ArgumentException("Passare almeno un elemento");
+            else if (values.Length == 1)
+                return values[0];
+            else
+            {
+                decimal? max = null;
+
+                foreach (decimal v in values)
+                {
+                    if (max == null || v > max)
+                        max = v;
+                }
+
+                return max.Value;
+
+            }
+        }
+        public decimal Min(params decimal[] values)
+        {
+            if (values.Length == 0)
+                throw new ArgumentException("Passare almeno un elemento");
+            else if (values.Length == 1)
+                return values[0];
+            else
+            {
+                decimal? min = null;
+
+                foreach (decimal v in values)
+                {
+                    if (min == null || v < min)
+                        min = v;
+                }
+
+                return min.Value;
+
+            }
+        }
+
+
+        public float Max(params float[] values)
+        {
+            if (values.Length == 0)
+                throw new ArgumentException("Passare almeno un elemento");
+            else if (values.Length == 1)
+                return values[0];
+            else
+            {
+                float? max = null;
+
+                foreach (float v in values)
+                {
+                    if (max == null || v > max)
+                        max = v;
+                }
+
+                return max.Value;
+
+            }
+        }
+        public float Min(params float[] values)
+        {
+            if (values.Length == 0)
+                throw new ArgumentException("Passare almeno un elemento");
+            else if (values.Length == 1)
+                return values[0];
+            else
+            {
+                float? min = null;
+
+                foreach (float v in values)
+                {
+                    if (min == null || v < min)
+                        min = v;
+                }
+
+                return min.Value;
+
+            }
+        }
     }
 }

@@ -983,6 +983,20 @@ namespace ExtendCSharp
             return new Point((int)px, (int)py);
         }
 
+        public static PointF Rotate(this PointF source, PointF CentroRotazione, double Gradi)
+        {
+            return source.Rotate(CentroRotazione.X, CentroRotazione.Y, Gradi);
+        }
+        public static PointF Rotate(this PointF source, float CentroRotazioneX, float CentroRotazioneY, double Gradi)
+        {
+            MathService ms = ServicesManager.GetOrSet(() => { return new MathService(); });
+            Gradi = ms.GradToRad(Gradi);
+            double px = Math.Cos(Gradi) * (source.X - CentroRotazioneX) - Math.Sin(Gradi) * (source.Y - CentroRotazioneY) + CentroRotazioneX;
+            double py = Math.Sin(Gradi) * (source.X - CentroRotazioneX) + Math.Cos(Gradi) * (source.Y - CentroRotazioneY) + CentroRotazioneY;
+            return new PointF((float)px, (float)py);
+        }
+
+
         public static double Distanza(this Point source, Point pnt)
         {
             return source.Distanza(pnt.X, pnt.Y);
@@ -1379,6 +1393,11 @@ namespace ExtendCSharp
         {
             g.DrawPolygon(pen,p);
         }
+        public static void DrawPolygon(this Graphics g, Pen pen, params PointF[] p)
+        {
+            g.DrawPolygon(pen, p);
+        }
+
 
         public static void DrawCircle(this Graphics g, Pen pen,float centerX, float centerY, float radius)
         {
