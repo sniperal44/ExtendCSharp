@@ -37,48 +37,6 @@ namespace ExtendCSharp.Services
         }
 
 
-       /* public int Max(params int[] values)
-        {
-            if (values.Length == 0)
-                throw new ArgumentException("Passare almeno un elemento");
-            else if (values.Length == 1)
-                return values[0];
-            else
-            {
-                int? max=null;
-
-                foreach(int v in values)
-                {
-                    if (max == null || v > max)
-                        max = v;
-                }
-
-                return max.Value;
-
-            }
-        }
-
-        public float Max(params float[] values)
-        {
-            if (values.Length == 0)
-                throw new ArgumentException("Passare almeno un elemento");
-            else if (values.Length == 1)
-                return values[0];
-            else
-            {
-                float? max = null;
-
-                foreach (float v in values)
-                {
-                    if (max == null || v > max)
-                        max = v;
-                }
-
-                return max.Value;
-
-            }
-        }*/
-
         public decimal Max(params decimal[] values)
         {
             if (values.Length == 0)
