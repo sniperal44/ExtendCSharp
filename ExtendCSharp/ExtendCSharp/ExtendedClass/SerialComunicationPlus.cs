@@ -41,17 +41,19 @@ namespace ExtendCSharp.ExtendedClass
             serialPort = new SerialPort(port);
             serialPort.Open();
            
-            t = new Thread(ListenLine);
-            t.Start();
         }
         public SerialComunicationPlus(SerialComunicationSetting setting)
         {
             serialPort = new SerialPort(setting.Port,setting.Speed,setting.Parity,setting.DataBits,setting.StopBits);
             serialPort.Open();
+            
+        }
 
+
+        public void StartListenLineThread()
+        {
             t = new Thread(ListenLine);
             t.Start();
-            
         }
 
 

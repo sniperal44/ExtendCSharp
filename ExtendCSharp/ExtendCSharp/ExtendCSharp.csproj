@@ -216,7 +216,7 @@
     <Compile Include="Services\MouseKeyboardService.cs" />
     <Compile Include="Services\ProcessMemoryService.cs" />
     <Compile Include="Services\RegisteredFileTypeService.cs" />
-    <Compile Include="ExtendedClass\SerialComunicationService.cs" />
+    <Compile Include="ExtendedClass\SerialComunicationPlus.cs" />
     <Compile Include="Services\SerialServices.cs" />
     <Compile Include="Services\SystemService.cs" />
     <Compile Include="Forms\SliderForm.cs">
