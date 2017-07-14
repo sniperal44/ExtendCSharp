@@ -19,9 +19,111 @@ namespace ExtendCSharp.Controls
 
         int RefIndex = 0;
         Dictionary<int, CartesianAction> CartesianActions = new Dictionary<int, CartesianAction>();
-    
+
+        Point origin = new Point(0, 0);
+
+        /*TODO: creo enum TipoDiResize ( stretch o zoom )
+         * 
+         * durante il settaggio della XMax o YMax ( proprierty ) se è stretch non faccio niente di nuovo
+         * se è zoom vado a impostare entramble se Scale sul valore minimo
+           */
+
+           
+        CartesianLayout _cartesianLayout = CartesianLayout.Stretch;
+        float XScale = 1;
+        float YScale = 1;
+
+        float? _XMax = null;
+        float? _YMax = null;
+
+
         #endregion
 
+
+        #region Proprierty
+        public PointReadOnly Origin
+        {
+            get { return origin; }
+        }
+
+        public float? XMax
+        {
+            get => _XMax;
+            set
+            {
+                _XMax = value;
+                if (_XMax == null)
+                    XScale = 1;
+                else
+                    XScale =(float) (InternalWidth/ _XMax);
+
+                if(_cartesianLayout==CartesianLayout.Zoom)
+                {
+                    YScale = Math.Min(YScale, XScale);
+                    XScale = YScale;
+                }
+            }
+        }
+        public float? YMax
+        {
+            get => _YMax;
+            set
+            {
+                _YMax = value;
+                if (_YMax == null)
+                    YScale = 1;
+                else
+                    YScale = (float)(InternalHeight / _YMax);
+
+                if (_cartesianLayout == CartesianLayout.Zoom)
+                {
+                    YScale = Math.Min(YScale, XScale);
+                    XScale = YScale;
+                }
+            }
+        }
+        public CartesianLayout cartesianLayout
+        {
+            get => _cartesianLayout;
+            set
+            {
+                _cartesianLayout = value;
+                if(_cartesianLayout==CartesianLayout.Stretch)
+                {
+                    //Ricalcolo le scale
+                    if (_YMax == null)
+                        YScale = 1;
+                    else
+                        YScale = (float)(InternalHeight / _YMax);
+
+                    if (_XMax == null)
+                        XScale = 1;
+                    else
+                        XScale = (float)(InternalWidth / _XMax);
+
+
+                }
+                if (_cartesianLayout == CartesianLayout.Zoom)
+                {
+                    //Ricalcolo le scale
+                    if (_YMax == null)
+                        YScale = 1;
+                    else
+                        YScale = (float)(InternalHeight / _YMax);
+
+                    if (_XMax == null)
+                        XScale = 1;
+                    else
+                        XScale = (float)(InternalWidth / _XMax);
+
+                    YScale=Math.Min(YScale, XScale);
+                    XScale = YScale;
+
+                }
+            }
+        }
+
+        #endregion
         #region Constructor
 
         public CartesianPlan()
@@ -37,15 +139,11 @@ namespace ExtendCSharp.Controls
 
         #endregion
 
-        Point origin = new Point(0, 0);
-        public PointReadOnly Origin
-        {
-            get { return origin; }
-        }
 
 
         protected override void OnPaint(PaintEventArgs e)
         {
+            
             base.OnPaint(e);
 
             //e.Graphics.DrawRectangle(Pens.Black, GetBackgroundRect().Truncate());
@@ -54,7 +152,9 @@ namespace ExtendCSharp.Controls
 
             e.Graphics.ScaleTransform(1, -1);
             e.Graphics.TranslateTransform(0, -Height);
+            e.Graphics.ScaleTransform(XScale, YScale);
             e.Graphics.TranslateTransform(origin.X, origin.Y);
+            
 
 
             foreach ( KeyValuePair<int,CartesianAction> kca in CartesianActions)
@@ -73,13 +173,36 @@ namespace ExtendCSharp.Controls
         {
             CartesianActions.Add(RefIndex, ca);
             int ID = RefIndex;
-            ID++;
+            RefIndex++;
 
             Invalidate();
             return ID;
         }
+        public bool RemoveAction(CartesianAction ca)
+        {
+            if (CartesianActions.ContainsValue(ca))
+            {
+                CartesianActions.Remove(ca);
+                return true;
+            }
+            return false;
+        }
+        public bool RemoveAction(int index)
+        {
+            if (CartesianActions.ContainsKey(index))
+            {
+                CartesianActions.Remove(index);
+                return true;
+            }
+            return false;
+
+        }
 
 
+
+      
+           
+        
         public void SetRelativeOrigin(Size RelativeOrigin)
         {
             origin.X += RelativeOrigin.Width;
@@ -190,20 +313,17 @@ namespace ExtendCSharp.Controls
     }
 
 
-    public class CartesianAction
+    public abstract class CartesianAction
     {
-        public PenDataObject DefaultPen = Pens.Black;
-        public virtual void Paint(Graphics g, PenDataObject pen = null)
-        {
-            
-        }
+        protected PenDataObject DefaultPen = Pens.Black;
+        public PenDataObject pen=null;
+        public abstract void Paint(Graphics g, PenDataObject pen = null);
     }
 
     public class CartesianActionLine:CartesianAction
     {
         public float X1, X2, Y1, Y2;
-
-        public PenDataObject pen;
+        
         
 
         public CartesianActionLine(float X1, float Y1, float X2, float Y2)
@@ -245,46 +365,158 @@ namespace ExtendCSharp.Controls
             g.DrawLine(p, X1, Y1, X2, Y2);
         }
     }
+    public class CartesianActionCircle : CartesianAction
+    {
 
+        public float X, Y, radius;
+
+        public CartesianActionCircle(float X, float Y, float radius)
+        {
+            this.X = X;
+            this.Y = Y;
+            this.radius = radius;
+        }
+
+        public CartesianActionCircle(PointF p, float radius) : this(p.X, p.Y, radius)
+        {
+
+        }
+
+
+
+        public override void Paint(Graphics g, PenDataObject pen = null)
+        {
+            Pen p;
+            if (pen != null)
+                p = pen;
+            else if (this.pen != null)
+                p = this.pen;
+            else
+                p = DefaultPen;
+
+
+            g.DrawCircle(p, X, Y, radius);
+        }
+    }
+    public class CartesianActionRectangle : CartesianAction
+    {
+        public float X, Y, width,height;
+
+
+        public CartesianActionRectangle(float X,float Y,float Width,float Height) 
+        {
+            this.X = X;
+            this.Y = Y;
+            this.width = Width;
+            this.height = Height;
+        }
+        public CartesianActionRectangle(RectangleF rectangle) : this(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height)
+        {
+            
+
+        }
+
+        public CartesianActionRectangle(PointF BottomLeft, Size size) : this(BottomLeft.X,BottomLeft.Y,size.Width,size.Height)
+        {
+
+        }
+
+
+
+        public override void Paint(Graphics g, PenDataObject pen = null)
+        {
+            Pen p;
+            if (pen != null)
+                p = pen;
+            else if (this.pen != null)
+                p = this.pen;
+            else
+                p = DefaultPen;
+
+            g.DrawRectangle(p, X, Y, width, height);
+        }
+    }
 
 
     //TODO: termino le CartesianAction
 
     public class CartesianActionLines : CartesianAction
     {
+        public override void Paint(Graphics g, PenDataObject pen = null)
+        {
+            throw new NotImplementedException();
+        }
     }
 
 
     public class CartesianActionArc : CartesianAction
     {
+        public override void Paint(Graphics g, PenDataObject pen = null)
+        {
+            throw new NotImplementedException();
+        }
     }
-    public class CartesianActionCircle : CartesianAction
-    {
-    }
+
     public class CartesianActionEllipse : CartesianAction
     {
+        public override void Paint(Graphics g, PenDataObject pen = null)
+        {
+            throw new NotImplementedException();
+        }
     }
     public class CartesianActionIcon : CartesianAction
     {
+        public override void Paint(Graphics g, PenDataObject pen = null)
+        {
+            throw new NotImplementedException();
+        }
     }
     public class CartesianActionImage : CartesianAction
     {
+        public override void Paint(Graphics g, PenDataObject pen = null)
+        {
+            throw new NotImplementedException();
+        }
     }
     public class CartesianActionPolygon : CartesianAction
     {
-    }
-    public class CartesianActionRectangle : CartesianAction
-    {
+        public override void Paint(Graphics g, PenDataObject pen = null)
+        {
+            throw new NotImplementedException();
+        }
     }
     public class CartesianActionRectangles : CartesianAction
     {
+        public override void Paint(Graphics g, PenDataObject pen = null)
+        {
+            throw new NotImplementedException();
+        }
     }
     public class CartesianActionString : CartesianAction
     {
+        public override void Paint(Graphics g, PenDataObject pen = null)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class CartesianActionGROUP : CartesianAction
     {
         //permette di raggruppare altri CartesianAction
+        public override void Paint(Graphics g, PenDataObject pen = null)
+        {
+            throw new NotImplementedException();
+        }
     }
+
+
+
+
+    public enum CartesianLayout
+    {
+        Stretch,
+        Zoom
+    }
+
+
 }

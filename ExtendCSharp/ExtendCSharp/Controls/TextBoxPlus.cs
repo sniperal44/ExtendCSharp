@@ -129,6 +129,19 @@ namespace ExtendCSharp.Controls
                 this.ScrollToCaret();
             }
         }
+        public void AppendLine(String line)
+        {
+            if (this.InvokeRequired)
+                this.BeginInvoke((MethodInvoker)delegate { this.AppendLine(line); });
+            else
+                base.Text = base.Text + line.RemoveRight("\r", "\n", "\r\n") + "\r\n";
+
+            if (AutoScroll)
+            {
+                this.SelectionStart = this.Text.Length;
+                this.ScrollToCaret();
+            }
+        }
         private void SetText(object s)
         {
             if (this.InvokeRequired)

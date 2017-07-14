@@ -751,6 +751,20 @@ namespace ExtendCSharp
             return ret;
         }
 
+        public static void Remove<TKey, TValue>(this Dictionary<TKey, TValue> source, TValue element)
+        {
+            List<TKey> ToRemove = new List<TKey>();
+            foreach (KeyValuePair<TKey, TValue> entry in source)
+            {
+                if (entry.Value.Equals( element))
+                    ToRemove.Add(entry.Key);
+            }
+
+            foreach (TKey k in ToRemove)
+                source.Remove(k);
+        }
+
+
         #endregion
 
         #region CheckedListBox

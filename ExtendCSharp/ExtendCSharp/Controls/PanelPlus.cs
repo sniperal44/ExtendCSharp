@@ -37,6 +37,9 @@ namespace ExtendCSharp.Controls
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Area di disegno interno (Width), escluso il bordo
+        /// </summary>
         public int InternalWidth
         {
             get
@@ -51,7 +54,9 @@ namespace ExtendCSharp.Controls
                 return DrawWidth;
             }
         }
-
+        /// <summary>
+        /// Area di disegno interno (Height), escluso il bordo
+        /// </summary>
         public int InternalHeight
         {
             get
