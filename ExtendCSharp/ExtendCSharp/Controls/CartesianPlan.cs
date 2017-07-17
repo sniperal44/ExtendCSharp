@@ -36,7 +36,7 @@ namespace ExtendCSharp.Controls
         float? _XMax = null;
         float? _YMax = null;
 
-
+        
         #endregion
 
 
@@ -123,6 +123,7 @@ namespace ExtendCSharp.Controls
             }
         }
 
+        public bool ManualInvalidation { get; set; } = false;
         #endregion
         #region Constructor
 
@@ -175,7 +176,7 @@ namespace ExtendCSharp.Controls
             int ID = RefIndex;
             RefIndex++;
 
-            Invalidate();
+            InternalInvalidate();
             return ID;
         }
         public bool RemoveAction(CartesianAction ca)
@@ -183,6 +184,7 @@ namespace ExtendCSharp.Controls
             if (CartesianActions.ContainsValue(ca))
             {
                 CartesianActions.Remove(ca);
+                InternalInvalidate();
                 return true;
             }
             return false;
@@ -192,17 +194,21 @@ namespace ExtendCSharp.Controls
             if (CartesianActions.ContainsKey(index))
             {
                 CartesianActions.Remove(index);
+                InternalInvalidate();
                 return true;
             }
             return false;
 
         }
+        public void ClearAction()
+        {
+            CartesianActions.Clear();
+        }
 
 
 
-      
-           
-        
+
+
         public void SetRelativeOrigin(Size RelativeOrigin)
         {
             origin.X += RelativeOrigin.Width;
@@ -309,6 +315,15 @@ namespace ExtendCSharp.Controls
             return new RectangleF(t, s);
         }
 
+
+
+        private void InternalInvalidate()
+        {
+            if(!ManualInvalidation)
+            {
+                base.Invalidate();
+            }
+        }
 
     }
 
@@ -438,6 +453,84 @@ namespace ExtendCSharp.Controls
     }
 
 
+    //TODO: finire arc
+    public class CartesianActionArc : CartesianAction
+    {
+        public RectangleF rect;
+        public float startAngle, sweepAngle;
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="rect">Struttura System.Drawing.RectangleF che definisce i limiti dell'arco.</param>
+        /// <param name="StartPoint">Punto iniziale dell'arco</param>
+        /// <param name="EndPoint">Punto Finale dell'arco</param>
+        public CartesianActionArc(RectangleF rect, PointF StartPoint, PointF EndPoint)
+        {
+            //TODO: 
+            /*
+             il punto start point lo converto in startAngle in base a sen/cos delle cordinate in 
+             base al centro del rettangolo
+
+            il punto EndPoint lo converto in sweepAngle facendo la differenza tra lo startAngle 
+            e all'angolo calcolato in base a sen/cos delle cordinate ( EndPoint ) in base al centro del rettangolo 
+                         
+             */
+        }
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="x">Coordinata X dell'angolo inferiore sinistro del rettangolo che definisce l'arco. </param>
+        /// <param name="y">Coordinata Y dell'angolo superiore sinistro del rettangolo che definisce l'arco.</param>
+        /// <param name="width">Larghezza del rettangolo che definisce l'arco.</param>
+        /// <param name="height">Altezza del rettangolo che definisce l'arco.</param>
+        /// <param name="startAngle">Angolo misurato in gradi in senso orario dall'asse X al punto iniziale dell'arco.</param>
+        /// <param name="sweepAngle">Angolo misurato in gradi in senso orario dal parametro startAngle al punto finale dell'arco.</param>
+        public CartesianActionArc( float x, float y, float width, float height, float startAngle, float sweepAngle):this(new RectangleF(x,y,width,height),startAngle,sweepAngle)
+        {
+
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="rect">Struttura System.Drawing.RectangleF che definisce i limiti dell'arco.</param>
+        /// <param name="startAngle">Angolo misurato in gradi in senso orario dall'asse X al punto iniziale dell'arco.</param>
+        /// <param name="sweepAngle">Angolo misurato in gradi in senso orario dal parametro startAngle al punto finale dell'arco.</param>
+        public CartesianActionArc( RectangleF rect, float startAngle, float sweepAngle)
+        {
+            this.rect = rect;
+            this.startAngle = startAngle;
+            this.sweepAngle = sweepAngle;
+        }
+
+
+
+
+        public override void Paint(Graphics g, PenDataObject pen = null)
+        {
+            Pen p;
+            if (pen != null)
+                p = pen;
+            else if (this.pen != null)
+                p = this.pen;
+            else
+                p = DefaultPen;
+
+
+
+            g.DrawArc(p, rect, startAngle, sweepAngle);
+        }
+
+
+        
+    }
+
+
+
     //TODO: termino le CartesianAction
 
     public class CartesianActionLines : CartesianAction
@@ -449,13 +542,7 @@ namespace ExtendCSharp.Controls
     }
 
 
-    public class CartesianActionArc : CartesianAction
-    {
-        public override void Paint(Graphics g, PenDataObject pen = null)
-        {
-            throw new NotImplementedException();
-        }
-    }
+    
 
     public class CartesianActionEllipse : CartesianAction
     {
