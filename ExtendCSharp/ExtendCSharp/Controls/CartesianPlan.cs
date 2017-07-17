@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ExtendCSharp;
+using ExtendCSharp.Services;
 
 namespace ExtendCSharp.Controls
 {
@@ -460,6 +461,21 @@ namespace ExtendCSharp.Controls
         public float startAngle, sweepAngle;
 
 
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="center">Punto centrale dell'arco</param>
+        /// <param name="radius">Raggio dell'arco</param>
+        /// <param name="StartPoint">Punto iniziale dell'arco</param>
+        /// <param name="EndPoint">Punto Finale dell'arco</param>
+        public CartesianActionArc(PointF center,float radius, PointF StartPoint, PointF EndPoint):this(center.CreateRectangle(radius),StartPoint,EndPoint)
+        {
+        }
+
+
+
         /// <summary>
         /// 
         /// </summary>
@@ -477,6 +493,17 @@ namespace ExtendCSharp.Controls
             e all'angolo calcolato in base a sen/cos delle cordinate ( EndPoint ) in base al centro del rettangolo 
                          
              */
+
+            PointF Center= rect.GetLocation(ContentAlignment.MiddleCenter);
+            float startAngle=(float)Center.Orientamento(StartPoint);
+
+
+            float endAngle = (float)Center.Orientamento(EndPoint);
+            MathService ms = ServicesManager.GetOrSet(() => { return new MathService(); });
+            sweepAngle=ms.AngleDif(endAngle, startAngle);
+
+
+            Setup(rect, startAngle, sweepAngle);
         }
 
 
@@ -502,12 +529,17 @@ namespace ExtendCSharp.Controls
         /// <param name="sweepAngle">Angolo misurato in gradi in senso orario dal parametro startAngle al punto finale dell'arco.</param>
         public CartesianActionArc( RectangleF rect, float startAngle, float sweepAngle)
         {
+            Setup(rect, startAngle, sweepAngle);
+        
+        }
+
+        private void Setup(RectangleF rect, float startAngle, float sweepAngle)
+        {
             this.rect = rect;
             this.startAngle = startAngle;
             this.sweepAngle = sweepAngle;
+
         }
-
-
 
 
         public override void Paint(Graphics g, PenDataObject pen = null)

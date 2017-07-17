@@ -146,6 +146,26 @@ namespace ExtendCSharp
         {
             return s.Split(str, StringSplitOptions.None);
         }
+        /// <summary>
+        /// Splitta la stringa in 2 sottostringhe in base alla prima occorrenza trovata
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static Tuple<String,String> SplitFirst(this String s, String str)
+        {
+            int index = s.IndexOf(str);
+            Tuple<String, String> t = null;
+            if (index != -1)
+            {
+                String s1= s.Substring(0, index);
+                String s2 = s.Substring(index + str.Length);   //TODO: controllare che se str è alla fine di s, viene creata una stringa vuota e può dare errore
+                t  = new Tuple<String, String>(s1,s2);
+
+            }
+            return t;
+        }
+
         public static String SplitAndGet(this String s, int Index, params char[] chars)
         {
             String[] t = s.Split(chars);
@@ -764,6 +784,10 @@ namespace ExtendCSharp
                 source.Remove(k);
         }
 
+        public static IEnumerable<TValue> ToIEnumerable<TKey, TValue>(this Dictionary<TKey, TValue> source)
+        {
+            return source.Select(x => { return x.Value; });
+        }
 
         #endregion
 
@@ -1117,6 +1141,16 @@ namespace ExtendCSharp
         }
 
 
+        public static Rectangle CreateRectangle(this Point source,int Margin)
+        {
+            return new Rectangle(source.X - Margin, source.Y - Margin, Margin * 2, Margin * 2);
+        }
+        public static RectangleF CreateRectangle(this PointF source, float Margin)
+        {
+            return new RectangleF(source.X - Margin, source.Y - Margin, Margin * 2, Margin * 2);
+        }
+
+
         #region Point[]
 
 
@@ -1141,44 +1175,8 @@ namespace ExtendCSharp
         #endregion
 
 
-        /*  public static bool InPoligon(this Point[] Points, Point p)
-          {
 
-
-              int max_point = Points.Length - 1;
-              float total_angle = GetAngle(Points[max_point].X, Points[max_point].Y, p.X, p.Y, Points[0].X, Points[0].Y);
-
-
-              for (int i = 0; i < max_point; i++)
-              {
-                  total_angle += GetAngle(Points[i].X, Points[i].Y, p.X, p.Y, Points[i + 1].X, Points[i + 1].Y);
-              }
-
-              return (Math.Abs(total_angle) > 0.000001);
-          }
-
-          private static float GetAngle(float Ax, float Ay, float Bx, float By, float Cx, float Cy)
-          {
-              float dot_product = DotProduct(Ax, Ay, Bx, By, Cx, Cy);
-              float cross_product = CrossProductLength(Ax, Ay, Bx, By, Cx, Cy);
-              return (float)Math.Atan2(cross_product, dot_product);
-          }
-          private static float DotProduct(float Ax, float Ay, float Bx, float By, float Cx, float Cy)
-          {
-              float BAx = Ax - Bx;
-              float BAy = Ay - By;
-              float BCx = Cx - Bx;
-              float BCy = Cy - By;
-              return (BAx * BCx + BAy * BCy);
-          }
-          private static float CrossProductLength(float Ax, float Ay, float Bx, float By, float Cx, float Cy)
-          {
-              float BAx = Ax - Bx;
-              float BAy = Ay - By;
-              float BCx = Cx - Bx;
-              float BCy = Cy - By;
-              return (BAx * BCy - BAy * BCx);
-          }*/
+            
         #endregion
 
         #region Size

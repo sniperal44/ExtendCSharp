@@ -84,6 +84,20 @@ namespace ExtendCSharp.ExtendedClass
                 return false;
             }
         }
+        public bool Prec(int Step = 1)
+        {
+            if (IsInLength(index - Step))
+            {
+                index -= Step;
+                return true;
+            }
+            else
+            {
+                index = -1;
+                return false;
+            }
+        }
+
 
         public bool GoTo(Func<String,bool> Comparator)
         {  
