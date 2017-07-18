@@ -788,7 +788,18 @@ namespace ExtendCSharp
         {
             return source.Select(x => { return x.Value; });
         }
+        public static bool ContainsKeys<TKey, TValue>(this Dictionary<TKey, TValue> source,params TKey[] keys)
+        {
+            foreach(TKey s in keys)
+            {
+                if (!source.ContainsKey(s))
+                    return false;
+            }
+            return true;
+        }
 
+
+        
         #endregion
 
         #region CheckedListBox

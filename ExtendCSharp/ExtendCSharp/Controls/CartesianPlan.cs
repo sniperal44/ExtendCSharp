@@ -458,11 +458,13 @@ namespace ExtendCSharp.Controls
     public class CartesianActionArc : CartesianAction
     {
         public RectangleF rect;
+        public Point Center;
         public float startAngle, sweepAngle;
 
 
 
-
+        //TODO: Controllo formule per settaggio degli angoli!
+        //TODO: possibile solizione-> controllare se l'angolo END è maggiore ( in antiorario ) o minore ( in orario ) dello start
         /// <summary>
         /// 
         /// </summary>
@@ -470,42 +472,102 @@ namespace ExtendCSharp.Controls
         /// <param name="radius">Raggio dell'arco</param>
         /// <param name="StartPoint">Punto iniziale dell'arco</param>
         /// <param name="EndPoint">Punto Finale dell'arco</param>
-        public CartesianActionArc(PointF center,float radius, PointF StartPoint, PointF EndPoint):this(center.CreateRectangle(radius),StartPoint,EndPoint)
+        public CartesianActionArc(PointF Center,float radius, PointF StartPoint, PointF EndPoint, AngleOrientation Orientamento)//:this(center.CreateRectangle(radius),StartPoint,EndPoint)
         {
-        }
+            if( Orientamento==AngleOrientation.Orario)
+                Center = CenterRadius(StartPoint, EndPoint, radius);
+            else if (Orientamento == AngleOrientation.Antiorario)
+                Center = CenterRadius(EndPoint, StartPoint, radius);
+            RectangleF rect = Center.CreateRectangle(radius);
 
+            
+         
 
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="rect">Struttura System.Drawing.RectangleF che definisce i limiti dell'arco.</param>
-        /// <param name="StartPoint">Punto iniziale dell'arco</param>
-        /// <param name="EndPoint">Punto Finale dell'arco</param>
-        public CartesianActionArc(RectangleF rect, PointF StartPoint, PointF EndPoint)
-        {
-            //TODO: 
-            /*
-             il punto start point lo converto in startAngle in base a sen/cos delle cordinate in 
-             base al centro del rettangolo
-
-            il punto EndPoint lo converto in sweepAngle facendo la differenza tra lo startAngle 
-            e all'angolo calcolato in base a sen/cos delle cordinate ( EndPoint ) in base al centro del rettangolo 
-                         
-             */
-
-            PointF Center= rect.GetLocation(ContentAlignment.MiddleCenter);
-            float startAngle=(float)Center.Orientamento(StartPoint);
-
-
-            float endAngle = (float)Center.Orientamento(EndPoint);
             MathService ms = ServicesManager.GetOrSet(() => { return new MathService(); });
-            sweepAngle=ms.AngleDif(endAngle, startAngle);
+            //PointF Center = rect.GetLocation(ContentAlignment.MiddleCenter);
+            float startAngle = ms.NormalizeAngle((float)Center.Orientamento(StartPoint));
+            float endAngle = ms.NormalizeAngle((float)Center.Orientamento(EndPoint));
 
+            if (Orientamento == AngleOrientation.Orario)
+                endAngle += 360;
+
+            sweepAngle = ms.AngleDif(startAngle, endAngle);
+
+            if (Orientamento == AngleOrientation.Orario)
+                sweepAngle = sweepAngle-360;
 
             Setup(rect, startAngle, sweepAngle);
         }
 
+        /// <summary>
+        /// Permette di trovare il centro di una circonferenza dati due punti sulla circonferenza ed il raggio
+        /// </summary>
+        /// <param name="p1"></param>
+        /// <param name="p2"></param>
+        /// <param name="radius"></param>
+        /// <returns></returns>
+        private PointF CenterRadius(PointF p1,PointF p2,float radius)
+        {
+            double radsq = radius * radius;
+            double q = Math.Sqrt(((p2.X - p1.X) * (p2.X - p1.X)) + ((p2.Y - p1.Y) * (p2.Y - p1.Y)));
+            double x3 = (p1.X + p2.X) / 2;
+            double y3 = (p1.Y + p2.Y) / 2;
+
+            x3= x3 + Math.Sqrt(radsq - ((q / 2) * (q / 2))) * ((p1.Y - p2.Y) / q);
+            y3= y3 + Math.Sqrt(radsq - ((q / 2) * (q / 2))) * ((p2.X - p1.X) / q);
+
+
+            return new PointF((float)x3, (float)y3);
+        }
+        private double CenterX(double x1, double y1, double x2, double y2, double radius)
+        {
+            double radsq = radius * radius;
+            double q = Math.Sqrt(((x2 - x1) * (x2 - x1)) + ((y2 - y1) * (y2 - y1)));
+            double x3 = (x1 + x2) / 2;
+
+
+            return x3 + Math.Sqrt(radsq - ((q / 2) * (q / 2))) * ((y1 - y2) / q);
+
+
+        }
+
+        private double CenterY(double x1, double y1, double x2, double y2, double radius)
+        {
+            double radsq = radius * radius;
+            double q = Math.Sqrt(((x2 - x1) * (x2 - x1)) + ((y2 - y1) * (y2 - y1)));
+
+            double y3 = (y1 + y2) / 2;
+
+            return y3 + Math.Sqrt(radsq - ((q / 2) * (q / 2))) * ((x2 - x1) / q);
+
+
+        }
+
+
+
+        /*
+                /// <summary>
+                /// 
+                /// </summary>
+                /// <param name="rect">Struttura System.Drawing.RectangleF che definisce i limiti dell'arco.</param>
+                /// <param name="StartPoint">Punto iniziale dell'arco</param>
+                /// <param name="EndPoint">Punto Finale dell'arco</param>
+                public CartesianActionArc(RectangleF rect, PointF StartPoint, PointF EndPoint)
+                {
+
+                    MathService ms = ServicesManager.GetOrSet(() => { return new MathService(); });
+                    PointF Center= rect.GetLocation(ContentAlignment.MiddleCenter);
+                    float startAngle=ms.NormalizeAngle((float)Center.Orientamento(StartPoint));
+
+                    float endAngle = ms.NormalizeAngle((float)Center.Orientamento(EndPoint));
+
+
+                    sweepAngle =ms.AngleDif(startAngle, endAngle);
+
+
+                    Setup(rect, startAngle, sweepAngle);
+                }
+                */
 
 
         /// <summary>
@@ -636,6 +698,10 @@ namespace ExtendCSharp.Controls
         Stretch,
         Zoom
     }
-
+    public enum AngleOrientation
+    {
+        Orario,
+        Antiorario
+    }
 
 }

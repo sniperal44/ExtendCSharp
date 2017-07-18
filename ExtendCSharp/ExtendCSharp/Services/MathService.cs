@@ -24,11 +24,22 @@ namespace ExtendCSharp.Services
         /// <param name="FirstAngle"></param>
         /// <param name="SecondAngle"></param>
         /// <returns></returns>
-        public double AngleDif(double FirstAngle, double SecondAngle)
+        public double AngleDifNormalized(double FirstAngle, double SecondAngle)
         {
             double dif = SecondAngle - FirstAngle;
             while (dif < 0)
                 dif += 360;
+            return dif;
+        }
+        public float AngleDifNormalized(float FirstAngle, float SecondAngle)
+        {
+            return (float)AngleDifNormalized((double)FirstAngle, (double)SecondAngle);
+        }
+
+
+        public double AngleDif(double FirstAngle, double SecondAngle)
+        {
+            double dif = SecondAngle - FirstAngle;
             return dif;
         }
         public float AngleDif(float FirstAngle, float SecondAngle)
@@ -37,7 +48,16 @@ namespace ExtendCSharp.Services
         }
 
 
-        public decimal Max(params decimal[] values)
+        public float NormalizeAngle(float Angle)
+        {
+            Angle= Angle % 360;
+            if (Angle < 0)
+                Angle += 360;
+            return Angle;
+        }
+
+
+            public decimal Max(params decimal[] values)
         {
             if (values.Length == 0)
                 throw new ArgumentException("Passare almeno un elemento");

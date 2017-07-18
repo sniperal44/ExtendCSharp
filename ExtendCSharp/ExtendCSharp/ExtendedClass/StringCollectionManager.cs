@@ -56,6 +56,7 @@ namespace ExtendCSharp.ExtendedClass
             }
         }
 
+        public bool Terminated { get { return index == -1; } }
 
 
 
