@@ -72,6 +72,10 @@ namespace ExtendCSharp.ExtendedClass
         {
             index = 0;
         }
+        public void End()
+        {
+            index = Length - 1;
+        }
         public bool Next(int Step=1)
         {
             if (IsInLength(index + Step))
@@ -123,7 +127,7 @@ namespace ExtendCSharp.ExtendedClass
         }
         
 
-        private bool IsInLength(int index)
+        protected bool IsInLength(int index)
         {
             return index < data.Length && index > -1;
         }
@@ -139,11 +143,11 @@ namespace ExtendCSharp.ExtendedClass
         }
         public String[] GetRange(int Start,int End)
         {
-            return GetRangeCount(Start, End - Start);
+            return GetRangeCount(Start, (End - Start)+1);
         }
         public String[] GetRangeCount(int Start, int Count)
         {
-            if (IsInLength(Start) && IsInLength(Start + Count) && Count>0)
+            if (IsInLength(Start) && IsInLength(Start + Count-1) && Count>0)
             {
                 return data.SubArray(Start, Count);
             }

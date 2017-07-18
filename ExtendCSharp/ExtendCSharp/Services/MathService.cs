@@ -1,6 +1,7 @@
 ﻿using ExtendCSharp.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,15 +38,7 @@ namespace ExtendCSharp.Services
         }
 
 
-        public double AngleDif(double FirstAngle, double SecondAngle)
-        {
-            double dif = SecondAngle - FirstAngle;
-            return dif;
-        }
-        public float AngleDif(float FirstAngle, float SecondAngle)
-        {
-            return (float)AngleDif((double)FirstAngle, (double)SecondAngle);
-        }
+      
 
 
         public float NormalizeAngle(float Angle)
@@ -139,5 +132,28 @@ namespace ExtendCSharp.Services
 
             }
         }
+
+
+        /// <summary>
+        /// Permette di trovare il centro di una circonferenza dati due punti sulla circonferenza ed il raggio
+        /// </summary>
+        /// <param name="p1"></param>
+        /// <param name="p2"></param>
+        /// <param name="radius"></param>
+        /// <returns></returns>
+        private PointF CenterRadius(PointF p1, PointF p2, float radius)
+        {
+            double radsq = radius * radius;
+            double q = Math.Sqrt(((p2.X - p1.X) * (p2.X - p1.X)) + ((p2.Y - p1.Y) * (p2.Y - p1.Y)));
+            double x3 = (p1.X + p2.X) / 2;
+            double y3 = (p1.Y + p2.Y) / 2;
+
+            x3 = x3 + Math.Sqrt(radsq - ((q / 2) * (q / 2))) * ((p1.Y - p2.Y) / q);
+            y3 = y3 + Math.Sqrt(radsq - ((q / 2) * (q / 2))) * ((p2.X - p1.X) / q);
+
+
+            return new PointF((float)x3, (float)y3);
+        }
+
     }
 }
