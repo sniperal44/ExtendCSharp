@@ -444,6 +444,17 @@ namespace ExtendCSharp
             if (self.Parent != null)
                 self.Parent.Controls.Remove(self);
         }
+        public static void CenterX_InParent(this Control self)
+        {
+            if (self.Parent != null)
+            {
+                int x = self.Parent.Width / 2 - self.Width / 2;
+                self.Location = new Point(x, self.Location.Y);
+            }
+        }
+
+
+
 
         #endregion
 

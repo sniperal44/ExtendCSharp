@@ -65,9 +65,14 @@ namespace ExtendCSharp.Controls
                 button_arrow.Disable();
             else
                 button_arrow.Enable();
+
+            button_int.Click += ButtonMenu_Click;
         }
 
-        
+        private void ButtonMenu_Click(object sender, EventArgs e)
+        {
+            ButtonMenuClick?.Invoke(sender, e);
+        }
 
         private void ContextMenuStrip_Opened(object sender, EventArgs e)
         {
@@ -111,7 +116,7 @@ namespace ExtendCSharp.Controls
 
 
 
-
+        public event EventHandler ButtonMenuClick;
 
 
         public class ButtonMenuWrapper
