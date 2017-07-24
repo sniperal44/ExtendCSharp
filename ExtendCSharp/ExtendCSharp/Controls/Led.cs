@@ -16,11 +16,15 @@ namespace ExtendCSharp.Controls
         public LedType ledType
         {
             get => _type;
-            set => _type = value;
+            set
+            {
+                _type = value;
+                Invalidate();
+            }
         }
 
 
-        SolidBrush _ColorAcceso = new SolidBrush(Color.Green);
+        SolidBrush _ColorAcceso = new SolidBrush(Color.LawnGreen);
         public Color ColorAcceso
         {
             get => _ColorAcceso.Color;
@@ -30,7 +34,7 @@ namespace ExtendCSharp.Controls
                 Invalidate();
             }
         }
-        SolidBrush _ColorSpento = new SolidBrush(Color.DarkGreen);
+        SolidBrush _ColorSpento = new SolidBrush(Color.ForestGreen);
         public Color ColorSpento
         {
             get => _ColorSpento.Color;
@@ -40,7 +44,7 @@ namespace ExtendCSharp.Controls
                 Invalidate();
             }
         }
-        SolidBrush _ColorBorder = new SolidBrush(Color.DarkOliveGreen);
+        SolidBrush _ColorBorder = new SolidBrush(Color.DarkGreen);
         public Color ColorBorder
         {
             get => _ColorBorder.Color;
@@ -67,52 +71,57 @@ namespace ExtendCSharp.Controls
         public bool Acceso
         {
             get => _Acceso;
-            set => _Acceso = value;
+            set
+            {
+                _Acceso = value;
+                Invalidate();
+            }
         }
 
 
-
-        public Led(LedType type)
+        public Led()
         {
             InitializeComponent();
+            Invalidate();
+
+        }
+        public Led(LedType type):this()
+        {
+            
             this._type = type;
         }
-
-        //TODO: finisco la pain del Led
+        
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-
-            if( BorderWidth!=0)
-            {
-                if(_type==LedType.Ellisse)
-                {
-                    e.Graphics.FillEllipse(_ColorBorder, this.Bounds);
-                }
-                else if (_type == LedType.Quadrato)
-                {
-                    e.Graphics.FillRectangle(_ColorBorder, this.Bounds);
-                }
-
-            }
-
-
-
+            Brush FillBrush = _Acceso ? _ColorAcceso : _ColorSpento;
+            FillByData borderFunc = null;
+            FillByData fillfunc = null;
             if (_type == LedType.Ellisse)
             {
-                e.Graphics.FillEllipse(_ColorBorder, this.Bounds.X+_BorderWidth);
+                borderFunc = e.Graphics.FillEllipse;
+                fillfunc = e.Graphics.FillEllipse;
             }
             else if (_type == LedType.Quadrato)
             {
-                e.Graphics.FillRectangle(_ColorBorder, this.Bounds);
+                borderFunc = e.Graphics.FillRectangle;
+                fillfunc = e.Graphics.FillRectangle;
             }
 
+
+            if ( BorderWidth!=0)
+            {
+                borderFunc(_ColorBorder, 0,0, Width, Height);
+            }
+
+            fillfunc(FillBrush, _BorderWidth, _BorderWidth, Width - (_BorderWidth*2), Height - (_BorderWidth*2));
         }
 
 
     }
 
 
+    public delegate void FillByData(Brush b, float x, float y, float width, float heigth);
 
     public enum LedType
     {
