@@ -13,6 +13,18 @@ namespace ExtendCSharp.Services
     {
         Dictionary<Form, ThreadPlus> ListThread = new Dictionary<Form, ThreadPlus>();
 
+
+        public void ShowDialog(Func<Form> FunzioneCreazione,Control Invoker)
+        {
+            if (Invoker == null)
+                return;
+            Invoker.BeginInvoke((MethodInvoker)delegate 
+            {
+                Form f = FunzioneCreazione();
+                f.ShowDialog();
+            });
+        }
+
         public void StartFormThread(Func<Form> FunzioneCreazione)
         {
             
@@ -35,7 +47,6 @@ namespace ExtendCSharp.Services
             t.Start(t);
 
         }
-
         public void StopThread(Form f)
         {
             if (f == null)

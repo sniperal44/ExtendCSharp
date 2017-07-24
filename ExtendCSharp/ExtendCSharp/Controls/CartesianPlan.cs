@@ -131,16 +131,43 @@ namespace ExtendCSharp.Controls
         public CartesianPlan()
         {
             InitializeComponent();
+            Resize += CartesianPlan_Resize;
         }
-        public CartesianPlan(IContainer container)
+
+       
+        public CartesianPlan(IContainer container):this()
         {
             container.Add(this);
-
-            InitializeComponent();
         }
 
         #endregion
 
+
+
+
+        private void RecalculateScale()
+        {
+            if (_XMax == null)
+                XScale = 1;
+            else
+                XScale = (float)(InternalWidth / _XMax);
+
+            if (_YMax == null)
+                YScale = 1;
+            else
+                YScale = (float)(InternalHeight / _YMax);
+
+            if (_cartesianLayout == CartesianLayout.Zoom)
+            {
+                YScale = Math.Min(YScale, XScale);
+                XScale = YScale;
+            }
+        }
+        private void CartesianPlan_Resize(object sender, EventArgs e)
+        {
+            RecalculateScale();
+            InternalInvalidate();
+        }
 
 
         protected override void OnPaint(PaintEventArgs e)

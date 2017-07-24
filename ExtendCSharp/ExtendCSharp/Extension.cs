@@ -239,6 +239,27 @@ namespace ExtendCSharp
             return st;
         }
 
+        public static String RemoveLeftCaseInsensitive(this String s, params String[] str)
+        {
+            String origin = s;
+            s = RemoveLeft(s.ToUpperInvariant(), str.ToUpperInvariant());
+            if (origin.Length != s.Length)
+                origin = origin.Substring(origin.Length - s.Length);
+
+            return origin;
+        }
+        public static String RemoveRightCaseInsensitive(this String s, params String[] str)
+        {
+            String origin = s;
+            s = RemoveRight(s.ToUpperInvariant(), str.ToUpperInvariant());
+            if (origin.Length != s.Length)
+                origin = origin.Substring(0, s.Length);
+           
+
+            return origin;
+        }
+
+
         public static String Substring(this String s,string delimiter1,string delimiter2)
         {
             int iD1 = s.IndexOf(delimiter1);
@@ -302,6 +323,25 @@ namespace ExtendCSharp
         {
             return arr.AsQueryable().Contains<string>(str);
         }
+
+        public static String[] ToUpper(this String[] arr)
+        {
+            return arr.AsQueryable().Select(s => s.ToUpper()).ToArray();
+        }
+        public static String[] ToUpperInvariant(this String[] arr)
+        {
+            return arr.AsQueryable().Select(s => s.ToUpperInvariant()).ToArray();
+        }
+        public static String[] ToLower(this String[] arr)
+        {
+            return arr.AsQueryable().Select(s => s.ToLower()).ToArray();
+        }
+        public static String[] ToLowerInvariant(this String[] arr)
+        {
+            return arr.AsQueryable().Select(s => s.ToLowerInvariant()).ToArray();
+        }
+
+
 
         #endregion
 
@@ -452,7 +492,14 @@ namespace ExtendCSharp
                 self.Location = new Point(x, self.Location.Y);
             }
         }
-
+        public static void CenterY_InParent(this Control self)
+        {
+            if (self.Parent != null)
+            {
+                int y = self.Parent.Height / 2 - self.Height / 2;
+                self.Location = new Point(self.Location.X, y);
+            }
+        }
 
 
 
@@ -1317,9 +1364,9 @@ namespace ExtendCSharp
         public static bool IsEnum<T>(this T e, bool withFlags) where T : struct
         {
             if (!typeof(T).IsEnum)
-                throw new ArgumentException(string.Format("Il tipo '{0}' non è un enum", typeof(T).FullName));
+                return false;
             if (withFlags && !Attribute.IsDefined(typeof(T), typeof(FlagsAttribute)))
-                throw new ArgumentException(string.Format("Il tipo '{0}' non ha l'attributo 'Flags'", typeof(T).FullName));
+                return false;
 
             return true;
         }
@@ -1965,6 +2012,7 @@ namespace ExtendCSharp
             return new RectangleF(rect.X - offset, rect.Y - offset, rect.Width + (offset * 2), rect.Height + (offset * 2));
         }
 
+ 
 
 
         #endregion
