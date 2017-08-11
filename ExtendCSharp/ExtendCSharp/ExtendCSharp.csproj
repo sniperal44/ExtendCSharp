@@ -193,6 +193,7 @@
     <Compile Include="ExtendedClass\FileSystemPlus.cs" />
     <Compile Include="ExtendedClass\FullPrecisionNumber.cs" />
     <Compile Include="Interfaces\IBinarySerializer.cs" />
+    <Compile Include="Interfaces\ICatcher.cs" />
     <Compile Include="Interfaces\ICloneablePlus.cs" />
     <Compile Include="Interfaces\IResolvible.cs" />
     <Compile Include="Interfaces\ISerializer.cs" />
@@ -215,6 +216,7 @@
     <Compile Include="Services\JsonService.cs" />
     <Compile Include="Services\MathService.cs" />
     <Compile Include="Services\MD5Service.cs" />
+    <Compile Include="Services\MutexObjectDispatcherServices.cs" />
     <Compile Include="Services\MySQLService.cs" />
     <Compile Include="ExtendedClass\ProcessPlus.cs" />
     <Compile Include="Services\FFmpeg.cs" />

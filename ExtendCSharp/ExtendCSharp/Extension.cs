@@ -653,9 +653,21 @@ namespace ExtendCSharp
             }
 
         }
-        
+
+        public static T RemoveAndGet<T>(this IList<T> self, int index, T DefaultValue = default(T))
+        {
+            if (index < self.Count)
+            {
+                DefaultValue = self[index];
+                self.RemoveAt(index);
+            }
+
+            return DefaultValue;
+        }
 
 
+        #endregion
+        #region ListBox
         public static void RemoveSelectedItemsInvoke(this ListBox self)
         {
             if (self.InvokeRequired)
@@ -680,13 +692,17 @@ namespace ExtendCSharp
             }
         }
         public static void AddInvoke(this ListBox self, object obj)
-        {   
-            if (self.InvokeRequired)
-                self.Invoke((MethodInvoker)delegate { self.AddInvoke(obj); });
-            else
+        {
+            try
             {
-                self.Items.Add(obj);
+                if (self.InvokeRequired)
+                    self.Invoke((MethodInvoker)delegate { self.AddInvoke(obj); });
+                else
+                {
+                    self.Items.Add(obj);
+                }
             }
+            catch (Exception) { };
         }
         public static void AddInvoke(this ListBox self, object[] obj)
         {
@@ -743,7 +759,7 @@ namespace ExtendCSharp
             }
 
         }
-
+       
 
         public static int GetItemsCountInvoke(this ListBox self)
         {
@@ -785,6 +801,20 @@ namespace ExtendCSharp
         }
 
 
+        public static void SetSelectedIndexInvoke(this ListBox self,int index)
+        {
+            
+            if (self.InvokeRequired)
+                self.Invoke((MethodInvoker)delegate { self.SetSelectedIndexInvoke(index); });
+            else
+            {
+                if(index< self.Items.Count && index>=0)
+                    self.SelectedIndex = index;
+            }
+
+        }
+
+
         #endregion
 
         #region List<String>
@@ -812,6 +842,8 @@ namespace ExtendCSharp
                 self.Remove(t);
 
         }
+
+      
 
 
 
@@ -1330,9 +1362,32 @@ namespace ExtendCSharp
                 self.TopMost = TopMost;
 
         }
-        
-        
-        
+
+        public static void LockSizeInvoke(this Form self)
+        {
+            if (self.InvokeRequired)
+                self.Invoke((MethodInvoker)delegate { LockSizeInvoke(self); });
+            else
+            {
+                self.MaximumSize = self.Size;
+                self.MinimumSize = self.Size;
+            }
+
+        }
+        public static void UnLockSizeInvoke(this Form self)
+        {
+            if (self.InvokeRequired)
+                self.Invoke((MethodInvoker)delegate { UnLockSizeInvoke(self); });
+            else
+            {
+                self.MaximumSize = new Size(0,0);
+                self.MinimumSize = new Size(0, 0);
+            }
+
+        }
+
+
+
         #endregion
 
         #region Enum

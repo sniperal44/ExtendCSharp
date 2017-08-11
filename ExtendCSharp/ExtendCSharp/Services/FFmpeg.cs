@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace ExtendCSharp.Services
 {
-    public class FFmpeg
+    public class FFmpeg:IService
     {
         SystemService ss = null;
 

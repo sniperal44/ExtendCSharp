@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -34,13 +35,18 @@ namespace ExtendCSharp.Services
                 Form f = FunzioneCreazione();
                 ListThread.Add(f, (ThreadPlus)CurrentThread);
 
-                f.Show();
-                f.FormClosed += (object sender, FormClosedEventArgs e)=>
+                
+                f.FormClosed += (object sender, FormClosedEventArgs e) =>
                 {
                     Finito = true;
                 };
+
+                f.Show();
                 while (!Finito)
+                {
+                    Thread.Sleep(100);
                     Application.DoEvents();
+                }
 
 
             });

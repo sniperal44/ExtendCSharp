@@ -39,7 +39,7 @@ namespace ExtendCSharp.Services
 
         #region CORE METHODS
 
-        public static Icon GetIconFromExtension(String Ext)
+        public Icon GetIconFromExtension(String Ext)
         {
             if (iconsInfo == null)
                 iconsInfo = GetFileTypeAndIcon();
@@ -49,7 +49,7 @@ namespace ExtendCSharp.Services
             {
                 string fileAndParam = o.ToString();
                 if (!String.IsNullOrEmpty(fileAndParam))
-                    return RegisteredFileTypeService.ExtractIconFromFile(fileAndParam, true); 
+                    return ExtractIconFromFile(fileAndParam, true); 
             }
 
             return null;
@@ -60,7 +60,7 @@ namespace ExtendCSharp.Services
         /// Gets registered file types and their associated icon in the system.
         /// </summary>
         /// <returns>Returns a hash table which contains the file extension as keys, the icon file and param as values.</returns>
-        private static Hashtable GetFileTypeAndIcon()
+        private Hashtable GetFileTypeAndIcon()
         {
             try
             {
@@ -123,7 +123,7 @@ namespace ExtendCSharp.Services
         /// <param name="fileAndParam">The params string, 
         /// such as ex: "C:\\Program Files\\NetMeeting\\conf.exe,1".</param>
         /// <returns>This method always returns the large size of the icon (may be 32x32 px).</returns>
-        private static Icon ExtractIconFromFile(string fileAndParam)
+        private Icon ExtractIconFromFile(string fileAndParam)
         {
             try
             {
@@ -149,7 +149,7 @@ namespace ExtendCSharp.Services
         /// <param name="isLarge">
         /// Determines the returned icon is a large (may be 32x32 px) 
         /// or small icon (16x16 px).</param>
-        private static Icon ExtractIconFromFile(string fileAndParam, bool isLarge)
+        private Icon ExtractIconFromFile(string fileAndParam, bool isLarge)
         {
             unsafe
             {
@@ -205,7 +205,7 @@ namespace ExtendCSharp.Services
         /// <param name="fileAndParam">The params string, 
         /// such as ex: "C:\\Program Files\\NetMeeting\\conf.exe,1".</param>
         /// <returns></returns>
-        protected static EmbeddedIconInfo getEmbeddedIconInfo(string fileAndParam)
+        protected EmbeddedIconInfo getEmbeddedIconInfo(string fileAndParam)
         {
             EmbeddedIconInfo embeddedIcon = new EmbeddedIconInfo();
 
