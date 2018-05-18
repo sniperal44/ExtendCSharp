@@ -28,7 +28,13 @@ namespace ExtendCSharp.Services
             md5 = MD5.Create(algName);
         }
 
-
+        public byte[] ComputeHashString(String s)
+        {
+            
+            byte[] temp = s.ToByteArrayASCII();
+            ComputeHashMultiBlock(temp, temp.Length);
+            //TODO: completo!
+        }
         public void ComputeHashMultiBlock(Stream s)
         {
             int BufferSize = 1024 * 1024;
