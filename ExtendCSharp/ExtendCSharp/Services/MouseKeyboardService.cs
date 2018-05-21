@@ -99,7 +99,16 @@ namespace ExtendCSharp.Services
 
         public void SendKeyEvent(MyKeyboardEvent ke, Keys k)
         {
-            keybd_event((byte)k, 0x45, KEYEVENTF_EXTENDEDKEY | (uint)ke.ToSendKeyEventInternal().Value, 0);
+            
+            if (k == Keys.LMenu)
+            {
+                //keybd_event(0x12, 0xB8, a, 0);
+                keybd_event(18, 0, (uint)ke.ToSendKeyEventInternal().Value, 0);
+            }
+            else
+            {
+                keybd_event((byte)k, 0x45, KEYEVENTF_EXTENDEDKEY | (uint)ke.ToSendKeyEventInternal().Value, 0);
+            }
         }
         public void SendKeyUpDown(Keys k)
         {
@@ -361,7 +370,7 @@ namespace ExtendCSharp.Services
         }
         public void FromHookKeyStatusInternal(HookKeyStatusInternal ev)
         {
-            KeyStat = ev == HookKeyStatusInternal.WM_KEYDOWN ? KeyStatus.Down : ev == HookKeyStatusInternal.WM_KEYUP ? KeyStatus.Up : KeyStatus.None;
+            KeyStat = ev == HookKeyStatusInternal.WM_KEYDOWN || ev == HookKeyStatusInternal.WM_SYSKEYDOWN ? KeyStatus.Down : ev == HookKeyStatusInternal.WM_KEYUP ||  ev== HookKeyStatusInternal.WM_SYSKEYUP ? KeyStatus.Up : KeyStatus.None;
         }
 
 
@@ -397,6 +406,8 @@ namespace ExtendCSharp.Services
     {
         WM_KEYDOWN = 0x0100,
         WM_KEYUP = 0x0101,
+        WM_SYSKEYDOWN=0x0104,
+        WM_SYSKEYUP= 0x0105,
     }
     public enum GetAsyncKeyStateStatus
     {

@@ -363,6 +363,16 @@ namespace ExtendCSharp
         }
         #endregion
 
+
+        #region PictureBox
+        public static void SetImageInvoke(this PictureBox t, Image b)
+        {
+            if (t.InvokeRequired)
+                t.BeginInvoke((MethodInvoker)delegate { t.SetImageInvoke(b); });
+            else
+                t.Image = b;
+        }
+        #endregion
         #region Control
 
         public static void Enable(this Control t)

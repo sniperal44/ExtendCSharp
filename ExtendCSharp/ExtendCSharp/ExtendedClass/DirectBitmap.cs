@@ -38,8 +38,8 @@ namespace ExtendCSharp.ExtendedClass
             {
                 g.DrawImage(source, 0, 0);
             }
-
         }
+ 
         /// <summary>
         /// 
         /// </summary>
@@ -48,12 +48,13 @@ namespace ExtendCSharp.ExtendedClass
         /// <param name="height"></param>
         public DirectBitmap(byte[] bits, int width, int height)
         {
-            //TODO: controllare
-            if(bits.Length<width*height)
+            if(bits.Length<width*height*4)
             {
-                byte[] tmp = new byte[width * height];  //evito che la bitmap vada a puntare in uno spazio di memoria vuoto ( allungo i miei bit ) 
+                byte[] tmp = new byte[width * height*4];  //evito che la bitmap vada a puntare in uno spazio di memoria vuoto ( allungo i miei bit ) 
                 for (int i = 0; i < bits.Length; i++)
                     tmp[i] = bits[i];
+
+                bits = tmp;
             }
             Width = width;
             Height = height;
@@ -63,6 +64,20 @@ namespace ExtendCSharp.ExtendedClass
         }
 
 
+
+        public byte this[int x, int y,RGBA tono]
+        {
+            get
+            {
+                int index = (Width * y + x)*4;
+                return Bits[index + (int)tono];
+            }
+            set
+            {
+                int index = (Width * y + x)*4;
+                Bits[index + (int)tono] = value;
+            }
+        }
 
         public Color this[int x,int y] {
             get
@@ -132,6 +147,7 @@ namespace ExtendCSharp.ExtendedClass
             return Bits[index+3];
         }
 
+       
         public void Dispose()
         {
             if (Disposed) return;
@@ -139,5 +155,13 @@ namespace ExtendCSharp.ExtendedClass
             Bitmap.Dispose();
             BitsHandle.Free();
         }
+    }
+
+    public enum RGBA
+    {
+        R=1,
+        G=2,
+        B=3,
+        A=0
     }
 }

@@ -70,6 +70,8 @@ namespace ExtendCSharp.Services
 
         private int Proc(int nCode, IntPtr wParam, IntPtr lParam)
         {
+            //Log.Log.AddLog("nCode: " + nCode + " - wParam" + wParam + " - lParam" + lParam+" - marshal"+ Marshal.ReadInt32(lParam));
+          
             bool Suppress = false;
             if (EventDispatcher != null)
                 EventDispatcher(nCode, new MyKeyboardEvent((HookKeyStatusInternal)wParam),(Keys)Marshal.ReadInt32(lParam), ref Suppress);
