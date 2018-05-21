@@ -68,16 +68,20 @@ namespace ExtendCSharp.Services
 
         public byte[] ComputeHashMultiBlock(byte[] input, int size)
         {
+            
             int offset = 0;
-
             while (input.Length - offset >= size)
             {
                 offset += md5.TransformBlock(input, offset, size, input, offset);
                 OnMD5BlockTransformEventHandler2?.Invoke((offset * 100L) / input.Length, size, offset);
             }
             md5.TransformFinalBlock(input, offset, input.Length - offset);
-            OnMD5ComputeHashFinishEventHandler?.Invoke(md5.Hash);
-            return md5.Hash;
+
+            byte[] hash = md5.Hash;
+            md5.Initialize();
+            OnMD5ComputeHashFinishEventHandler?.Invoke(hash);
+            
+            return hash;
         }
 
 
