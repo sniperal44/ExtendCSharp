@@ -28,15 +28,21 @@ namespace ExtendCSharp.Services
             md5 = MD5.Create(algName);
         }
 
+
         //TODO: da testare!
+        /// <summary>
+        /// Permette di calcolare l'Hash MD5 di una stringa
+        /// </summary>
+        /// <param name="s">stringa su cui calcolare l'Hash</param>
+        /// <returns>i byte dell'Hash calcolato ( usare ToHexString per convertirla in stringa ) </returns>
         public byte[] ComputeHashString(String s)
-        {
-            
+        {           
             byte[] temp = s.ToByteArrayASCII();
             return ComputeHashMultiBlock(temp, temp.Length);
-           
         }
-        public void ComputeHashMultiBlock(Stream s)
+		
+		
+        public byte[] ComputeHashMultiBlock(Stream s)
         {
             int BufferSize = 1024 * 1024;
             byte[] buffer = new byte[BufferSize];
@@ -51,6 +57,7 @@ namespace ExtendCSharp.Services
             md5.TransformFinalBlock(buffer, 0, readCount);
 
             OnMD5ComputeHashFinishEventHandler?.Invoke(md5.Hash);
+            return md5.Hash;
         }
         public  Thread ComputeHashMultiBlockThread(Stream s)
         {
@@ -65,16 +72,25 @@ namespace ExtendCSharp.Services
 
         public byte[] ComputeHashMultiBlock(byte[] input, int size)
         {
+            
             int offset = 0;
-
             while (input.Length - offset >= size)
             {
                 offset += md5.TransformBlock(input, offset, size, input, offset);
                 OnMD5BlockTransformEventHandler2?.Invoke((offset * 100L) / input.Length, size, offset);
             }
             md5.TransformFinalBlock(input, offset, input.Length - offset);
+
             OnMD5ComputeHashFinishEventHandler?.Invoke(md5.Hash);
             return md5.Hash;
+
+
+           /* byte[] hash = md5.Hash;
+            md5.Initialize();
+            OnMD5ComputeHashFinishEventHandler?.Invoke(hash);
+            
+            return hash;*/
+			
         }
 
 
