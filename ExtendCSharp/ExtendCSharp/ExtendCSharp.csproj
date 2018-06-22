@@ -68,6 +68,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\MySQLFieldAttribute.cs" />
     <Compile Include="Controls\ButtonMenu.cs">
       <SubType>UserControl</SubType>
     </Compile>
