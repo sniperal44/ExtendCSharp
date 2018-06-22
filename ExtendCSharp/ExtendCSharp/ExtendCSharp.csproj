@@ -263,6 +263,7 @@
     </Compile>
     <Compile Include="Services\ZipService.cs" />
     <Compile Include="Services\_ServicesManager.cs" />
+    <Compile Include="Services\_TestService.cs" />
     <Compile Include="Struct\SerialComunicationSetting.cs" />
     <Compile Include="ExtendedClass\TimeSpanPlus.cs" />
     <Compile Include="Controls\ToolStripMenuItemPlus.cs">
