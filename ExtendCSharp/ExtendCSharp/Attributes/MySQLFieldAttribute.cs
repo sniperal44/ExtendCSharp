@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ExtendCSharp.Attributes
 {
-    class MySQLFieldAttribute : Attribute
+    public class MySQLFieldAttribute : Attribute
     {
         public string Name { get; set; }
     }
