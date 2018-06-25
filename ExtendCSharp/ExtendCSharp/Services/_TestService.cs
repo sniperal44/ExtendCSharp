@@ -12,12 +12,13 @@ namespace ExtendCSharp.Services
     public class _TestService : IService
     {
 
-        public T Test<T>() where T : new()
+        public IEnumerable<T> Test<T>() where T : new()
         {
 
             Type tipo = typeof(T);
-           
-            T newObj = new T();
+            List<T> OutList = new List<T>();
+            Dictionary<String, FieldInfo> fieldDictionary = new Dictionary<string, FieldInfo>();
+            
 
           
             //Recupero tutti i campi PUBBLICI con l'attributo MySQLFieldAttribute
@@ -31,17 +32,31 @@ namespace ExtendCSharp.Services
 
 
 
-
+            //recupero campo per campo in base al nome e li inserisco in un dizionario per una ricerca più rapida
             FieldInfo Intero = Campi.FirstOrDefault(field => Attribute.GetCustomAttribute(field, typeof(MySQLFieldAttribute))._Cast<MySQLFieldAttribute>().Name == "Intero");
+            fieldDictionary.Add("Intero", Intero);
+
             FieldInfo Decimale = Campi.FirstOrDefault(field => Attribute.GetCustomAttribute(field, typeof(MySQLFieldAttribute))._Cast<MySQLFieldAttribute>().Name == "Decimale");
+            fieldDictionary.Add("Decimale", Decimale);
+
             FieldInfo Stringa = Campi.FirstOrDefault(field => Attribute.GetCustomAttribute(field, typeof(MySQLFieldAttribute))._Cast<MySQLFieldAttribute>().Name == "Stringa");
+            fieldDictionary.Add("Stringa", Stringa);
 
 
-            Intero.SetValue(newObj, 1);
-            Decimale.SetValue(newObj, (float)5.3);
-            Stringa.SetValue(newObj, "Hello World!");
 
-            return newObj;
+            //ciclo di tutti gli elementi
+            for( int i=0;i<10;i++)
+            {
+                T tmp = new T();
+                fieldDictionary["Intero"]?.SetValue(tmp,null);
+                fieldDictionary["Decimale"]?.SetValue(tmp, null);
+                fieldDictionary["Stringa"]?.SetValue(tmp, "Hello World!");
+                OutList.Add(tmp);
+            }
+
+          
+
+            return OutList;
         }
     }
 }
