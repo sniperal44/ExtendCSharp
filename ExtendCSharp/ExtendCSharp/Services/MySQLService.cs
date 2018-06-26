@@ -1,4 +1,5 @@
-﻿using ExtendCSharp.ExtendedClass;
+﻿using ExtendCSharp.Attributes;
+using ExtendCSharp.ExtendedClass;
 using ExtendCSharp.Interfaces;
 using MySql.Data.MySqlClient;
 using System;
@@ -103,6 +104,7 @@ namespace ExtendCSharp.Services
                         for(int i=0;i< TipiDati.Count;i++)
                         {
                             o[i] = r.GetFieldValue(i, TipiDati[i]);
+                            
                         }
 
                         l.Add(o);
@@ -118,6 +120,84 @@ namespace ExtendCSharp.Services
                 throw ex;
             }
             return l;
+        }
+
+        /// <summary>
+        /// Ritorna una lista di Righe ( ogni riga è un array di object ). I veri tipi dovranno essere passati tramite la lista TipiDati, in ordine. occorrerà infine fare un cast sull'object 
+        /// Leggere il README
+        /// </summary>
+        /// <param name="Query">Query da eseguire</param>
+        /// <param name="TipiDati">Lista di Type -> ( per ottenere un tipe = tipeof(int) / tipeof(String) / ecc... )</param>
+        /// <returns></returns>
+        public List<T> ExecuteReaderQueryNew<T>(String Query) where T : new()
+        {
+            Type tipo = typeof(T);
+            List<T> OutList = new List<T>();
+            
+
+            MySqlDataReader r = null;
+            try
+            {
+
+                MySqlCommand comm = new MySqlCommand(Query, c);
+                r = comm.ExecuteReader();
+                if (r.HasRows)
+                {
+                    //Se la query ha restituito delle righe
+
+
+                    //faccio le operazioni per ottenere dalla classe passata i Field
+                    //--------- INIZIO ---------
+                    Dictionary<String, FieldInfo> fieldDictionary = new Dictionary<string, FieldInfo>();
+
+                    //Recupero tutti i campi PUBBLICI con l'attributo MySQLFieldAttribute
+                    FieldInfo[] Campi = tipo.GetFields().Where(prop => Attribute.IsDefined(prop, typeof(MySQLFieldAttribute))).ToArray();
+                    //Se si vogliono trovare tutte le Proprietà: sostituire GetFields con GetProperties
+
+                    //Ottengo il nome delle colonne
+                    var columns = Enumerable.Range(0, r.FieldCount).Select(r.GetName).ToList();
+
+                    //Cerco in base ai nomi, i Field associati nella classe
+                    //e li inserisco nel dictionary (per una ricerca più rapida)
+                    foreach ( String s in columns)
+                    {
+                        FieldInfo tmp = Campi.FirstOrDefault(field => Attribute.GetCustomAttribute(field, typeof(MySQLFieldAttribute))._Cast<MySQLFieldAttribute>().Name == s);
+                        if(tmp!=null)
+                            fieldDictionary.Add(s, tmp);
+                    }
+                    
+                    //--------- FINE ---------
+
+
+                    //Leggo una riga
+                    while (r.Read())
+                    {
+                        T tmpObj = new T();
+                        foreach ( KeyValuePair<string, FieldInfo> kv in fieldDictionary )
+                        {
+                            try
+                            {
+                                object value = r[kv.Key];
+                                kv.Value.SetValue(tmpObj, value);
+                            }
+                            catch (Exception ex)
+                            {
+
+                            }
+                        }
+                        OutList.Add(tmpObj);
+                    }
+                }
+
+                r.TryClose();
+            }
+            catch (Exception ex)
+            {
+
+                r.TryClose();
+                throw ex;
+            }
+            return OutList;
         }
 
 
