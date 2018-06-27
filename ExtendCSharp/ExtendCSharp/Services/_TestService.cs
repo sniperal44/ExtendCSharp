@@ -24,7 +24,8 @@ namespace ExtendCSharp.Services
             //Recupero tutti i campi PUBBLICI con l'attributo MySQLFieldAttribute
             FieldInfo[] Campi = tipo.GetFields().Where(prop => Attribute.IsDefined(prop, typeof(MySQLFieldAttribute))).ToArray();
             //Se si vogliono trovare tutte le Proprietà: sostituire GetFields con GetProperties
-           
+            
+            
 
 
             //Recupero un campo dato il Name specificato nel MySQLFieldAttribute -> ritorna NULL se non lo trova

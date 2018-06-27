@@ -2077,14 +2077,23 @@ namespace ExtendCSharp
             return new RectangleF(rect.X - offset, rect.Y - offset, rect.Width + (offset * 2), rect.Height + (offset * 2));
         }
 
- 
+
 
 
         #endregion
-        //TODO: implementare gli altri ToPlus
-        #region ToPlus
 
-        public static PictureBoxPlus ToPlus(this PictureBox self)
+
+        #region MethodInfo
+        public static Object Invoke(this MethodInfo mi, object obj, params  object[] parameters)
+        {
+            return mi.Invoke(obj, parameters);
+        }
+        #endregion
+
+            //TODO: implementare gli altri ToPlus
+            #region ToPlus
+
+            public static PictureBoxPlus ToPlus(this PictureBox self)
         {
             PictureBoxPlus temp = new PictureBoxPlus()
             {

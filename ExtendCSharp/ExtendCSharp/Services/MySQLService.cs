@@ -1,6 +1,7 @@
 ﻿using ExtendCSharp.Attributes;
 using ExtendCSharp.ExtendedClass;
 using ExtendCSharp.Interfaces;
+using ExtendCSharp.Wrapper;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
@@ -148,36 +149,47 @@ namespace ExtendCSharp.Services
 
                     //faccio le operazioni per ottenere dalla classe passata i Field
                     //--------- INIZIO ---------
-                    Dictionary<String, FieldInfo> fieldDictionary = new Dictionary<string, FieldInfo>();
-
-                    //Recupero tutti i campi PUBBLICI con l'attributo MySQLFieldAttribute
-                    FieldInfo[] Campi = tipo.GetFields().Where(prop => Attribute.IsDefined(prop, typeof(MySQLFieldAttribute))).ToArray();
-                    //Se si vogliono trovare tutte le Proprietà: sostituire GetFields con GetProperties
+                    Dictionary<String, Property_Field_Info> fieldDictionary = new Dictionary<string, Property_Field_Info>();
 
                     //Ottengo il nome delle colonne
                     var columns = Enumerable.Range(0, r.FieldCount).Select(r.GetName).ToList();
+
+
+                    //Recupero tutti i campi PUBBLICI con l'attributo MySQLFieldAttribute
+                    FieldInfo[] Campi = tipo.GetFields().Where(prop => Attribute.IsDefined(prop, typeof(MySQLFieldAttribute))).ToArray();
+                    //Recupero tutti le proprietà PUBBLICHE con l'attributo MySQLFieldAttribute e che abbiano il metodo SET
+                    PropertyInfo[] Propieta = tipo.GetProperties().Where(prop => Attribute.IsDefined(prop, typeof(MySQLFieldAttribute)) && prop.SetMethod!=null ).ToArray();
+
 
                     //Cerco in base ai nomi, i Field associati nella classe
                     //e li inserisco nel dictionary (per una ricerca più rapida)
                     foreach ( String s in columns)
                     {
-                        FieldInfo tmp = Campi.FirstOrDefault(field => Attribute.GetCustomAttribute(field, typeof(MySQLFieldAttribute))._Cast<MySQLFieldAttribute>().Name == s);
-                        if(tmp!=null)
-                            fieldDictionary.Add(s, tmp);
+                        
+                        FieldInfo tmpFi = Campi.FirstOrDefault(field => Attribute.GetCustomAttribute(field, typeof(MySQLFieldAttribute))._Cast<MySQLFieldAttribute>().Name == s);
+                        if(tmpFi != null)
+                            fieldDictionary.Add(s, tmpFi);
+
+                        PropertyInfo tmpPi = Propieta.FirstOrDefault(field => Attribute.GetCustomAttribute(field, typeof(MySQLFieldAttribute))._Cast<MySQLFieldAttribute>().Name == s);
+                        if (tmpPi != null)
+                            fieldDictionary.Add(s, tmpPi);
                     }
-                    
+
                     //--------- FINE ---------
 
-
+                    
+                    
                     //Leggo una riga
                     while (r.Read())
                     {
                         T tmpObj = new T();
-                        foreach ( KeyValuePair<string, FieldInfo> kv in fieldDictionary )
+                        foreach ( KeyValuePair<string, Property_Field_Info> kv in fieldDictionary )
                         {
                             try
                             {
                                 object value = r[kv.Key];
+                                Type t= value.GetType();
+                                
                                 kv.Value.SetValue(tmpObj, value);
                             }
                             catch (Exception ex)

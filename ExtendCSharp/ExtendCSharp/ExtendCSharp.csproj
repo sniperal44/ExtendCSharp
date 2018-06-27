@@ -275,6 +275,7 @@
     </Compile>
     <Compile Include="Wrapper\PenDataObject.cs" />
     <Compile Include="Wrapper\PointReadOnly.cs" />
+    <Compile Include="Wrapper\Property_Field_Info.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Controls\ButtonMenu.resx">
