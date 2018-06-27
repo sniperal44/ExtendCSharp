@@ -191,12 +191,14 @@
     <Compile Include="Exceptions\MissingServiceException.cs" />
     <Compile Include="ExtendedClass\DirectBitmap.cs" />
     <Compile Include="ExtendedClass\GifImage.cs" />
+    <Compile Include="ExtendedClass\MySQL_classes.cs" />
     <Compile Include="ExtendedClass\ObjectPlus.cs" />
     <Compile Include="ExtendedClass\StringCollectionManager.cs" />
     <Compile Include="ExtendedClass\ThreadPlus.cs" />
     <Compile Include="ExtendedClass\FileSystemPlus.cs" />
     <Compile Include="ExtendedClass\FullPrecisionNumber.cs" />
     <Compile Include="Interfaces\IBinarySerializer.cs" />
+    <Compile Include="Interfaces\ICastable.cs" />
     <Compile Include="Interfaces\ICatcher.cs" />
     <Compile Include="Interfaces\ICloneablePlus.cs" />
     <Compile Include="Interfaces\IResolvible.cs" />
