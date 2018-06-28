@@ -216,6 +216,7 @@
     <Compile Include="Controls\NumericUpDownPlus.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="README\DemoClasses\MySQL_demo_Class.cs" />
     <Compile Include="Services\BitmapService.cs" />
     <Compile Include="Services\EnumService.cs" />
     <Compile Include="Services\FormService.cs" />
@@ -320,6 +321,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="CsQuery.dll" />
+    <None Include="README\README_MySQLService.md" />
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>

@@ -1,63 +1,27 @@
 ﻿# ExtendCSharp
-Libreria contenente le estensioni delle classi C#
+Questa libreria è pensata per estendere le funzionalità di C# implementanto:
+- Estensioni ( Extension.cs )
+	Le estensioni sono raggruppate in region in base alla classe di estensione
+- Servizi ( Servies )
+	I servizi vanno a raggruppare servizi già esistenti o a crearne/organizzarne di nuovi 
+	Guardare README_Services per capirne il funzionamento
+- Classi Estese ( ExtendedClass)
+	Le classi base vengono estense per l'aggiunta di numerose funzioni
+- Controlli ( Controls )
+	Controlli base ereditati o nuovi gruppi di controlli
+- Log ( Log )
+	degli strumenti di log per avere una finestra con tutti i dettagli
+- ALTRO
+	Sono introdotti Attributi, Eccezioni, Form, Interfacce, Strutture e Wrapper per il 
+	funzionamento della libreria e dei suoi componenti
 
-Esempio utilizzo Funzioni MySQL
-
-
-
-
-  MySQLext conn = new MySQLext("localhost", "asd", "root", "");
-
-  if(!conn.ExecuteQuery("insert into reparto (NomeReparto) values('pippo')"))
-  {
-      MessageBox.Show(conn.LastException.Message);
-  }
-
-
-
-
-  List<Type> ListaTipiSelect1 = new Type[] { typeof(int), typeof(String), typeof(DateTime) }.ToList<Type>();
-
-  List<object[]> res= conn.ExecuteReaderQuery("select ID,Nome,`Data di Nascita` from dipendente" ,ListaTipiSelect1);
-
-  foreach(object[] o in res)
-  {
-      textBoxPlus1.Text += o[0]._Cast<int>()+" - " + o[1]._Cast<String>()+" - " + o[2]._Cast<DateTime>().ToString();
-     textBoxPlus1.Text += "\r\n";
-  }
+Questa libreria inoltre si appoggia alle librerie:
+- CsQuery
+- CefLibrary
+- MySql.Data
+- Newtonsoft.JSON
 
 
+TUTTI I README sono nella cartella apposita: README
 
 
-  textBoxPlus1.Text += "\r\n\r\n\r\n\r\n\r\n";
-
-
-
-
-
-  Dictionary<String, Type> t = new Dictionary<string, Type>();
-  t.Add("ID", typeof(int));
-  t.Add("Nome", typeof(String));
-  t.Add("Data di Nascita", typeof(DateTime));
-
-  List<Dictionary<String, object>> ress = conn.ExecuteReaderQuery("select ID,Nome,`Data di Nascita` from dipendente", t);
-
-  bool prima = true;
-  foreach (Dictionary<String,object> o in ress)
-  {
-      if (prima)
-      {
-          foreach (KeyValuePair<String, object> oo in o)
-          {
-              textBoxPlus1.Text += oo.Key + " - ";
-          }
-          textBoxPlus1.Text += "\r\n";
-          prima = false;
-      }
-      textBoxPlus1.Text += o["ID"]._Cast<int>() + " - " + o["Nome"]._Cast<String>() + " - " + o["Data di Nascita"]._Cast<DateTime>().ToString();
-      textBoxPlus1.Text += "\r\n";
-  }
-
-
-
-  conn.Close();

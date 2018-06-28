@@ -88,7 +88,7 @@ namespace ExtendCSharp.Services
         /// <param name="Query">Query da eseguire</param>
         /// <param name="TipiDati">Lista di Type -> ( per ottenere un tipe = tipeof(int) / tipeof(String) / ecc... )</param>
         /// <returns></returns>
-        public List<object[]> ExecuteReaderQuery(String Query,List<Type> TipiDati)
+        /*public List<object[]> ExecuteReaderQuery(String Query,List<Type> TipiDati)
         {
             List<object[]> l = new List<object[]>();
             MySqlDataReader r = null;
@@ -121,7 +121,7 @@ namespace ExtendCSharp.Services
                 throw ex;
             }
             return l;
-        }
+        }*/
 
         /// <summary>
         /// Ritorna una lista di Righe ( ogni riga è un array di object ). I veri tipi dovranno essere passati tramite la lista TipiDati, in ordine. occorrerà infine fare un cast sull'object 
@@ -130,7 +130,7 @@ namespace ExtendCSharp.Services
         /// <param name="Query">Query da eseguire</param>
         /// <param name="TipiDati">Lista di Type -> ( per ottenere un tipe = tipeof(int) / tipeof(String) / ecc... )</param>
         /// <returns></returns>
-        public List<T> ExecuteReaderQueryNew<T>(String Query) where T : new()
+        public List<T> ExecuteReaderQuery<T>(String Query) where T : new()
         {
             Type tipo = typeof(T);
             List<T> OutList = new List<T>();
@@ -221,7 +221,7 @@ namespace ExtendCSharp.Services
         /// <param name="Query"></param>
         /// <param name="TipiDati"></param>
         /// <returns></returns>
-        public List<Dictionary<String, object>> ExecuteReaderQuery(String Query, Dictionary<String,Type> TipiDati)
+        /*public List<Dictionary<String, object>> ExecuteReaderQuery(String Query, Dictionary<String,Type> TipiDati)
         {
             List<Dictionary<String, object>> l = new List<Dictionary<String, object>>();
 
@@ -279,9 +279,17 @@ namespace ExtendCSharp.Services
             }
             return l;
         }
+        */
 
 
-        public bool FillDataGrid(String query, DataGridView d)
+
+        /// <summary>
+        /// Permette di eseguire una query e di visualizzare i risultati in un DataGridView
+        /// </summary>
+        /// <param name="query">Query da eseguire</param>
+        /// <param name="dataGridView">DataGridView da riempire</param>
+        /// <returns>TRUE = OK | FALSE = c'è stata un eccezione ( visualizzabile nella Propietà LastException ) </returns>
+        public bool FillDataGrid(String query, DataGridView dataGridView)
         {
             try
             {
@@ -289,7 +297,7 @@ namespace ExtendCSharp.Services
                 adr.SelectCommand.CommandType = CommandType.Text;
                 DataTable dt = new DataTable();
                 adr.Fill(dt);
-                d.DataSource = dt;
+                dataGridView.DataSource = dt;
             }
             catch (Exception ex)
             {
