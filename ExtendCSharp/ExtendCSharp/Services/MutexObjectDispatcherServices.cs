@@ -1,10 +1,5 @@
 ﻿using ExtendCSharp.Interfaces;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ExtendCSharp;
 using System.Threading;
 
 namespace ExtendCSharp.Services

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace ExtendCSharp._v3_5_Fix
+﻿namespace ExtendCSharp._v3_5_Fix
 {
 
 

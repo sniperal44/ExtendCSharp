@@ -2,16 +2,13 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 [assembly: InternalsVisibleTo("Extension")]
 namespace ExtendCSharp.Controls
 {
-    
+
     /// <summary>
     /// PictureBoxPlus implementa molti metodi per la gestione dei movimenti/animazioni/collisioni tra PictureBox
     /// Per usarle al meglio conviene non usare il campo BackgroundImage ( usare il campo Image ) 

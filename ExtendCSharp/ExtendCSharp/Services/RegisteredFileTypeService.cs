@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-using System.Runtime.InteropServices;
+﻿using ExtendCSharp.Interfaces;
 using Microsoft.Win32;
+using System;
+using System.Collections;
 using System.Drawing;
-using ExtendCSharp.Interfaces;
+using System.Runtime.InteropServices;
 
 namespace ExtendCSharp.Services
 {

@@ -1,19 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using ExtendCSharp;
+﻿using ExtendCSharp.ExtendedClass;
 using ExtendCSharp.Services;
-using ExtendCSharp.ExtendedClass;
+using System;
+using System.Windows.Forms;
 
 namespace ExtendCSharp.Log
 {
-   
+
     public partial class LogForm : Form
     {
         public LogForm()

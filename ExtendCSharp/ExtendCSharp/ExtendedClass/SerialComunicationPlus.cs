@@ -1,12 +1,7 @@
-﻿using ExtendCSharp.Interfaces;
-using ExtendCSharp.Struct;
+﻿using ExtendCSharp.Struct;
 using System;
-using System.Collections.Generic;
 using System.IO.Ports;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace ExtendCSharp.ExtendedClass
 {

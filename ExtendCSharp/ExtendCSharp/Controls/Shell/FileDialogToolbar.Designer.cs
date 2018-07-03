@@ -1,4 +1,5 @@
-namespace GongSolutions.Shell {
+namespace GongSolutions.Shell
+{
     partial class FileDialogToolbar {
         /// <summary> 
         /// Required designer variable.

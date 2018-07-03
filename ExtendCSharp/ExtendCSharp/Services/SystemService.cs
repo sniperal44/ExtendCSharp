@@ -1,18 +1,14 @@
 ﻿using ExtendCSharp.ExtendedClass;
+using ExtendCSharp.Interfaces;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using ExtendCSharp.Interfaces;
-
 using System.Reflection;
-using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace ExtendCSharp.Services

@@ -16,11 +16,11 @@
 // Software Foundation, Inc., 51 Franklin Street, Fifth Floor,  
 // Boston, MA 2110-1301, USA.
 //
+using GongSolutions.Shell.Interop;
 using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using GongSolutions.Shell.Interop;
 
 namespace GongSolutions.Shell
 {

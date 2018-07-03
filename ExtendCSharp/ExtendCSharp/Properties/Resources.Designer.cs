@@ -8,10 +8,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ExtendCSharp.Properties {
-    using System;
-    
-    
+namespace ExtendCSharp.Properties
+{
+
+
     /// <summary>
     ///   Classe di risorse fortemente tipizzata per la ricerca di stringhe localizzate e così via.
     /// </summary>

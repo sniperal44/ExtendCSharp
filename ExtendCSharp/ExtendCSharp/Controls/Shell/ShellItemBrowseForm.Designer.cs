@@ -1,4 +1,5 @@
-namespace GongSolutions.Shell {
+namespace GongSolutions.Shell
+{
     partial class ShellItemBrowseForm {
         /// <summary>
         /// Required designer variable.

@@ -1,5 +1,4 @@
-﻿using ExtendCSharp.ExtendedClass;
-using ExtendCSharp.Interfaces;
+﻿using ExtendCSharp.Interfaces;
 using ExtendCSharp.Services;
 using Newtonsoft.Json;
 
@@ -7,9 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ExtendCSharp.ExtendedClass
 {

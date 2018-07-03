@@ -16,22 +16,20 @@
 // Software Foundation, Inc., 51 Franklin Street, Fifth Floor,  
 // Boston, MA 2110-1301, USA.
 //
+using ExtendCSharp;
+using ExtendCSharp.Controls.Shell;
+using ExtendCSharp.Services;
+using GongSolutions.Shell.Interop;
+using Microsoft.Win32;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Design;
-using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using Microsoft.Win32;
-using GongSolutions.Shell.Interop;
-using Interop = GongSolutions.Shell.Interop;
 using ComTypes = System.Runtime.InteropServices.ComTypes;
-using ExtendCSharp;
-using ExtendCSharp.Controls.Shell;
-using ExtendCSharp.Services;
 
 namespace GongSolutions.Shell
 {

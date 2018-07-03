@@ -1,12 +1,8 @@
 ﻿using ExtendCSharp.ExtendedClass;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Runtime.Remoting;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ExtendCSharp.Controls

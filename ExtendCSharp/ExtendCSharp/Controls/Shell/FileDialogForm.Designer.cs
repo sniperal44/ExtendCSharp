@@ -1,4 +1,5 @@
-namespace GongSolutions.Shell {
+namespace GongSolutions.Shell
+{
     partial class FileDialogForm {
         /// <summary> 
         /// Required designer variable.

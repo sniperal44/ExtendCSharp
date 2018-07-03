@@ -13,10 +13,10 @@ using System.Linq;
 
 namespace ExtendCSharp.Services
 {
-	/// <summary>
-	/// Description of EnumService.
-	/// </summary>
-	public class EnumService : IService
+    /// <summary>
+    /// Description of EnumService.
+    /// </summary>
+    public class EnumService : IService
 	{
 
         /// <summary>

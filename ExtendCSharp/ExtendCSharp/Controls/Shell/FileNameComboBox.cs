@@ -17,8 +17,8 @@
 // Boston, MA 2110-1301, USA.
 //
 using System;
-using System.IO;
 using System.ComponentModel;
+using System.IO;
 using System.Windows.Forms;
 
 namespace GongSolutions.Shell

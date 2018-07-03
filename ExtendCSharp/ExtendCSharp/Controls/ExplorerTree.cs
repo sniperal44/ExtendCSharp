@@ -4,29 +4,23 @@
  * Company Info: www.irajesh.com
  * See EULA.txt and Copyright.txt for additional information
  * **************************************************/
- 
+
 using System;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.Collections;
 using System.ComponentModel;
-using System.Windows.Forms;
-using System.Data;
-using System.Diagnostics; 
-using System.Text;
-using Microsoft.Win32;		//For registry access
-using System.Runtime.InteropServices;	//Used for .dll import
+using System.Drawing;
 using System.IO;
-using System.Configuration;
+using System.Runtime.InteropServices;	//Used for .dll import
+using System.Windows.Forms;
 
 namespace WindowsExplorer
 {
-	/// <summary>
-	/// Summary description for ExplorerTree.
-	/// </summary>
-	/// 
+    /// <summary>
+    /// Summary description for ExplorerTree.
+    /// </summary>
+    /// 
 
-	public class ExplorerTree : System.Windows.Forms.UserControl
+    public class ExplorerTree : System.Windows.Forms.UserControl
 	{
 		private System.Windows.Forms.Button btnRefresh;
 		private System.Windows.Forms.TreeView tvwMain;

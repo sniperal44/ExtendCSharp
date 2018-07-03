@@ -10,10 +10,10 @@ using System;
 
 namespace ExtendCSharp.Exceptions
 {
-	/// <summary>
-	/// Description of MissingServiceException.
-	/// </summary>
-	public class MissingServiceException :Exception
+    /// <summary>
+    /// Description of MissingServiceException.
+    /// </summary>
+    public class MissingServiceException :Exception
 	{
 		public MissingServiceException(Type t)
 		{

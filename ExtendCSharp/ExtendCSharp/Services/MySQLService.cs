@@ -1,5 +1,4 @@
 ﻿using ExtendCSharp.Attributes;
-using ExtendCSharp.ExtendedClass;
 using ExtendCSharp.Interfaces;
 using ExtendCSharp.Wrapper;
 using MySql.Data.MySqlClient;
@@ -8,8 +7,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ExtendCSharp.Services
