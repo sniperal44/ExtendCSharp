@@ -9,7 +9,9 @@ namespace ExtendCSharp.Services
         public void Test()
         {
 
-
+#if (NETFX4_6_1)
+            Log.Log.AddLog("v4_6_1 was set");
+#endif
 #if (NETFX4_5)
             Log.Log.AddLog("v4_5 was set");
 #endif

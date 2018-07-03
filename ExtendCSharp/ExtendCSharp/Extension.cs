@@ -18,6 +18,10 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 
+#if (NETFX3_5)
+    using ExtendCSharp._v3_5_Fix;
+#endif
+
 namespace ExtendCSharp
 {
     public static class Extension
