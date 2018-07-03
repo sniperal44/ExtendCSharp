@@ -34,8 +34,8 @@ namespace ExtendCSharp.Wrapper
 
             //in base se è una property o un field, richiamo la SetValue
             if ( pi!=null)
-            { 
-                pi.SetValue(obj, value);               
+            {         
+                pi.SetValue(obj, value,null);               
             }
             else if(fi != null)
             {

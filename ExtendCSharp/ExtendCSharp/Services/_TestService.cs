@@ -19,6 +19,9 @@ namespace ExtendCSharp.Services
 #if (NETFX4_0)
         Log.Log.AddLog("v4_0 was set");
 #endif
+#if (NETFX4_0_3)
+        Log.Log.AddLog("v4_0_3 was set");
+#endif
 #if (NETFX3_5)
 
         Log.Log.AddLog("v3_5 was set");

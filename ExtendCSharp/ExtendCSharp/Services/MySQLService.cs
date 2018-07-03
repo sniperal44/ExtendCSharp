@@ -155,7 +155,19 @@ namespace ExtendCSharp.Services
                     //Recupero tutti i campi PUBBLICI con l'attributo MySQLFieldAttribute
                     FieldInfo[] Campi = tipo.GetFields().Where(prop => Attribute.IsDefined(prop, typeof(MySQLFieldAttribute))).ToArray();
                     //Recupero tutti le proprietà PUBBLICHE con l'attributo MySQLFieldAttribute e che abbiano il metodo SET
-                    PropertyInfo[] Propieta = tipo.GetProperties().Where(prop => Attribute.IsDefined(prop, typeof(MySQLFieldAttribute)) && prop.SetMethod!=null ).ToArray();
+
+                    PropertyInfo[] Propieta = tipo.GetProperties().Where(prop => Attribute.IsDefined(prop, typeof(MySQLFieldAttribute)) && prop.CanWrite).ToArray();
+
+                    //TO_REMOVE
+/*#if (NETFX4_5 || NETFX4_6 || NETFX4_6_1)
+                    PropertyInfo[] Propieta = tipo.GetProperties().Where(prop => Attribute.IsDefined(prop, typeof(MySQLFieldAttribute)) && prop.SetMethod != null).ToArray();
+                    
+#endif
+#if (NETFX4_0_3 || NETFX3_5)
+                    PropertyInfo[] Propieta = tipo.GetProperties().Where(prop => Attribute.IsDefined(prop, typeof(MySQLFieldAttribute)) && prop.CanWrite ).ToArray();
+                    PropertyInfo[] Propieta = tipo.GetProperties().Where(prop => Attribute.IsDefined(prop, typeof(MySQLFieldAttribute)) && prop.SetMethod != null).ToArray();
+#endif*/
+
 
 
                     //Cerco in base ai nomi, i Field associati nella classe
