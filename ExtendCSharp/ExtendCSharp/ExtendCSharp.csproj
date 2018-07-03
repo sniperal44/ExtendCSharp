@@ -9,10 +9,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ExtendCSharp</RootNamespace>
     <AssemblyName>ExtendCSharp</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0.3</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <DefineConstants>NETFX$(TargetFrameworkVersion.Replace("v", "").Replace(".", "_"))</DefineConstants>
+	
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -282,6 +283,7 @@
     <Compile Include="Wrapper\PenDataObject.cs" />
     <Compile Include="Wrapper\PointReadOnly.cs" />
     <Compile Include="Wrapper\Property_Field_Info.cs" />
+    <Compile Include="_v4_0_Fix\Tuple_3_5.cs" />
     <Compile Include="_v3_5_Fix\Tuple_3_5.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -335,6 +337,7 @@
     <Content Include="Controls\Shell\Resources\Up.bmp" />
     <Content Include="Controls\Shell\Resources\Views.bmp" />
     <Content Include="Controls\Shell\Shell.csproj" />
+    <Content Include="_v4_0_Fix\README.txt" />
     <Content Include="_v3_5_Fix\README.txt" />
   </ItemGroup>
   <ItemGroup>
