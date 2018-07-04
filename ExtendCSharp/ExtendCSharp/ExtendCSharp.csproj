@@ -279,8 +279,6 @@
     <Compile Include="Wrapper\PenDataObject.cs" />
     <Compile Include="Wrapper\PointReadOnly.cs" />
     <Compile Include="Wrapper\Property_Field_Info.cs" />
-    <Compile Include="_v4_0_Fix\Tuple_3_5.cs" />
-    <Compile Include="_v3_5_Fix\Tuple_3_5.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Controls\ButtonMenu.resx">
@@ -333,8 +331,7 @@
     <Content Include="Controls\Shell\Resources\Up.bmp" />
     <Content Include="Controls\Shell\Resources\Views.bmp" />
     <Content Include="Controls\Shell\Shell.csproj" />
-    <Content Include="_v4_0_Fix\README.txt" />
-    <Content Include="_v3_5_Fix\README.txt" />
+    <Content Include="_v4_0_3_Fix\README.txt" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="WPF\ExtendedClass\" />
