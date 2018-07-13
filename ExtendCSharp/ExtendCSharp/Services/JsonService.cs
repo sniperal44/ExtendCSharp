@@ -8,21 +8,27 @@ namespace ExtendCSharp.Services
 {
     public class JsonService :IService
     {
-        public T Deserialize<T>(String s)
+        /// <summary>
+        /// Deserializza una stringa JSON in un oggetto 
+        /// </summary>
+        /// <typeparam name="T">Il tipo di oggetto da restituire</typeparam>
+        /// <param name="jsonData">La stringa JSON da parsare</param>
+        /// <returns></returns>
+        public T Deserialize<T>(String jsonData)
         {
             
             try
             {
                 JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
-                return JsonConvert.DeserializeObject<T>(s, settings);
+                return JsonConvert.DeserializeObject<T>(jsonData, settings);
             }
-            catch (Exception ) { return default(T); }
+            catch (Exception ex) { return default(T); }
         }
-        public T Deserialize<T>(Stream s)
+        public T Deserialize<T>(Stream jsonDataStream)
         {
             try
             {
-                using (StreamReader sr = new StreamReader(s))
+                using (StreamReader sr = new StreamReader(jsonDataStream))
                 {
                     JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
                     return JsonConvert.DeserializeObject<T>(sr.ReadToEnd(), settings);

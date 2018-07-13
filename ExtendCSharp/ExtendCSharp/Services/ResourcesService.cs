@@ -1,4 +1,5 @@
-﻿using ExtendCSharp.Interfaces;
+﻿using ExtendCSharp.ExtendedClass;
+using ExtendCSharp.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -13,6 +14,14 @@ namespace ExtendCSharp.Services
 
         private Dictionary<Type, ResourceParser> parsers;
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="targetAssembly">assembly dove recuperare la risorsa 
+        /// <para /> System.Reflection.Assembly.GetExecutingAssembly() -> assembly corrente
+        /// <para />System.Reflection.Assembly.GetEntryAssembly() -> primo assembly eseguito
+        /// </param>
         public ResourcesService(Assembly targetAssembly)
         {
             this.targetAssembly = targetAssembly;
@@ -22,16 +31,12 @@ namespace ExtendCSharp.Services
             parsers = new Dictionary<Type, ResourceParser>();
             RegisterParser<String>(new ResourceStringParse());
             RegisterParser<Image>(new ResourceImageParse());
-
+            RegisterParser<GifImage>(new ResourceGifImageParse());
 
         }
         /// <summary>
         /// Ritorna uno stream ad una RISORSA INCORPORATA ( proprietà della risorsa -> "Azione di compilazione" = Risorsa incorporata )
         /// </summary>
-        /// <param name="assembly">assembly dove recuperare la risorsa 
-        /// <para /> System.Reflection.Assembly.GetExecutingAssembly() -> assembly corrente
-        /// <para />System.Reflection.Assembly.GetEntryAssembly() -> primo assembly eseguito
-        /// </param>
         /// <param name="ResourcePath">Path della RISORSA INCORPORATA nello stream.
         /// <para /> 
         /// <para />Esempio:
@@ -47,6 +52,19 @@ namespace ExtendCSharp.Services
         }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="ResourcePath">Path della RISORSA INCORPORATA nello stream.
+        /// <para /> 
+        /// <para />Esempio:
+        /// <para />extendCSharpTest.Gif.test.gif
+        /// <para />extendCSharpTest = Nome del progetto ( assembly di esecuzione ) 
+        /// <para />Gif = sottocartella ( aggiungere altre sottocartelle separate dal . ) 
+        /// <para />test.gif = nome del file
+        /// </param>
+        /// <returns></returns>
         public T GetObject<T>( String ResourcePath)
         {
             ResourceParser rp = GetParser<T>();
@@ -59,7 +77,7 @@ namespace ExtendCSharp.Services
                 T temp;
                 using (Stream s = GetStream(ResourcePath))
                 {
-                    temp= rp.Parse(s)._Cast<T>();
+                    temp = rp.Parse(s)._Cast<T>();
                 }
                 return temp;
             }
@@ -68,7 +86,7 @@ namespace ExtendCSharp.Services
 
         public void RegisterParser<T>(ResourceParser parser)
         {
-            parsers.Add(parser.GetType(), parser);
+            parsers.Add(typeof(T), parser);
         }
         private ResourceParser GetParser<T>()
         {
@@ -127,9 +145,24 @@ namespace ExtendCSharp.Services
 
         public override object Parse(Stream s)
         {
-            return Image.FromStream(s);  
+            return Image.FromStream(s);
+            
         }
     }
+    public class ResourceGifImageParse : ResourceParser
+    {
+        public ResourceGifImageParse() : base(typeof(GifImage))
+        {
 
+        }
+        protected ResourceGifImageParse(Type resourceType) : base(resourceType)
+        {
+        }
+
+        public override object Parse(Stream s)
+        {
+            return new GifImage(s);
+        }
+    }
 
 }

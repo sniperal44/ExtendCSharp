@@ -11,7 +11,13 @@ namespace ExtendCSharp.Services
     {
         Dictionary<Form, ThreadPlus> ListThread = new Dictionary<Form, ThreadPlus>();
 
-
+        /// <summary>
+        /// Permette di aprire un dialog
+        /// </summary>
+        /// <param name="FunzioneCreazione"> funzione che ritorna il forma da visualizzare. Usare la sintassi:
+        /// <para /> ()=>{ return new MyForm();}
+        /// </param>
+        /// <param name="Invoker"></param>
         public void ShowDialog(Func<Form> FunzioneCreazione,Control Invoker)
         {
             if (Invoker == null)

@@ -3,16 +3,23 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 
 namespace ExtendCSharp.ExtendedClass
 {
-    public class GifImage
+    public class GifImage:IDisposable
     {
         //Image[] Frames;
         int FramesCount = 0;
         int delay = 0;
+        public int Delay
+        {
+            get => delay;
+        }
+
         Image img = null;
+        MemoryStream ms = null;
 
         Stopwatch watch = null;
         int CurrentFrame = 0;
@@ -44,6 +51,14 @@ namespace ExtendCSharp.ExtendedClass
         
 
         FrameDimension _dimension;
+
+        
+        public GifImage(Stream s)
+        {
+            ms = new MemoryStream();
+            s.CopyTo(ms);
+            Init(Image.FromStream(ms));
+        }
         public GifImage(Image i)
         {
             Init( i); 
@@ -179,5 +194,17 @@ namespace ExtendCSharp.ExtendedClass
             return -1;
         }
 
+        public void Dispose()
+        {
+            if(ms!=null)
+            {
+                try
+                {
+                    ms.Close();
+                    ms.Dispose();
+                }
+                catch(Exception ex) { }
+            }
+        }
     }
 }

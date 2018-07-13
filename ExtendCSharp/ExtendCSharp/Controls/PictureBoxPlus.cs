@@ -8,6 +8,7 @@ using System.Windows.Forms;
 [assembly: InternalsVisibleTo("Extension")]
 namespace ExtendCSharp.Controls
 {
+    //TODO: implemento la gestione delle animazioni tramite la GifImage ( o implemento del codice parallelo ) 
 
     /// <summary>
     /// PictureBoxPlus implementa molti metodi per la gestione dei movimenti/animazioni/collisioni tra PictureBox

@@ -5,6 +5,7 @@ using System.Windows.Forms;
 
 namespace ExtendCSharp.Controls
 {
+    //TODO: implemento il watch per un tempo più preciso
     public class TimerPlus: Component
     {
         const int DefaultMillisec = 1000;

@@ -194,6 +194,7 @@
     <Compile Include="ExtendedClass\MySQL_classes.cs" />
     <Compile Include="ExtendedClass\ObjectPlus.cs" />
     <Compile Include="ExtendedClass\StringCollectionManager.cs" />
+    <Compile Include="ExtendedClass\TcpListenerPlus.cs" />
     <Compile Include="ExtendedClass\ThreadPlus.cs" />
     <Compile Include="ExtendedClass\FileSystemPlus.cs" />
     <Compile Include="ExtendedClass\FullPrecisionNumber.cs" />
@@ -232,6 +233,7 @@
     <Compile Include="Services\ProcessMemoryService.cs" />
     <Compile Include="Services\RegisteredFileTypeService.cs" />
     <Compile Include="ExtendedClass\SerialComunicationPlus.cs" />
+    <Compile Include="Services\RegisterService.cs" />
     <Compile Include="Services\ResourcesService.cs" />
     <Compile Include="Services\SerialServices.cs" />
     <Compile Include="Services\SystemService.cs" />
