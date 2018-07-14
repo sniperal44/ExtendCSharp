@@ -194,6 +194,7 @@
     <Compile Include="ExtendedClass\MySQL_classes.cs" />
     <Compile Include="ExtendedClass\ObjectPlus.cs" />
     <Compile Include="ExtendedClass\StringCollectionManager.cs" />
+    <Compile Include="ExtendedClass\TcpClientPlus.cs" />
     <Compile Include="ExtendedClass\TcpListenerPlus.cs" />
     <Compile Include="ExtendedClass\ThreadPlus.cs" />
     <Compile Include="ExtendedClass\FileSystemPlus.cs" />
