@@ -63,7 +63,7 @@ namespace ExtendCSharp.ExtendedClass
                     ClientConnected?.Invoke(client);
                 }
             }
-            catch(Exception) { }
+            catch(Exception ex) { }
         }
         public new void Start()
         {

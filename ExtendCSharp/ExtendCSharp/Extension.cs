@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -1948,7 +1949,51 @@ namespace ExtendCSharp
         }
         #endregion
 
+        #region Stream
 
+
+        /// <summary>
+        /// Tramite questa funzione è possibile inviare un oggetto via qualsiasi stream.
+        /// Occorre contrassegnare la classe dell'oggetto da inviare con l'attributo [Serializable] 
+        /// ed impostare come PUBLIC tutte le propietà/variabili da inviare
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="stream"></param>
+        /// <param name="Obj">Oggetto da inviare</param>
+        public static void SendObject<T>(this Stream stream,T Obj)
+        {
+            // Initialize a storage medium to hold the serialized object
+
+            // Serialize an object into the storage medium referenced by 'stream' object.
+            BinaryFormatter formatter = new BinaryFormatter();
+
+            // Serialize multiple objects into the stream
+            formatter.Serialize(stream, Obj);
+
+
+        }
+
+
+        /// <summary>
+        /// Tramite questa funzione è possibile ricevere un oggetto via qualsiasi stream.
+        /// Occorre contrassegnare la classe dell'oggetto da inviare con l'attributo [Serializable] 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="stream"></param>
+        /// <param name="Obj"></param>
+        public static T ReceiveObject<T>(this Stream stream)
+        {
+            // Construct a binary formatter
+            BinaryFormatter formatter = new BinaryFormatter();
+            
+
+            // Deserialize the stream into object
+            T obj = (T)formatter.Deserialize(stream);
+
+            return obj;
+        }
+
+        #endregion
 
         #region TreeNode
         public static TreeNode FirstParent(this TreeNode node)
