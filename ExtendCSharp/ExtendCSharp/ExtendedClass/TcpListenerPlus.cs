@@ -50,6 +50,9 @@ namespace ExtendCSharp.ExtendedClass
             
         }
        
+
+
+
         private void ThreadListener()
         {
             try
@@ -74,6 +77,8 @@ namespace ExtendCSharp.ExtendedClass
             tp.Abort();
         }
 
+
+        
 
     }
     public delegate void ClientConnectedDelegate(TcpClient client);
