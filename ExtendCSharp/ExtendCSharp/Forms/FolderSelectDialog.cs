@@ -55,7 +55,7 @@ namespace ExtendCSharp.Forms
         /// <summary>
         /// Gets the selected folder
         /// </summary>
-        public string FileName
+        public string FolderPath
         {
             get { return ofd.FileName; }
         }

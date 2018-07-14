@@ -84,6 +84,12 @@
     <Compile Include="Controls\ExplorerTree.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Controls\FolderSelectBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\FolderSelectBar.Designer.cs">
+      <DependentUpon>FolderSelectBar.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\LabelPlus.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -288,6 +294,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\ExplorerTree.resx">
       <DependentUpon>ExplorerTree.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\FolderSelectBar.resx">
+      <DependentUpon>FolderSelectBar.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\Led.resx">
       <DependentUpon>Led.cs</DependentUpon>

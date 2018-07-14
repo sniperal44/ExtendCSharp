@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace ExtendCSharp.Controls
@@ -49,6 +50,33 @@ namespace ExtendCSharp.Controls
     }
     public class TextBoxPlus<T> : TextBox
     {
+        private String textCaption = "";
+        public String TextCaption {
+            get => textCaption;
+            set
+            {
+                textCaption = value;
+                if(status == TextCaptionStatus.visible)
+                {
+                    base.Text = value;
+                }
+            }
+        }
+        public Color CaptionColor { get; set; } = Color.Gray;
+        private Color NormalTextColor { get; set; } = Color.Black;
+
+        public override Color ForeColor
+        {
+            get => base.ForeColor;
+        }
+       
+
+        public bool AutoScroll { get; set; } = false;
+
+        protected TextCaptionStatus status;
+
+        public event ValidationTextDelegate ValidationText;
+
         public TextBoxPlus()
         {
             KeyDown += (object sender, KeyEventArgs e) =>
@@ -57,8 +85,77 @@ namespace ExtendCSharp.Controls
             };
             KeyDownPlus += Ctrl_A_Checker;
             KeyDownPlus += EnterSendChecker;
+            GotFocus += TextBoxPlus_GotFocus;
+            LostFocus += TextBoxPlus_LostFocus;
+            NormalTextColor = ForeColor;
+
+            PrintCaptionText();
         }
-        public bool AutoScroll { get; set; } = false;
+
+       
+
+     
+
+        private void TextBoxPlus_GotFocus(object sender, EventArgs e)
+        {
+            if (ReadOnly)
+                return;
+
+            if (status == TextCaptionStatus.visible)
+            {
+                base.Text = "";
+                ForeColor = NormalTextColor;
+                status = TextCaptionStatus.invisible;
+            }
+        }
+        private void TextBoxPlus_LostFocus(object sender, EventArgs e)
+        {
+            if (ReadOnly)
+                return;
+
+            StartTextValidation();
+        }
+
+        public void StartTextValidation()
+        {
+            status = TextCaptionStatus.invisible;   //qualsiasi cosa ci sia scritta, la valuto come testo scritto
+            bool? Valid = ValidationText?.Invoke(base.Text);
+            if(Valid.HasValue)  //se ho ricevuto un valore
+            {
+                if (Valid.Value)    //postivo
+                {
+                    //lascio il testo corrente e lo status su invisible
+                }
+                else
+                {
+                    PrintCaptionText();
+                }
+            }
+            else    //non ho ricevuto risposta
+            {
+                if (base.Text == "")
+                {
+                    PrintCaptionText();
+                }
+                else
+                {
+                    //lascio il testo corrente e lo status su invisible
+                }
+            }
+
+
+        }
+        
+        private void PrintCaptionText()
+        {
+            //cancello il testo corrente e visualizzo la caption
+            ForeColor = CaptionColor;
+            base.Text = TextCaption;
+
+            //imposto di visualizzare la caption
+            status = TextCaptionStatus.visible;
+        }
+        
 
 
         protected void EnterSendChecker(TextBoxPlus<T> sender, KeyEventArgs e)
@@ -108,6 +205,8 @@ namespace ExtendCSharp.Controls
         {
             get
             {
+                if (status == TextCaptionStatus.visible)
+                    return "";
                 return base.Text;
             }
         }
@@ -173,4 +272,11 @@ namespace ExtendCSharp.Controls
 
     }
 
+    public enum TextCaptionStatus
+    {
+        visible,
+        invisible
+    }
+
+    public delegate bool? ValidationTextDelegate(string textToValidate);
 }

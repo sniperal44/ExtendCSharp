@@ -36,6 +36,11 @@ namespace ExtendCSharp.Services
         {
             return Path.GetExtension(s);
         }
+        public String GetFileVersion(String path)
+        {
+            return FileVersionInfo.GetVersionInfo(path).FileVersion;
+        }
+
 
         public String GetParent(String s)
         {
