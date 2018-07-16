@@ -10,6 +10,8 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -1953,7 +1955,7 @@ namespace ExtendCSharp
 
 
         /// <summary>
-        /// Tramite questa funzione è possibile inviare un oggetto via qualsiasi stream.
+        /// Tramite questa funzione è possibile inviare un oggetto tramite lo stream corrente.
         /// Occorre contrassegnare la classe dell'oggetto da inviare con l'attributo [Serializable] 
         /// ed impostare come PUBLIC tutte le propietà/variabili da inviare
         /// </summary>
@@ -1993,7 +1995,84 @@ namespace ExtendCSharp
             return obj;
         }
 
+
+        /// <summary>
+        /// Permette di inviare un file tramite lo stream corrente
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="file"></param>
+        public static void SendFile(this Stream stream, FilePlus file)
+        {
+            stream.SendObject(file);
+        }
+
+        /// <summary>
+        /// Permette di ricevere un file tramite lo stream corrente
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="file"></param>
+        public static FilePlus ReceiveFile(this Stream stream)
+        {
+            return stream.ReceiveObject<FilePlus>();
+        }
+
         #endregion
+
+
+        #region TcpClient
+        public static TcpState GetState(this TcpClient tcpClient)
+        {
+            var foo = IPGlobalProperties.GetIPGlobalProperties()
+              .GetActiveTcpConnections()
+              .FirstOrDefault(x => x.LocalEndPoint.Equals(tcpClient.Client.LocalEndPoint));
+            return foo != null ? foo.State : TcpState.Unknown;
+        }
+        public static bool IsConnected(this TcpClient tcpClient)
+        {
+
+            try
+            {
+                if (tcpClient != null && tcpClient.Client != null && tcpClient.Client.Connected)
+                {
+                    /* pear to the documentation on Poll:
+                     * When passing SelectMode.SelectRead as a parameter to the Poll method it will return 
+                     * -either- true if Socket.Listen(Int32) has been called and a connection is pending;
+                     * -or- true if data is available for reading; 
+                     * -or- true if the connection has been closed, reset, or terminated; 
+                     * otherwise, returns false
+                     */
+
+                    // Detect if client disconnected
+                    if (tcpClient.Client.Poll(0, SelectMode.SelectRead))
+                    {
+                        byte[] buff = new byte[1];
+                        if (tcpClient.Client.Receive(buff, SocketFlags.Peek) == 0)
+                        {
+                            // Client disconnected
+                            return false;
+                        }
+                        else
+                        {
+                            return true;
+                        }
+                    }
+
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+
+        #endregion
+
 
         #region TreeNode
         public static TreeNode FirstParent(this TreeNode node)
@@ -2137,9 +2216,9 @@ namespace ExtendCSharp
         #endregion
 
             //TODO: implementare gli altri ToPlus
-            #region ToPlus
+        #region ToPlus
 
-            public static PictureBoxPlus ToPlus(this PictureBox self)
+        public static PictureBoxPlus ToPlus(this PictureBox self)
         {
             PictureBoxPlus temp = new PictureBoxPlus()
             {
@@ -2154,7 +2233,10 @@ namespace ExtendCSharp
             temp.Image = self.Image;
             return temp;
         }
-
+        public static TcpClientPlus ToPlus(this TcpClient self)
+        {
+            return new TcpClientPlus(self);     
+        }
         #endregion
     }
 

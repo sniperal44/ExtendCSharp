@@ -23,35 +23,76 @@ namespace ExtendCSharp.Services
         }
 
 
-
+        /// <summary>
+        ///  Restituisce il nome del file e l'estensione della stringa di percorso specificata.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
         public String GetFileName(String s)
         {
            return Path.GetFileName(s);
         }
+        /// <summary>
+        ///  Restituisce il nome del file della stringa di percorso specificata.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
         public String GetFileNameWithoutExtension(String s)
         {
             return Path.GetFileNameWithoutExtension(s);
         }
+        /// <summary>
+        ///  Restituisce l'estensione della stringa di percorso specificata.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
         public String GetExtension(String s)
         {
             return Path.GetExtension(s);
         }
+        /// <summary>
+        ///  Restituisce la versione del file della stringa di percorso specificata.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         public String GetFileVersion(String path)
         {
             return FileVersionInfo.GetVersionInfo(path).FileVersion;
         }
+        public long GetFileSize(String path)
+        {
+            return new System.IO.FileInfo(path).Length;
+        }
 
 
+        /// <summary>
+        /// Recupera la directory padre del percorso specificato, inclusi il percorso assoluto e relativo.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
         public String GetParent(String s)
         {
             return Directory.GetParent(s).FullName;
         }
+        /// <summary>
+        /// Restituisce il percorso assoluto della stringa di percorso specificata.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public string GetFullPath(string path)
+        {
+            return Path.GetFullPath(path);
+        }
 
+        /// <summary>
+        /// Ritorna un array di stringhe contenente i nomi delle cartelle nel path passato
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         public String[] GetDirectories(String path)
         {
             return Directory.GetDirectories(path);
         }
-
         /// <summary>
         /// Ritorna un array di stringhe contenente i nomi dei file nel path passato
         /// </summary>
@@ -85,7 +126,6 @@ namespace ExtendCSharp.Services
         /// </summary>
         /// <param name="PathEl">Elemento da analizzare ( file o cartella ) </param>
         /// <returns></returns>
-
         public String GetDirectoryName(String PathEl)
         {
             if( FileExist(PathEl))
@@ -262,7 +302,6 @@ namespace ExtendCSharp.Services
             else
                 File.WriteAllText(Path, Contents);
         }
-
         public void Write(String Path, String Contents, Encoding encoding, bool Append)
         {
             if (Append)
@@ -270,6 +309,13 @@ namespace ExtendCSharp.Services
             else
                 File.WriteAllText(Path, Contents, encoding);
         }
+        public void WriteAllBytes(String Path, byte[] data)
+        {
+            CreateFolderSecure(GetParent(Path));
+            File.WriteAllBytes(Path, data);
+        }
+
+
 
         public String Read(String Path, Encoding encoding)
         {
@@ -279,7 +325,10 @@ namespace ExtendCSharp.Services
         {
             return File.ReadAllText(Path);
         }
-
+        public byte[] ReadAllBytes(String Path)
+        {
+            return File.ReadAllBytes(Path);
+        }
 
 
         public void Rename(String Source, String Dest, bool Override = true)
@@ -443,10 +492,7 @@ namespace ExtendCSharp.Services
         }
 
 
-        public string GetFullPath(string path)
-        {
-            return Path.GetFullPath(path);
-        }
+      
         public string NormalizePath(string path)
         {
             return Path.GetFullPath(new Uri(path).LocalPath)

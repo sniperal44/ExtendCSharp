@@ -216,13 +216,19 @@ namespace ExtendCSharp.Controls
             if (this.InvokeRequired)
                 this.BeginInvoke((MethodInvoker)delegate { this.AppendText(s); });
             else
+            {
                 base.Text = base.Text + s;
 
-            if (AutoScroll)
-            {
-                this.SelectionStart = this.Text.Length;
-                this.ScrollToCaret();
+                StartTextValidation();
+
+                if (AutoScroll)
+                {
+                    this.SelectionStart = this.Text.Length;
+                    this.ScrollToCaret();
+                }
+
             }
+
         }
         public void AppendLine(String line)
         {
@@ -231,6 +237,10 @@ namespace ExtendCSharp.Controls
             else
             {
                 base.Text = base.Text + line.RemoveRight("\r", "\n", "\r\n") + "\r\n";
+
+                StartTextValidation();
+
+
                 if (AutoScroll)
                 {
                     this.SelectionStart = this.Text.Length;
@@ -249,6 +259,9 @@ namespace ExtendCSharp.Controls
                     base.Text = null;
                 else
                     base.Text = s.ToString();
+
+                StartTextValidation();
+
 
                 if (AutoScroll)
                 {

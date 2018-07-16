@@ -3,6 +3,7 @@ using ExtendCSharp.Interfaces;
 using Newtonsoft.Json;
 using System;
 using System.IO;
+using System.Xml;
 
 namespace ExtendCSharp.Services
 {
@@ -16,7 +17,6 @@ namespace ExtendCSharp.Services
         /// <returns></returns>
         public T Deserialize<T>(String jsonData)
         {
-            
             try
             {
                 JsonSerializerSettings settings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
@@ -35,6 +35,11 @@ namespace ExtendCSharp.Services
                 }
             }
             catch (Exception ) { return default(T); }
+        }
+
+        public XmlDocument DeserializeXmlNode(string jsonData)
+        {
+            return JsonConvert.DeserializeXmlNode(jsonData);
         }
 
         public String Serialize(object o)

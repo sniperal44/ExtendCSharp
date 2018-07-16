@@ -59,6 +59,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
@@ -98,6 +99,12 @@
     </Compile>
     <Compile Include="Controls\Led.Designer.cs">
       <DependentUpon>Led.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Line.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Line.Designer.cs">
+      <DependentUpon>Line.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\PanelPlus.cs">
       <SubType>Component</SubType>
@@ -196,10 +203,12 @@
     <Compile Include="Controls\Shell\SystemImageList.cs" />
     <Compile Include="Exceptions\MissingServiceException.cs" />
     <Compile Include="ExtendedClass\DirectBitmap.cs" />
+    <Compile Include="ExtendedClass\FilePlus.cs" />
     <Compile Include="ExtendedClass\GifImage.cs" />
     <Compile Include="ExtendedClass\MySQL_classes.cs" />
     <Compile Include="ExtendedClass\ObjectPlus.cs" />
     <Compile Include="ExtendedClass\StringCollectionManager.cs" />
+    <Compile Include="ExtendedClass\TcpClientPlus.cs" />
     <Compile Include="ExtendedClass\TcpListenerPlus.cs" />
     <Compile Include="ExtendedClass\ThreadPlus.cs" />
     <Compile Include="ExtendedClass\FileSystemPlus.cs" />
@@ -223,6 +232,11 @@
     <Compile Include="Controls\NumericUpDownPlus.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="README\DemoClasses\MySQL_demo_Class.cs" />
     <Compile Include="Services\BitmapService.cs" />
     <Compile Include="Services\EnumService.cs" />
@@ -236,6 +250,7 @@
     <Compile Include="Services\FFmpeg.cs" />
     <Compile Include="Services\Hook.cs" />
     <Compile Include="Services\MouseKeyboardService.cs" />
+    <Compile Include="Services\OnlineServices.cs" />
     <Compile Include="Services\ProcessMemoryService.cs" />
     <Compile Include="Services\RegisteredFileTypeService.cs" />
     <Compile Include="ExtendedClass\SerialComunicationPlus.cs" />
@@ -301,6 +316,9 @@
     <EmbeddedResource Include="Controls\Led.resx">
       <DependentUpon>Led.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Controls\Line.resx">
+      <DependentUpon>Line.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\Shell\FileDialogForm.resx">
       <DependentUpon>FileDialogForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -332,6 +350,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="CsQuery.dll" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="README\README_MySQLService.md" />
     <None Include="README.md" />
   </ItemGroup>

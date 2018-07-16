@@ -15,10 +15,11 @@ namespace ExtendCSharp.Exceptions
     /// </summary>
     public class MissingServiceException :Exception
 	{
-		public MissingServiceException(Type t)
+        Type t;
+		public MissingServiceException(Type t):base("Il servizio " + t.ToString() + " è stato chiamato senza essere registrato.")
 		{
-			
-		}
+            this.t = t;
+        }
 
-	}
+    }
 }

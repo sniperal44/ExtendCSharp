@@ -60,7 +60,7 @@ namespace ExtendCSharp.ExtendedClass
                 while (true)
                 {
                     TcpClient client = AcceptTcpClient();
-                    ClientConnected?.Invoke(client);
+                    ClientConnected?.Invoke(client.ToPlus());
                 }
             }
             catch(Exception ex) { }
@@ -81,5 +81,5 @@ namespace ExtendCSharp.ExtendedClass
         
 
     }
-    public delegate void ClientConnectedDelegate(TcpClient client);
+    public delegate void ClientConnectedDelegate(TcpClientPlus client);
 }
