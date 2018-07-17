@@ -69,12 +69,12 @@ namespace ExtendCSharp.ExtendedClass
         {
             base.Start();
             tp = new ThreadPlus(ThreadListener);
-            tp.Start();
+            tp?.Start();
         }
         public new void Stop()
         {
             base.Stop();
-            tp.Abort();
+            tp?.Abort();
         }
 
 

@@ -75,6 +75,18 @@ namespace ExtendCSharp.ExtendedClass
             inter.Connect(ipAddresses, port);
         }
 
+        public void Connect(String hostname,Int32 port,int timeoutMillisecond)
+        {
+            var result = inter.BeginConnect(hostname, port, null, null);
+            var success = result.AsyncWaitHandle.WaitOne(TimeSpan.FromMilliseconds(timeoutMillisecond));
+
+            if (!success)
+            {
+                throw new  SocketException((int)SocketError.TimedOut);
+            }
+
+        }
+
         public IAsyncResult BeginConnect(String host, Int32 port, System.AsyncCallback requestCallback, object state)
         {
             return inter.BeginConnect(host, port, requestCallback, state);
