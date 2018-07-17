@@ -20,6 +20,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
+using System.Xml.Serialization;
 
 #if (NETFX3_5)
     using ExtendCSharp._v3_5_Fix;
@@ -1987,12 +1988,14 @@ namespace ExtendCSharp
         {
             // Construct a binary formatter
             BinaryFormatter formatter = new BinaryFormatter();
-            
 
-            // Deserialize the stream into object
-            T obj = (T)formatter.Deserialize(stream);
+           
+                // Deserialize the stream into object
+                T obj = (T)formatter.Deserialize(stream);
+   
+                //TODO: TROVO UN MODO PER FERMARE LA DESERIALIZZAZIONE!!!
+                return obj;
 
-            return obj;
         }
 
 

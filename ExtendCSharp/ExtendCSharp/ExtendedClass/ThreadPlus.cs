@@ -10,7 +10,7 @@ namespace ExtendCSharp.ExtendedClass
 
         
         private Thread t;
-        private Thread WhaitEnd;
+        private Thread WaitEnd;
 
         private bool SuspendOnEnd = false;
 
@@ -50,22 +50,22 @@ namespace ExtendCSharp.ExtendedClass
 
         private void Start_WhaitEndThread()
         {
-            WhaitEnd = new Thread(WhaitEndThread);
-            WhaitEnd.Start();
+            WaitEnd = new Thread(WaitEndThread);
+            WaitEnd.Start();
         }
-        private void WhaitEndThread()
+        private void WaitEndThread()
         {
             t.Join();
             if (!SuspendOnEnd)
                 OnEnd?.Invoke(this);
-            WhaitEnd = null;
+            WaitEnd = null;
 
         }
         private void Interrupt_WhaitEndThread()
         {
             try
             {
-                WhaitEnd.Abort();
+                WaitEnd.Abort();
             }
             catch (Exception ) { }
         }
