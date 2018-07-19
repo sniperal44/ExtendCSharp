@@ -1952,51 +1952,39 @@ namespace ExtendCSharp
         }
         #endregion
 
+
+        #region BinaryFormatter
+
+        public static byte[] SerializeToArray(this BinaryFormatter _BinaryFormatter, object obj)	//TODO: controllo se funziona da passaggio da T ( template ) a object
+        {
+            byte[] temp;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                _BinaryFormatter.Serialize(ms, obj);
+                ms.Seek(0, SeekOrigin.Begin);
+                temp = ms.ToArray();
+            }
+            return temp;
+        }
+        public static T DeserializeFromArray<T>(this BinaryFormatter _BinaryFormatter, byte[] data)
+        {
+            T temp;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                ms.Write(data);
+                ms.Seek(0, SeekOrigin.Begin);
+                temp =(T)_BinaryFormatter.Deserialize(ms);
+            }
+            return temp;
+        }
+
+
+        #endregion
+
+
         #region Stream
 
 
-        /// <summary>
-        /// Tramite questa funzione è possibile inviare un oggetto tramite lo stream corrente.
-        /// Occorre contrassegnare la classe dell'oggetto da inviare con l'attributo [Serializable] 
-        /// ed impostare come PUBLIC tutte le propietà/variabili da inviare
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="stream"></param>
-        /// <param name="Obj">Oggetto da inviare</param>
-        public static void SendObject<T>(this Stream stream,T Obj)
-        {
-            // Initialize a storage medium to hold the serialized object
-
-            // Serialize an object into the storage medium referenced by 'stream' object.
-            BinaryFormatter formatter = new BinaryFormatter();
-
-            // Serialize multiple objects into the stream
-            formatter.Serialize(stream, Obj);
-
-
-        }
-
-
-        /// <summary>
-        /// Tramite questa funzione è possibile ricevere un oggetto via qualsiasi stream.
-        /// Occorre contrassegnare la classe dell'oggetto da inviare con l'attributo [Serializable] 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="stream"></param>
-        /// <param name="Obj"></param>
-        public static T ReceiveObject<T>(this Stream stream)
-        {
-            // Construct a binary formatter
-            BinaryFormatter formatter = new BinaryFormatter();
-
-           
-                // Deserialize the stream into object
-                T obj = (T)formatter.Deserialize(stream);
-   
-                //TODO: TROVO UN MODO PER FERMARE LA DESERIALIZZAZIONE!!!
-                return obj;
-
-        }
 
 
         /// <summary>
@@ -2004,9 +1992,9 @@ namespace ExtendCSharp
         /// </summary>
         /// <param name="stream"></param>
         /// <param name="file"></param>
-        public static void SendFile(this Stream stream, FilePlus file)
+        public static void SendFile(this Stream stream, FilePlus file,int timeoutMillisecond=0)
         {
-            stream.SendObject(file);
+            stream.WriteObject(file, timeoutMillisecond);
         }
 
         /// <summary>
@@ -2014,10 +2002,304 @@ namespace ExtendCSharp
         /// </summary>
         /// <param name="stream"></param>
         /// <param name="file"></param>
-        public static FilePlus ReceiveFile(this Stream stream)
+        public static FilePlus ReceiveFile(this Stream stream, int timeoutMillisecond = 0)
         {
-            return stream.ReceiveObject<FilePlus>();
+            return stream.ReadObject<FilePlus>(timeoutMillisecond);
         }
+
+
+
+
+
+
+        /// <summary>
+        /// Permette di scrivere qualcosa sul flusso di dati in maniera sincrona, impostando un tempo massimo
+        /// </summary>
+        /// <param name="value">Array di byte da inviare</param>
+        /// <param name="timeout"> 0 = infinito, espresso in millisecondi</param>
+        public static void Write(this Stream stream, byte[] value, int timeoutMillisecond = 0)
+        {
+            byte[] temp = value;
+
+            if (timeoutMillisecond == 0)    //se è 0, aspetta all'infinito
+            {
+                stream.Write(temp, 0, temp.Length);
+            }
+            else
+            {
+                var result = stream.BeginWrite(temp, 0, temp.Length, null, null);
+                var success = result.AsyncWaitHandle.WaitOne(TimeSpan.FromMilliseconds(timeoutMillisecond));
+
+                if (!success)
+                {
+                    throw new SocketException((int)SocketError.TimedOut);
+                }
+            }
+    
+        }
+
+
+        /// <summary>
+        /// Permette di scrivere qualcosa sul flusso di dati in maniera sincrona, impostando un tempo massimo
+        /// </summary>
+        /// <param name="value">Numero da inviare</param>
+        /// <param name="timeout"> 0 = infinito, espresso in millisecondi</param>
+        public static void Write(this Stream stream,int value, int timeoutMillisecond = 0)
+        {
+            byte[] temp;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                using (BinaryWriter writer = new BinaryWriter(ms))
+                {
+                    writer.Write(value);
+                    temp = ms.ToArray();
+                }
+            }
+
+            stream.Write(temp, timeoutMillisecond);
+        }
+
+        /// <summary>
+        /// Permette di scrivere qualcosa sul flusso di dati in maniera sincrona, impostando un tempo massimo
+        /// </summary>
+        /// <param name="value">Numero da inviare</param>
+        /// <param name="timeout"> 0 = infinito, espresso in millisecondi</param>
+        public static void Write(this Stream stream, UInt64 value, int timeoutMillisecond = 0)
+        {
+            byte[] temp;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                using (BinaryWriter writer = new BinaryWriter(ms))
+                {
+                    writer.Write(value);
+                    temp = ms.ToArray();
+                }
+            }
+
+            stream.Write(temp, timeoutMillisecond);
+        }
+
+        /// <summary>
+        /// Permette di scrivere qualcosa sul flusso di dati in maniera sincrona, impostando un tempo massimo
+        /// </summary>
+        /// <param name="value">Booleano da inviare</param>
+        /// <param name="timeout"> 0 = infinito, espresso in millisecondi</param>
+        public static void Write(this Stream stream, bool value, int timeoutMillisecond = 0)
+        {
+            byte[] temp;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                using (BinaryWriter writer = new BinaryWriter(ms))
+                {
+                    writer.Write(value);
+                    temp = ms.ToArray();
+                }
+            }
+
+
+            stream.Write(temp, timeoutMillisecond);
+        }
+
+        /// <summary>
+        /// Permette di scrivere qualcosa sul flusso di dati in maniera sincrona, impostando un tempo massimo
+        /// </summary>
+        /// <param name="value">Carattere da inviare</param>
+        /// <param name="timeout"> 0 = infinito, espresso in millisecondi</param>
+        public static void Write(this Stream stream, char value, int timeoutMillisecond = 0)
+        {
+            byte[] temp;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                using (BinaryWriter writer = new BinaryWriter(ms))
+                {
+                    writer.Write(value);
+                    temp = ms.ToArray();
+                }
+            }
+
+
+            stream.Write(temp, timeoutMillisecond);
+        }
+
+
+
+        /// <summary>
+        /// Permette di scrivere un oggetto sul flusso di dati in maniera sincrona, impostando un tempo massimo
+        /// </summary>
+        /// <param name="value">Booleano da inviare</param>
+        /// <param name="timeout"> 0 = infinito, espresso in millisecondi</param>
+        public static void WriteObject<T>(this Stream stream, T obj, int timeoutMillisecond = 0)
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            byte[] data = formatter.SerializeToArray(obj);
+
+            UInt64 dim = (UInt64)data.Length;
+            stream.Write(dim, timeoutMillisecond);  //invio la dimensione 
+            if (stream.Read<Boolean>(timeoutMillisecond))   //aspetto la risposta
+                stream.Write(data, timeoutMillisecond);     //invio il file
+
+        }
+
+
+
+        static Dictionary<Type, Func<BinaryReader, object>> StreamByteReaderTypeFunction = null;
+
+        /*
+        /// <summary>
+        /// Permette di leggere qualcosa sul flusso di dati in maniera sincrona, impostando un tempo massimo
+        /// </summary>
+        /// <param name="timeout"> 0 = infinito, espresso in millisecondi</param>
+        public static T Read<T>(this Stream stream, int timeoutMillisecond = 0)
+        {
+           
+            if (StreamByteReaderTypeFunction == null)
+            {
+                StreamByteReaderTypeFunction = new Dictionary<Type, Func<BinaryReader, object>>();
+                StreamByteReaderTypeFunction.Add(typeof(Boolean), (BinaryReader reader) => { return reader.ReadBoolean(); });
+                StreamByteReaderTypeFunction.Add(typeof(Byte), (BinaryReader reader) => { return reader.ReadByte(); });
+                StreamByteReaderTypeFunction.Add(typeof(SByte), (BinaryReader reader) => { return reader.ReadSByte(); });
+                StreamByteReaderTypeFunction.Add(typeof(Char), (BinaryReader reader) => { return reader.ReadChar(); });
+                StreamByteReaderTypeFunction.Add(typeof(Int16), (BinaryReader reader) => { return reader.ReadInt16(); });
+                StreamByteReaderTypeFunction.Add(typeof(UInt16), (BinaryReader reader) => { return reader.ReadUInt16(); });
+                StreamByteReaderTypeFunction.Add(typeof(Int32), (BinaryReader reader) => { return reader.ReadInt32(); });
+                StreamByteReaderTypeFunction.Add(typeof(UInt32), (BinaryReader reader) => { return reader.ReadUInt32(); });
+                StreamByteReaderTypeFunction.Add(typeof(Int64), (BinaryReader reader) => { return reader.ReadInt64(); });
+                StreamByteReaderTypeFunction.Add(typeof(UInt64), (BinaryReader reader) => { return reader.ReadUInt64(); });
+                StreamByteReaderTypeFunction.Add(typeof(Single), (BinaryReader reader) => { return reader.ReadSingle(); });
+                StreamByteReaderTypeFunction.Add(typeof(Double), (BinaryReader reader) => { return reader.ReadDouble(); });
+                StreamByteReaderTypeFunction.Add(typeof(Decimal), (BinaryReader reader) => { return reader.ReadDecimal(); });
+                StreamByteReaderTypeFunction.Add(typeof(String), (BinaryReader reader) => { return reader.ReadString(); });
+            }
+
+            //Controllo se T è valida e la posso parsare
+            if (!StreamByteReaderTypeFunction.ContainsKey(typeof(T)))
+            {
+                throw new InvalidCastException("Tipo passato non riconosciuto, controlla la documentazione per i tipi di dati consentiti.");
+            }
+                
+
+            //Dichiaro un array lungo quanto il tipo passato
+            byte[] temp = new byte[System.Runtime.InteropServices.Marshal.SizeOf(default(T))];
+            if (timeoutMillisecond == 0)    //se è 0, aspetta all'infinito
+            {
+                stream.Read(temp, 0, temp.Length);
+            }
+            else
+            {
+                var result = stream.BeginRead(temp, 0, temp.Length, null, null);        //inizio la lettura
+                var success = result.AsyncWaitHandle.WaitOne(TimeSpan.FromMilliseconds(timeoutMillisecond));        //la interrompo dopo TOT millisecondi
+                if (!success)       //se ha sforato il tempo sollevo un eccezione
+                {
+                    throw new SocketException((int)SocketError.TimedOut);
+                }
+            }
+
+
+            //Usando un memory stream, carico tutto quello che ho letto in memoria, e lo passo ad un BinaryReader che converte nell'oggetto corretto
+            T ret;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                ms.Write(temp,0,temp.Length);
+                using (BinaryReader reader = new BinaryReader(ms))
+                {
+                    ret=StreamByteReaderTypeFunction[typeof(T)](reader)._Cast<T>();
+                }
+            }
+            return ret;          
+        }
+        */
+
+
+        /// <summary>
+        /// Permette di leggere qualcosa sul flusso di dati in maniera sincrona, impostando un tempo massimo
+        /// </summary>
+        /// <param name="timeout"> 0 = infinito, espresso in millisecondi</param>
+        public static byte[] Read(this Stream stream,int count, int timeoutMillisecond = 0)
+        {
+
+            //Dichiaro un array lungo quanto passato ( count ) 
+            byte[] temp = new byte[count];
+            if (timeoutMillisecond == 0)    //se è 0, aspetta all'infinito
+            {
+                stream.Read(temp, 0, temp.Length);
+            }
+            else
+            {
+                var result = stream.BeginRead(temp, 0, temp.Length, null, null);        //inizio la lettura
+                var success = result.AsyncWaitHandle.WaitOne(TimeSpan.FromMilliseconds(timeoutMillisecond));        //la interrompo dopo TOT millisecondi
+                if (!success)       //se ha sforato il tempo sollevo un eccezione
+                {
+                    throw new SocketException((int)SocketError.TimedOut);
+                }
+            }
+
+            return temp;
+        }
+
+        /// <summary>
+        /// Permette di leggere qualcosa sul flusso di dati in maniera sincrona, impostando un tempo massimo
+        /// Tipi permessi: 
+        /// Boolean, Byte, SByte, Char, Int16, UInt16, Int32, UInt32, Int64, UInt64, Single, Double, Decimal, String
+        /// </summary>
+        /// <param name="timeout"> 0 = infinito, espresso in millisecondi</param>
+        public static T Read<T>(this Stream stream, int timeoutMillisecond = 0)
+        {
+            if (StreamByteReaderTypeFunction == null)
+            {
+                StreamByteReaderTypeFunction = new Dictionary<Type, Func<BinaryReader, object>>();
+                StreamByteReaderTypeFunction.Add(typeof(Boolean), (BinaryReader reader) => { return reader.ReadBoolean(); });
+                StreamByteReaderTypeFunction.Add(typeof(Byte), (BinaryReader reader) => { return reader.ReadByte(); });
+                StreamByteReaderTypeFunction.Add(typeof(SByte), (BinaryReader reader) => { return reader.ReadSByte(); });
+                StreamByteReaderTypeFunction.Add(typeof(Char), (BinaryReader reader) => { return reader.ReadChar(); });
+                StreamByteReaderTypeFunction.Add(typeof(Int16), (BinaryReader reader) => { return reader.ReadInt16(); });
+                StreamByteReaderTypeFunction.Add(typeof(UInt16), (BinaryReader reader) => { return reader.ReadUInt16(); });
+                StreamByteReaderTypeFunction.Add(typeof(Int32), (BinaryReader reader) => { return reader.ReadInt32(); });
+                StreamByteReaderTypeFunction.Add(typeof(UInt32), (BinaryReader reader) => { return reader.ReadUInt32(); });
+                StreamByteReaderTypeFunction.Add(typeof(Int64), (BinaryReader reader) => { return reader.ReadInt64(); });
+                StreamByteReaderTypeFunction.Add(typeof(UInt64), (BinaryReader reader) => { return reader.ReadUInt64(); });
+                StreamByteReaderTypeFunction.Add(typeof(Single), (BinaryReader reader) => { return reader.ReadSingle(); });
+                StreamByteReaderTypeFunction.Add(typeof(Double), (BinaryReader reader) => { return reader.ReadDouble(); });
+            }
+
+
+            //Dichiaro un array lungo quanto il tipo passato
+            int count = System.Runtime.InteropServices.Marshal.SizeOf(default(T));
+            byte[] temp = stream.Read(count, timeoutMillisecond);       //recupero dallo stream i byte
+
+
+            //Usando un memory stream, carico tutto quello che ho letto in memoria, e lo passo ad un BinaryReader che converte nell'oggetto corretto
+            T ret;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                ms.Write(temp, 0, temp.Length);
+                ms.Seek(0, SeekOrigin.Begin);
+                using (BinaryReader reader = new BinaryReader(ms))
+                {
+                    ret = StreamByteReaderTypeFunction[typeof(T)](reader)._Cast<T>();
+                }
+            }
+            return ret;
+ 
+        }
+ 
+        /// <summary>
+        /// Permette di leggere un oggetto sul flusso di dati in maniera sincrona, impostando un tempo massimo
+        /// </summary>
+        /// <param name="timeout"> 0 = infinito, espresso in millisecondi</param>
+        public static T ReadObject<T>(this Stream stream, int timeoutMillisecond = 0)
+        {
+            UInt64 dim = stream.Read<UInt64>(timeoutMillisecond);//aspetto la dimensione del file
+            stream.Write(true, timeoutMillisecond); //invio l'OK
+            byte[] data = stream.Read((int)dim, timeoutMillisecond); //aspetto il file
+
+
+            BinaryFormatter formatter = new BinaryFormatter();
+            T temp = formatter.DeserializeFromArray<T>(data);
+            return temp;
+        }
+ 
+            
+   
 
         #endregion
 

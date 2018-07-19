@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using ExtendCSharp;
 using System.Threading;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 
 namespace ExtendCSharp.ExtendedClass
 {
@@ -316,6 +318,7 @@ namespace ExtendCSharp.ExtendedClass
             while (CheckTreadActive);
         }
 
+      
 
 
     }
