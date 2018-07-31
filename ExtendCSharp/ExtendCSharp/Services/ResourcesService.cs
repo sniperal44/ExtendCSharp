@@ -32,8 +32,11 @@ namespace ExtendCSharp.Services
             RegisterParser<String>(new ResourceStringParse());
             RegisterParser<Image>(new ResourceImageParse());
             RegisterParser<GifImage>(new ResourceGifImageParse());
+            RegisterParser<FilePlus>(new ResourceFilePlusParse());
 
         }
+
+ 
         /// <summary>
         /// Ritorna uno stream ad una RISORSA INCORPORATA ( proprietà della risorsa -> "Azione di compilazione" = Risorsa incorporata )
         /// </summary>
@@ -164,5 +167,25 @@ namespace ExtendCSharp.Services
             return new GifImage(s);
         }
     }
+    public class ResourceFilePlusParse : ResourceParser
+    {
+        public ResourceFilePlusParse() : base(typeof(FilePlus))
+        {
+
+        }
+        protected ResourceFilePlusParse(Type resourceType) : base(resourceType)
+        {
+        }
+
+        public override object Parse(Stream s)
+        {
+            MemoryStream ms = new MemoryStream();
+            s.CopyTo(ms);
+
+
+            return FilePlus.Create("temp.tmp", ms.ToArray());   
+        }
+    }
+
 
 }
