@@ -239,6 +239,7 @@
     </Compile>
     <Compile Include="README\DemoClasses\MySQL_demo_Class.cs" />
     <Compile Include="Services\BitmapService.cs" />
+    <Compile Include="Services\DevicesServices.cs" />
     <Compile Include="Services\EnumService.cs" />
     <Compile Include="Services\FormService.cs" />
     <Compile Include="Services\JsonService.cs" />
