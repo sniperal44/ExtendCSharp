@@ -16,11 +16,38 @@ namespace ExtendCSharp.Services
 
         public byte[] GetFileViaHttp(string url)
         {
-            //*throw new NotImplementedException();
             using (WebClient client = new WebClient())
             {
                 return client.DownloadData(url);
             }
+        }
+        public byte[] GetFileViaHttp(string url, DownloadProgressChangedEventHandler DownloadProgressChanged, DownloadDataCompletedEventHandler DownloadDataCompleted)
+        {
+            Task<byte[]> t = GetFileViaHttpAsync(url, DownloadProgressChanged, DownloadDataCompleted);
+            t.Wait();
+            return t.Result;
+        }
+
+
+
+        public Task<byte[]> GetFileViaHttpAsync(string url,DownloadProgressChangedEventHandler DownloadProgressChanged, DownloadDataCompletedEventHandler DownloadDataCompleted)
+        {
+            Task<byte[]> t = Task<byte[]>.Factory.StartNew(() => {
+                using (WebClient client = new WebClient())
+                {
+                    client.DownloadDataCompleted += DownloadDataCompleted;
+                    client.DownloadProgressChanged += DownloadProgressChanged;
+                    Task<byte[]> tt= client.DownloadDataTaskAsync(new Uri(url));
+                    tt.Wait();
+                    return tt.Result;
+                }
+            });
+            return t;
+        }
+
+        private void Client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         public  String GetStringViaHttp(string url)
