@@ -6,6 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -18,6 +19,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using System.Xml.Serialization;
@@ -51,6 +53,25 @@ namespace ExtendCSharp
         {
             return ((int)Math.Ceiling(d));
         }
+
+        public static double Round(this double value, int digit)
+        {
+            return Math.Round(value, digit);
+        }
+        public static double Truncate(this double value)
+        {
+            return Math.Truncate(value);
+        }
+        public static float Round(this float value, int digit)
+        {
+            return (float)Math.Round(value, digit);
+        }
+        public static float Truncate(this float value)
+        {
+            return (float)Math.Truncate(value);
+        }
+
+
         public static string ToHexString(this int Number, bool upperCase = true)
         {
             return Number.ToString(upperCase ? "X2" : "x2");
@@ -346,7 +367,10 @@ namespace ExtendCSharp
             return arr.AsQueryable().Select(s => s.ToLowerInvariant()).ToArray();
         }
 
-
+        public static string Join(this String[] arr, String separator)
+        {
+            return string.Join(separator, arr);
+        }
 
         #endregion
 
@@ -519,6 +543,8 @@ namespace ExtendCSharp
 
 
         #endregion
+
+      
 
         #region Control.ControlCollection
         public static void AddVertical(this Control.ControlCollection self, Control c)
@@ -2492,6 +2518,25 @@ namespace ExtendCSharp
 
         #endregion
 
+        #region Process
+        /// <summary>
+        /// Waits asynchronously for the process to exit.
+        /// </summary>
+        /// <param name="process">The process to wait for cancellation.</param>
+        /// <param name="cancellationToken">A cancellation token. If invoked, the task will return 
+        /// immediately as canceled.</param>
+        /// <returns>A Task representing waiting for the process to end.</returns>
+        public static Task WaitForExitAsync(this Process process, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var tcs = new TaskCompletionSource<object>();
+            process.EnableRaisingEvents = true;
+            process.Exited += (sender, args) => tcs.TrySetResult(null);
+            if (cancellationToken != default(CancellationToken))
+                cancellationToken.Register(tcs.SetCanceled);
+
+            return tcs.Task;
+        }
+        #endregion
 
         #region MethodInfo
         public static Object Invoke(this MethodInfo mi, object obj, params  object[] parameters)

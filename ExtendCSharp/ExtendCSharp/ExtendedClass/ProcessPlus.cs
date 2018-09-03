@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace ExtendCSharp.ExtendedClass
 {
@@ -17,9 +18,10 @@ namespace ExtendCSharp.ExtendedClass
         public bool UseShellExecute { get; set; }
         public bool RedirectStandardOutput { get; set; }
         public bool RedirectStandardError { get; set; }
+        public bool RedirectStandardInput { get; set; }
         public bool CreateNoWindow { get; set; }
         public System.Diagnostics.ProcessWindowStyle WindowStyle { get; set; }
-
+        public string WorkingDirectory { get; set; }
 
         public bool Async { get; set; }
 
@@ -38,20 +40,24 @@ namespace ExtendCSharp.ExtendedClass
             _Params = Params;
         }
 
-        public void Start()
+        public async Task Start()
         {
+           
             System.Diagnostics.Process pProcess = new System.Diagnostics.Process();
             pProcess.StartInfo.FileName = Command;
             pProcess.StartInfo.Arguments = Params;
 
             pProcess.StartInfo.UseShellExecute = UseShellExecute;
+            pProcess.StartInfo.RedirectStandardInput = RedirectStandardInput;
             pProcess.StartInfo.RedirectStandardOutput = RedirectStandardOutput;
             pProcess.StartInfo.RedirectStandardError = RedirectStandardError;
             pProcess.StartInfo.CreateNoWindow = CreateNoWindow;
             pProcess.StartInfo.WindowStyle = WindowStyle;
+            pProcess.StartInfo.WorkingDirectory = WorkingDirectory;
 
             if (RedirectStandardOutput)
             {
+                
                 pProcess.OutputDataReceived += (sender, args) =>
                 {
                     if (OnNewLine != null)
@@ -72,7 +78,10 @@ namespace ExtendCSharp.ExtendedClass
             }
             SetProcessStatusInvoke(ProcessStatus.Running);
 
-            if(Async)
+            
+           
+
+            if (Async)
             {
                 new Thread(() =>
                 {
@@ -82,7 +91,7 @@ namespace ExtendCSharp.ExtendedClass
             }
             else
             {
-                pProcess.WaitForExit();
+                await pProcess.WaitForExitAsync();
                 SetProcessStatusInvoke(ProcessStatus.Stop);
             }
         }

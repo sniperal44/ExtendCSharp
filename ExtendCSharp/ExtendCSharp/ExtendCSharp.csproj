@@ -45,6 +45,9 @@
     <Reference Include="CsQuery">
       <HintPath>.\CsQuery.dll</HintPath>
     </Reference>
+    <Reference Include="DotNetZip, Version=1.11.0.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
+      <HintPath>..\..\..\androidADBUpdate\androidADBUpdate\packages\DotNetZip.1.11.0\lib\net20\DotNetZip.dll</HintPath>
+    </Reference>
     <Reference Include="MySql.Data">
       <HintPath>.\MySql.Data.dll</HintPath>
     </Reference>
@@ -105,6 +108,12 @@
     </Compile>
     <Compile Include="Controls\Line.Designer.cs">
       <DependentUpon>Line.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\LinkLabelPlus.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\LinkLabelPlus.Designer.cs">
+      <DependentUpon>LinkLabelPlus.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\PanelPlus.cs">
       <SubType>Component</SubType>
@@ -201,6 +210,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\Shell\SystemImageList.cs" />
+    <Compile Include="Event\EventArgs\ExtractProgressEventArgs.cs" />
     <Compile Include="Exceptions\MissingServiceException.cs" />
     <Compile Include="ExtendedClass\DirectBitmap.cs" />
     <Compile Include="ExtendedClass\FilePlus.cs" />
@@ -351,6 +361,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="CsQuery.dll" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -368,6 +379,7 @@
     <Content Include="_v4_0_3_Fix\README.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Event\EventHandler\" />
     <Folder Include="WPF\ExtendedClass\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

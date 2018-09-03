@@ -13,7 +13,7 @@ namespace ExtendCSharp.Services
     public class OnlineServices:IService
     {
         public OnlineServices() { }
-
+        
         public byte[] GetFileViaHttp(string url)
         {
             using (WebClient client = new WebClient())
@@ -21,29 +21,18 @@ namespace ExtendCSharp.Services
                 return client.DownloadData(url);
             }
         }
-        public byte[] GetFileViaHttp(string url, DownloadProgressChangedEventHandler DownloadProgressChanged, DownloadDataCompletedEventHandler DownloadDataCompleted)
-        {
-            Task<byte[]> t = GetFileViaHttpAsync(url, DownloadProgressChanged, DownloadDataCompleted);
-            t.Wait();
-            return t.Result;
+   
+        public async Task<byte[]> GetFileViaHttpAsync(string url, DownloadProgressChangedEventHandler DownloadProgressChanged, DownloadDataCompletedEventHandler DownloadDataCompleted)
+        {    
+            using (WebClient client = new WebClient())
+            {
+                client.DownloadDataCompleted += DownloadDataCompleted;
+                client.DownloadProgressChanged += DownloadProgressChanged;
+                return await client.DownloadDataTaskAsync(new Uri(url));
+            }
+            
         }
 
-
-
-        public Task<byte[]> GetFileViaHttpAsync(string url,DownloadProgressChangedEventHandler DownloadProgressChanged, DownloadDataCompletedEventHandler DownloadDataCompleted)
-        {
-            Task<byte[]> t = Task<byte[]>.Factory.StartNew(() => {
-                using (WebClient client = new WebClient())
-                {
-                    client.DownloadDataCompleted += DownloadDataCompleted;
-                    client.DownloadProgressChanged += DownloadProgressChanged;
-                    Task<byte[]> tt= client.DownloadDataTaskAsync(new Uri(url));
-                    tt.Wait();
-                    return tt.Result;
-                }
-            });
-            return t;
-        }
 
         private void Client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {

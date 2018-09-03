@@ -125,6 +125,7 @@ namespace ExtendCSharp.Controls
                 if (Valid.Value)    //postivo
                 {
                     //lascio il testo corrente e lo status su invisible
+                    ForeColor = NormalTextColor;
                 }
                 else
                 {
@@ -140,6 +141,7 @@ namespace ExtendCSharp.Controls
                 else
                 {
                     //lascio il testo corrente e lo status su invisible
+                    ForeColor = NormalTextColor;
                 }
             }
 
@@ -232,6 +234,9 @@ namespace ExtendCSharp.Controls
         }
         public void AppendLine(String line)
         {
+            if (line == null)
+                return;
+
             if (this.InvokeRequired)
                 this.BeginInvoke((MethodInvoker)delegate { this.AppendLine(line); });
             else

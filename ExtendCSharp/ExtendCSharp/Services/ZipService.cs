@@ -1,4 +1,5 @@
 ﻿using ExtendCSharp.Interfaces;
+using Ionic.Zip;
 using System;
 using System.IO;
 using System.IO.Compression;
@@ -137,6 +138,77 @@ namespace ExtendCSharp.Services
                 dest.Write(bytes, 0, cnt);
             }
         }
+
+        public void ZipFolder(String startPath,String zipPath)
+        {
+            throw new NotImplementedException();
+            
+        }
+ 
+        public void UnzipFile(String zipPath, String extractPath, ExtractProgressEventHandler extractProgressEventHandler)
+        {
+            
+            using (ZipFile zip = ZipFile.Read(zipPath))
+            {
+                //Calcoli per conteggio percentuali
+                int totalFileCount = 0,partialFileCount=0;
+                long totalSize = 0, partialSizeTotal = 0, lastVal = 0;
+
+                //Calcolo il numero totale di file da estrarre e la loro dimensione totale
+                foreach (var entry in zip)
+                {
+                    if (!entry.IsDirectory)
+                    {
+                        totalFileCount++;
+                        totalSize += entry.UncompressedSize;
+                    }
+                }
+                
+
+                
+                zip.ExtractProgress += new EventHandler<Ionic.Zip.ExtractProgressEventArgs>(
+                    (sender, e) =>
+                    {
+                        //Conto file processati
+                        if(e.EventType==ZipProgressEventType.Extracting_AfterExtractEntry && e.CurrentEntry!=null && !e.CurrentEntry.IsDirectory)
+                        {
+                            partialFileCount++;
+                        }
+                        else if(e.EventType == ZipProgressEventType.Extracting_BeforeExtractEntry)
+                        {
+                            //Prima di ogni estrazione, resetto l'ultimo valore corrente
+                            lastVal = 0;
+                        }
+
+
+                        //Calcolo Percentuale Byte
+                        System.Windows.Forms.Application.DoEvents();
+                        if (e.TotalBytesToTransfer != 0)    //Escludo cartelle o casi speciali
+                        {
+                            long partialByteFromLastCheck = e.BytesTransferred - lastVal;       //calcolo quando byte ha elaborato dall'ultimo check
+                            partialSizeTotal += partialByteFromLastCheck;                       //li sommo al totale
+                            lastVal = e.BytesTransferred;                                       //imposto l'ultimo valore al valore corrente 
+                        }
+                       
+                        //Creo un EventArgs più dettagliato 
+                        ExtendCSharp.Event.EventArgs.ExtractProgressEventArgs tmp = new ExtendCSharp.Event.EventArgs.ExtractProgressEventArgs(e);
+                        tmp.EntriesTotal = totalFileCount;
+                        tmp.EntriesExtracted = partialFileCount;
+
+                        tmp.TotalByteToTransfer = totalSize;
+                        tmp.TotalByteTransferred = partialSizeTotal;
+
+                        extractProgressEventHandler?.Invoke(tmp);           //invoco l'evento 
+                    });
+                zip.ExtractAll(extractPath, ExtractExistingFileAction.OverwriteSilently);
+            }
+        }
+        public delegate void ExtractProgressEventHandler(ExtendCSharp.Event.EventArgs.ExtractProgressEventArgs EventArgs);
+
+
     }
+    
+
+
 
 }
