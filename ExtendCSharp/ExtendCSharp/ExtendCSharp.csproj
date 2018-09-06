@@ -210,6 +210,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\Shell\SystemImageList.cs" />
+    <Compile Include="Enums\ShowWindowCommands.cs" />
     <Compile Include="Event\EventArgs\ExtractProgressEventArgs.cs" />
     <Compile Include="Exceptions\MissingServiceException.cs" />
     <Compile Include="ExtendedClass\DirectBitmap.cs" />
