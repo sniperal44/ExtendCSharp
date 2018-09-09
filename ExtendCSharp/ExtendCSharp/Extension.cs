@@ -1292,6 +1292,11 @@ namespace ExtendCSharp
             return new RectangleF(source.X - Margin, source.Y - Margin, Margin * 2, Margin * 2);
         }
 
+        public static Point Clone(this Point source)
+        {
+            return new Point(source.X,source.Y);
+        }
+
 
         #region Point[]
 
