@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ExtendCSharp.Enums;
+using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
@@ -153,11 +154,5 @@ namespace ExtendCSharp.ExtendedClass
         }
     }
 
-    public enum RGBA
-    {
-        R=1,
-        G=2,
-        B=3,
-        A=0
-    }
+    
 }
