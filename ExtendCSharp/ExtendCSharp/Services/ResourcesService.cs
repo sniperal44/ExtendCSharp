@@ -37,6 +37,7 @@ namespace ExtendCSharp.Services
         }
 
  
+      
         /// <summary>
         /// Ritorna uno stream ad una RISORSA INCORPORATA ( proprietà della risorsa -> "Azione di compilazione" = Risorsa incorporata )
         /// </summary>
@@ -53,6 +54,51 @@ namespace ExtendCSharp.Services
         {
             return targetAssembly.GetManifestResourceStream(ResourcePath);
         }
+
+
+        /// <summary>
+        /// Ritorna uno stream ad una RISORSA INCORPORATA ( proprietà della risorsa -> "Azione di compilazione" = Risorsa incorporata ) in un assembly specifico
+        /// </summary>
+        /// <param name="ResourcePath">Path della RISORSA INCORPORATA nello stream.
+        /// <para /> 
+        /// <para />Esempio:
+        /// <para />extendCSharpTest.Gif.test.gif
+        /// <para />extendCSharpTest = Nome del progetto ( assembly di esecuzione ) 
+        /// <para />Gif = sottocartella ( aggiungere altre sottocartelle separate dal . ) 
+        /// <para />test.gif = nome del file
+        /// </param>
+        /// <returns></returns>
+        public Stream GetStream(Assembly assembly, String ResourcePath)
+        {
+            return assembly.GetManifestResourceStream(ResourcePath);
+        }
+
+
+        /// <summary>
+        /// Ritorna uno stream ad una RISORSA INCORPORATA ( proprietà della risorsa -> "Azione di compilazione" = Risorsa incorporata ) in un qualsiasi assembly caricato
+        /// </summary>
+        /// <param name="ResourcePath">Path della RISORSA INCORPORATA nello stream.
+        /// <para /> 
+        /// <para />Esempio:
+        /// <para />extendCSharpTest.Gif.test.gif
+        /// <para />extendCSharpTest = Nome del progetto ( assembly di esecuzione ) 
+        /// <para />Gif = sottocartella ( aggiungere altre sottocartelle separate dal . ) 
+        /// <para />test.gif = nome del file
+        /// </param>
+        /// <returns></returns>
+        public Stream GetStreamAllAssemby(String ResourcePath)
+        {
+            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            foreach( Assembly a in assemblies)
+            {
+                Stream s =a.GetManifestResourceStream(ResourcePath);
+                if (s != null)
+                    return s;
+            }
+
+            return null;
+        }
+
 
 
         /// <summary>
