@@ -21,8 +21,10 @@ namespace ExtendCSharp.ExtendedClass
         private static extern bool ClientToScreen(IntPtr hWnd, ref Point lpPoint);
         [DllImport("kernel32.dll")]
         private static extern IntPtr GetConsoleWindow();
-         
-        
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr SetActiveWindow(IntPtr hWnd);
+
+
         /// <summary>
         /// Ritorna un HWND che punta alla console corrente
         /// </summary>
@@ -64,6 +66,14 @@ namespace ExtendCSharp.ExtendedClass
             return tmp;
         }
 
+
+        /// <summary>
+        /// Imposta la finestra corrente come attiva 
+        /// </summary>
+        public void SetAsActiveWindow()
+        {
+            SetActiveWindow(this);
+        }
 
         public static implicit operator IntPtr(HWND hwnd)
         {
