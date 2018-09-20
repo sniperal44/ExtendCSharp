@@ -37,7 +37,7 @@ namespace ExtendCSharp.ExtendedClass
             }
         }
 
-        public bool AllChecked()
+        public bool AND_Check()
         {
             foreach(KeyValuePair<T,bool> kv in checkerValue)
             {
@@ -46,5 +46,15 @@ namespace ExtendCSharp.ExtendedClass
             }
             return true;
         }
+        public bool OR_Check()
+        {
+            foreach (KeyValuePair<T, bool> kv in checkerValue)
+            {
+                if (kv.Value)
+                    return true;
+            }
+            return false;
+        }
+
     }
 }

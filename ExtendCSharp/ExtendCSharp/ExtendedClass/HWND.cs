@@ -15,15 +15,18 @@ namespace ExtendCSharp.ExtendedClass
     /// </summary>
     public class HWND
     {
-        [DllImport("user32.dll")]
-        private static extern bool ShowWindow(IntPtr hWnd, ShowWindowCommands nCmdShow);
-        [DllImport("user32.dll")]
-        private static extern bool ClientToScreen(IntPtr hWnd, ref Point lpPoint);
-        [DllImport("kernel32.dll")]
-        private static extern IntPtr GetConsoleWindow();
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr SetActiveWindow(IntPtr hWnd);
+        #region Extern function
+            [DllImport("user32.dll")]
+            private static extern bool ShowWindow(IntPtr hWnd, ShowWindowCommands nCmdShow);
+            [DllImport("user32.dll")]
+            private static extern bool ClientToScreen(IntPtr hWnd, ref Point lpPoint);
+            [DllImport("kernel32.dll")]
+            private static extern IntPtr GetConsoleWindow();
+            [DllImport("user32.dll", SetLastError = true)]
+            public static extern IntPtr SetActiveWindow(IntPtr hWnd);
+        #endregion
 
+        #region Static 
 
         /// <summary>
         /// Ritorna un HWND che punta alla console corrente
@@ -34,9 +37,20 @@ namespace ExtendCSharp.ExtendedClass
             return new HWND(GetConsoleWindow());
         }
 
+        #endregion
+
+        #region Cast
+
+        public static implicit operator IntPtr(HWND hwnd)
+        {
+            return hwnd._hwndPtr;
+        }
+
+        #endregion
+
+
 
         private IntPtr _hwndPtr;
-        
 
 
 
@@ -44,6 +58,8 @@ namespace ExtendCSharp.ExtendedClass
         {
             this._hwndPtr = hwndPtr;
         }
+        
+
 
         /// <summary>
         /// Imposta lo status della finestra
@@ -54,6 +70,14 @@ namespace ExtendCSharp.ExtendedClass
             ShowWindow(_hwndPtr, nCmdShow);
         }
 
+
+        /// <summary>
+        /// Imposta la finestra corrente come attiva 
+        /// </summary>
+        public void SetAsActiveWindow()
+        {
+            SetActiveWindow(this);
+        }
 
         /// <summary>
         /// Ottiene il Point assoluto dello schermo rispetto al Point relativo alla finestra
@@ -67,17 +91,6 @@ namespace ExtendCSharp.ExtendedClass
         }
 
 
-        /// <summary>
-        /// Imposta la finestra corrente come attiva 
-        /// </summary>
-        public void SetAsActiveWindow()
-        {
-            SetActiveWindow(this);
-        }
-
-        public static implicit operator IntPtr(HWND hwnd)
-        {
-            return hwnd._hwndPtr;
-        }
+       
     }
 }
