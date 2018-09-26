@@ -29,6 +29,8 @@ namespace ExtendCSharp.Services
             });
         }
 
+
+
         public void StartFormThread(Func<Form> FunzioneCreazione)
         {
             

@@ -141,8 +141,14 @@ namespace ExtendCSharp.Services
 
         public void ZipFolder(String startPath,String zipPath)
         {
-            throw new NotImplementedException();
-            
+            using (ZipFile zip = new ZipFile())
+            {
+                //add directory, give it a name
+                zip.AddDirectory(startPath);
+                zip.Save(zipPath);
+            }
+
+
         }
  
         public void UnzipFile(String zipPath, String extractPath, ExtractProgressEventHandler extractProgressEventHandler)

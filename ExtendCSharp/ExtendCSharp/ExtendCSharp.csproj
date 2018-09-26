@@ -115,6 +115,7 @@
     <Compile Include="Controls\LinkLabelPlus.Designer.cs">
       <DependentUpon>LinkLabelPlus.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\OpenFileDialogPlus.cs" />
     <Compile Include="Controls\PanelPlus.cs">
       <SubType>Component</SubType>
     </Compile>
