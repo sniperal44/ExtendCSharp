@@ -70,6 +70,12 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="ZeroFormatter, Version=1.6.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\DnDMap\DnDMap\packages\ZeroFormatter.1.6.4\lib\net45\ZeroFormatter.dll</HintPath>
+    </Reference>
+    <Reference Include="ZeroFormatter.Interfaces, Version=1.6.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\DnDMap\DnDMap\packages\ZeroFormatter.Interfaces.1.6.4\lib\net45\ZeroFormatter.Interfaces.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\MySQLFieldAttribute.cs" />
@@ -304,6 +310,7 @@
     <Compile Include="Controls\TimerPlus.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Services\ZeroFormatterService.cs" />
     <Compile Include="Services\ZipService.cs" />
     <Compile Include="Services\_ServicesManager.cs" />
     <Compile Include="Services\_TestService.cs" />
