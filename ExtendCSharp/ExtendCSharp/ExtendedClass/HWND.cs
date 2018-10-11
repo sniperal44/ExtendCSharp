@@ -24,6 +24,12 @@ namespace ExtendCSharp.ExtendedClass
             private static extern IntPtr GetConsoleWindow();
             [DllImport("user32.dll", SetLastError = true)]
             public static extern IntPtr SetActiveWindow(IntPtr hWnd);
+            [DllImport("user32.dll", EntryPoint = "GetDC")]
+            public static extern IntPtr GetDC(IntPtr hWnd);
+            [DllImport("user32.dll")]
+            static extern IntPtr GetWindowThreadProcessId(IntPtr hWnd, IntPtr ProcessId);
+
+
         #endregion
 
         #region Static 
@@ -91,6 +97,15 @@ namespace ExtendCSharp.ExtendedClass
         }
 
 
-       
+        public IntPtr GetDC()
+        {
+            return GetDC(_hwndPtr);
+        }
+        public IntPtr GetThreadProcessId()
+        {
+            return GetWindowThreadProcessId(_hwndPtr, IntPtr.Zero);
+        }
+
+
     }
 }

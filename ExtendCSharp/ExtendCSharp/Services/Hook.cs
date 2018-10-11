@@ -12,7 +12,7 @@ namespace ExtendCSharp.Services
         public delegate int HookProcInterno(int nCode, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
-        public static extern int SetWindowsHookEx(int idHook, HookProcInterno lpfn, IntPtr hInstance, int threadId);
+        public static extern int SetWindowsHookEx(int idHook, HookProcInterno lpfn, IntPtr hInstance, IntPtr threadId);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
         public static extern bool UnhookWindowsHookEx(int idHook);
@@ -50,9 +50,18 @@ namespace ExtendCSharp.Services
             if (Hook == 0)
             {
                 HPI = new HookProcInterno(Proc);
-                Hook = SetWindowsHookEx((int)HookTypes.WH_MOUSE_LL, HPI, (IntPtr)0, 0);
+                Hook = SetWindowsHookEx((int)HookTypes.WH_MOUSE_LL, HPI, (IntPtr)0, IntPtr.Zero);
             }
         }
+        public void Enable(IntPtr ThreadProcessID)
+        {
+            if (Hook == 0)
+            {
+                HPI = new HookProcInterno(Proc);
+                Hook = SetWindowsHookEx((int)HookTypes.WH_MOUSE_LL, HPI, (IntPtr)0, ThreadProcessID);
+            }
+        }
+
         public bool Disable()
         {
             return HookService.UnhookWindowsHookEx(Hook);
@@ -81,7 +90,7 @@ namespace ExtendCSharp.Services
             if (Hook == 0)
             {
                 HPI = new HookProcInterno(Proc);
-                Hook = SetWindowsHookEx((int)HookTypes.WH_KEYBOARD_LL, HPI, (IntPtr)0, 0);
+                Hook = SetWindowsHookEx((int)HookTypes.WH_KEYBOARD_LL, HPI, (IntPtr)0, IntPtr.Zero);
             }
         }
         public bool Disable()
