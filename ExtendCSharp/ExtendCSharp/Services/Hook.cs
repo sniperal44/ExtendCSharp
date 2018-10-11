@@ -31,7 +31,7 @@ namespace ExtendCSharp.Services
     }
     public class HookMouse : Hook, IService
     {
-        public delegate void HookProcMouse(int nCode, MyMouseEvent wParam, IntPtr lParam, ref bool Suppress);
+        public delegate void HookProcMouse(int nCode, MyMouseEvent wParam, MSLLHOOKSTRUCT lParam, ref bool Suppress);
         public event HookProcMouse EventDispatcher = null;
         private int Hook = 0;
         private HookProcInterno HPI;
@@ -39,8 +39,10 @@ namespace ExtendCSharp.Services
         private int Proc(int nCode, IntPtr wParam, IntPtr lParam)
         {
             bool Suppress = false;
+            MSLLHOOKSTRUCT mouseLowLevelHook = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam,    typeof(MSLLHOOKSTRUCT));
+
             if (EventDispatcher != null)
-                EventDispatcher(nCode, new MyMouseEvent((MouseMessagesInternal)wParam), lParam, ref Suppress);
+                EventDispatcher(nCode, new MyMouseEvent((MouseMessagesInternal)wParam), mouseLowLevelHook, ref Suppress);
 
             return Suppress ? 1 : CallNextHookEx(Hook, nCode, wParam, lParam);
         }
@@ -58,7 +60,7 @@ namespace ExtendCSharp.Services
             if (Hook == 0)
             {
                 HPI = new HookProcInterno(Proc);
-                Hook = SetWindowsHookEx((int)HookTypes.WH_MOUSE_LL, HPI, (IntPtr)0, ThreadProcessID);
+                Hook = SetWindowsHookEx((int)HookTypes.WH_MOUSE, HPI, (IntPtr)0, ThreadProcessID);
             }
         }
 
@@ -91,6 +93,14 @@ namespace ExtendCSharp.Services
             {
                 HPI = new HookProcInterno(Proc);
                 Hook = SetWindowsHookEx((int)HookTypes.WH_KEYBOARD_LL, HPI, (IntPtr)0, IntPtr.Zero);
+            }
+        }
+        public void Enable(IntPtr ThreadProcessID)
+        {
+            if (Hook == 0)
+            {
+                HPI = new HookProcInterno(Proc);
+                Hook = SetWindowsHookEx((int)HookTypes.WH_KEYBOARD, HPI, (IntPtr)0, ThreadProcessID);
             }
         }
         public bool Disable()
@@ -130,6 +140,24 @@ namespace ExtendCSharp.Services
     public enum HookTypes
     {
         WH_MOUSE_LL = 14,
-        WH_KEYBOARD_LL = 13
+        WH_KEYBOARD_LL = 13,
+        WH_MOUSE=7,
+        WH_KEYBOARD=2,
+    }
+    [StructLayout(LayoutKind.Sequential)]
+    public struct POINT
+    {
+        public int X; 
+        public int Y;
+    }
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MSLLHOOKSTRUCT
+    {
+
+        public POINT Point;
+        public uint MouseData;
+        public uint Flags;
+        public uint Time;
+        public IntPtr DWExtraInfo;
     }
 }
