@@ -400,6 +400,12 @@ namespace ExtendCSharp
         {
             return Encoding.ASCII.GetString(s);
         }
+        public static Stream ToStream(this byte[] s)
+        {
+            return new MemoryStream(s);
+        }
+
+
         #endregion
 
 

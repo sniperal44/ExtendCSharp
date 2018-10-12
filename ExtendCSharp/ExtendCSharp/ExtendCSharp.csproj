@@ -310,6 +310,7 @@
     <Compile Include="Controls\TimerPlus.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Services\UpdateService.cs" />
     <Compile Include="Services\ZeroFormatterService.cs" />
     <Compile Include="Services\ZipService.cs" />
     <Compile Include="Services\_ServicesManager.cs" />

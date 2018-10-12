@@ -34,7 +34,7 @@ namespace ExtendCSharp.Services
                     return JsonConvert.DeserializeObject<T>(sr.ReadToEnd(), settings);
                 }
             }
-            catch (Exception ) { return default(T); }
+            catch (Exception e) { return default(T); }
         }
 
         public XmlDocument DeserializeXmlNode(string jsonData)

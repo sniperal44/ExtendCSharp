@@ -18,7 +18,15 @@ namespace ExtendCSharp.Services
         {
             using (WebClient client = new WebClient())
             {
-                return client.DownloadData(url);
+                try
+                {
+                    return client.DownloadData(url);
+                }
+               catch (Exception e)
+                {
+                    return null;
+
+                }
             }
         }
    
