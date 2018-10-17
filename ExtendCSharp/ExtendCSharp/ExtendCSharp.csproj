@@ -91,6 +91,8 @@
     <Compile Include="Controls\CartesianPlan.Designer.cs">
       <DependentUpon>CartesianPlan.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\DataGrid\DataGridViewImageCheckCell.cs" />
+    <Compile Include="Controls\DataGrid\DataGridViewImageCheckColumn.cs" />
     <Compile Include="Controls\ExplorerTree.cs">
       <SubType>UserControl</SubType>
     </Compile>
