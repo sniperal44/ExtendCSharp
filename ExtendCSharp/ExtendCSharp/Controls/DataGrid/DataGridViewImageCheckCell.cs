@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace ExtendCSharp.Controls.DataGrid
 {
-    class DataGridViewImageCheckCell: DataGridViewImageCell
+    public class DataGridViewImageCheckCell: DataGridViewImageCell
     {
         bool status;
         public bool Status
@@ -31,7 +31,10 @@ namespace ExtendCSharp.Controls.DataGrid
             }
         }
 
-
+        public DataGridViewImageCheckCell()
+        {
+            status = false;
+        }
         protected override void OnMouseClick(DataGridViewCellMouseEventArgs e)
         {
             Status = !Status;        
