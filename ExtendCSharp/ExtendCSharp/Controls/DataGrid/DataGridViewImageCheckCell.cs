@@ -39,7 +39,12 @@ namespace ExtendCSharp.Controls.DataGrid
         {
             Status = !Status;        
             base.OnMouseClick(e);
+            StatusChanged?.Invoke(this, status);
         }
+
+
+        public delegate void StatusChangedEventArgs(DataGridViewImageCheckCell sender,bool NewStatus);
+        public event StatusChangedEventArgs StatusChanged;
 
     }
 }
