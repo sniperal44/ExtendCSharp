@@ -52,6 +52,14 @@ namespace ExtendCSharp.Services
             catch (Exception ex) { return default(String); }
 
         }
+
+
+        public dynamic DeserializeJObject(string jsonData)
+        {
+            dynamic deserialized = Newtonsoft.Json.Linq.JObject.Parse(jsonData);
+            return deserialized;
+        }
+
     }
 
 
