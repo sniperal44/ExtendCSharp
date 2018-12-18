@@ -2,7 +2,9 @@
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Runtime.InteropServices;
+using System.Windows.Media.Imaging;
 
 namespace ExtendCSharp.ExtendedClass
 {
@@ -61,7 +63,74 @@ namespace ExtendCSharp.ExtendedClass
         }
 
 
+        public DirectBitmap( BitmapImage source)
+        {
+            using (MemoryStream outStream = new MemoryStream())
+            {
+                PngBitmapEncoder enc = new PngBitmapEncoder();
+                enc.Frames.Add(BitmapFrame.Create(source));
+                enc.Save(outStream);
+                using (System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(outStream))
+                {
+                    Width = bitmap.Width;
+                    Height = bitmap.Height;
+                    Bits = new byte[Width * Height * 4];
+                    BitsHandle = GCHandle.Alloc(Bits, GCHandleType.Pinned);
+                    Bitmap = new Bitmap(Width, Height, Width * 4, PixelFormat.Format32bppPArgb, BitsHandle.AddrOfPinnedObject());
+                    using (var g = Graphics.FromImage(Bitmap))
+                    {
+                        g.DrawImage(bitmap, 0, 0);
+                    }
+                }
+            }
 
+
+
+
+            /*
+            
+            //OLD METHOD! 
+            
+            Height = source.PixelHeight;
+            Width = source.PixelWidth;
+            int nStride = (Width * source.Format.BitsPerPixel + 7) / 8;
+            Bits = new byte[Height * nStride];
+            source.CopyPixels(Bits, nStride, 0);
+
+            //Aggiusto le posizioni dei pixel
+            for (int i = 0; i < Bits.Length; i += 4)
+            {
+                //Inverto A con B
+                byte A = Bits[i + 3];
+                Bits[i + 3] = Bits[i];
+                Bits[i] = A;
+
+
+                //Inverto R con G
+                byte R = Bits[i + 2];
+                Bits[i + 2] = Bits[i + 1];          //Metto la B in pos 4
+                Bits[i + 1] = R;
+
+
+                //BGRA
+                //ARGB
+
+                //A
+                //GRGB
+            }
+
+            BitsHandle = GCHandle.Alloc(Bits, GCHandleType.Pinned);
+            Bitmap = new Bitmap(Width, Height, Width * 4, PixelFormat.Format32bppPArgb, BitsHandle.AddrOfPinnedObject());
+
+            */
+        }
+
+        public DirectBitmap(System.Windows.Media.ImageSource image):this((BitmapImage) image)
+        {
+            
+        }
+
+        
         public byte this[int x, int y,RGBA tono]
         {
             get

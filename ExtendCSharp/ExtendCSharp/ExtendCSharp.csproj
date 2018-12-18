@@ -70,6 +70,7 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
     <Reference Include="ZeroFormatter, Version=1.6.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\DnDMap\DnDMap\packages\ZeroFormatter.1.6.4\lib\net45\ZeroFormatter.dll</HintPath>
     </Reference>
