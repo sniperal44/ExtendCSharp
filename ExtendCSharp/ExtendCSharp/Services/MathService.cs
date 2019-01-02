@@ -46,7 +46,7 @@ namespace ExtendCSharp.Services
         }
 
 
-            public decimal Max(params decimal[] values)
+        public decimal Max(params decimal[] values)
         {
             if (values.Length == 0)
                 throw new ArgumentException("Passare almeno un elemento");
@@ -137,7 +137,7 @@ namespace ExtendCSharp.Services
         /// <param name="p2"></param>
         /// <param name="radius"></param>
         /// <returns></returns>
-        private PointF CenterRadius(PointF p1, PointF p2, float radius)
+        public PointF CenterRadius(PointF p1, PointF p2, float radius)
         {
             double radsq = radius * radius;
             double q = Math.Sqrt(((p2.X - p1.X) * (p2.X - p1.X)) + ((p2.Y - p1.Y) * (p2.Y - p1.Y)));
@@ -151,5 +151,35 @@ namespace ExtendCSharp.Services
             return new PointF((float)x3, (float)y3);
         }
 
+
+
+
+
+        public PointF Midpoint(Point p1, Point p2)
+        {
+            return new PointF((float)((p1.X + p2.X) / 2.0), (float)((p1.Y + p2.Y) / 2.0));
+        }
+        public PointF Midpoint(System.Windows.Point p1, System.Windows.Point p2)
+        {
+            return new PointF((float)((p1.X + p2.X) / 2.0), (float)((p1.Y + p2.Y) / 2.0));
+        }
+
+        public PointF Midpoint(PointF p1, PointF p2)
+        {
+            return new System.Drawing.PointF((float)((p1.X + p2.X) / 2.0), (float)((p1.Y + p2.Y) / 2.0));
+        }
+        public PointF Midpoint(params PointF[] plist)
+        {
+            double x = 0;
+            double y = 0;
+
+            plist.ForEach((PointF p) => { x += p.X; y += p.Y;  });
+           
+            x /= plist.Length;
+            y /= plist.Length;
+
+            return new PointF((float)x, (float)y);
+
+        }
     }
 }

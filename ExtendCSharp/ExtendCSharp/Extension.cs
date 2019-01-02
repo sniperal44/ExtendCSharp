@@ -1280,6 +1280,10 @@ namespace ExtendCSharp
         }
 
 
+     
+
+
+
         public static Point Scala(this Point source, double scala)
         {
             return new Point((int)(source.X * scala), (int)(source.Y * scala));
@@ -1312,6 +1316,9 @@ namespace ExtendCSharp
         {
             return new Point(source.X,source.Y);
         }
+
+
+
 
 
         #region Point[]
