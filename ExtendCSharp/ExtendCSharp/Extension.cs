@@ -1201,6 +1201,24 @@ namespace ExtendCSharp
         {
             return Math.Sqrt(Math.Pow(source.X - X, 2) + Math.Pow(source.Y - Y, 2));
         }
+        public static double Distanza(this PointF source, PointF pnt)
+        {
+            return source.Distanza(pnt.X, pnt.Y);
+        }
+        public static double Distanza(this PointF source, float X, float Y)
+        {
+            return Math.Sqrt(Math.Pow(source.X - X, 2) + Math.Pow(source.Y - Y, 2));
+        }
+        public static double Distanza(this System.Windows.Point source, System.Windows.Point pnt)
+        {
+            return source.Distanza(pnt.X, pnt.Y);
+        }
+        public static double Distanza(this System.Windows.Point source, double X, double Y)
+        {
+            return Math.Sqrt(Math.Pow(source.X - X, 2) + Math.Pow(source.Y - Y, 2));
+        }
+
+
         public static double DistanzaAlQuandrato(this Point source, Point pnt)
         {
             return source.DistanzaAlQuandrato(pnt.X, pnt.Y);
