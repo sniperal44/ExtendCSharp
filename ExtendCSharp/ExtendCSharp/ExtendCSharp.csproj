@@ -326,7 +326,6 @@
     <Compile Include="Controls\WebBrowserPlus.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="WPF\ExtendedClass\ResourceParserWPF.cs" />
     <Compile Include="Wrapper\ParentWndWrapper.cs" />
     <Compile Include="Wrapper\PenDataObject.cs" />
     <Compile Include="Wrapper\PointReadOnly.cs" />

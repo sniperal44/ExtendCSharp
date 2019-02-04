@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
+using System.Windows.Media.Imaging;
 
 namespace ExtendCSharp.Services
 {
@@ -33,6 +34,7 @@ namespace ExtendCSharp.Services
             RegisterParser<Image>(new ResourceImageParse());
             RegisterParser<GifImage>(new ResourceGifImageParse());
             RegisterParser<FilePlus>(new ResourceFilePlusParse());
+            RegisterParser<BitmapImage>(new ResourceBitmapImageParse());
 
         }
 
@@ -232,6 +234,24 @@ namespace ExtendCSharp.Services
             return FilePlus.Create("temp.tmp", ms.ToArray());   
         }
     }
+    public class ResourceBitmapImageParse : ResourceParser
+    {
+        public ResourceBitmapImageParse() : base(typeof(BitmapImage))
+        {
 
+        }
+        protected ResourceBitmapImageParse(Type resourceType) : base(resourceType)
+        {
+        }
+
+        public override object Parse(Stream s)
+        {
+            var bitmapImage = new BitmapImage();
+            bitmapImage.BeginInit();
+            bitmapImage.StreamSource = s;
+            bitmapImage.EndInit();
+            return bitmapImage;
+        }
+    }
 
 }
