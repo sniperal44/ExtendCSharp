@@ -21,7 +21,7 @@ String query="select * from test";
 IEnumerable<MySQL_demo_Class> results=sql.ExecuteReaderQuery<MySQL_demo_Class>(query);
 ```
 
-####chiusura della connessione
+#### chiusura della connessione
 ```cs
 conn.Close();
 ```
