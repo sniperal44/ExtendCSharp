@@ -326,6 +326,7 @@
     <Compile Include="Controls\WebBrowserPlus.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="WPF\ExtendedClass\ResourceParserWPF.cs" />
     <Compile Include="Wrapper\ParentWndWrapper.cs" />
     <Compile Include="Wrapper\PenDataObject.cs" />
     <Compile Include="Wrapper\PointReadOnly.cs" />
@@ -397,7 +398,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Event\EventHandler\" />
-    <Folder Include="WPF\ExtendedClass\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
