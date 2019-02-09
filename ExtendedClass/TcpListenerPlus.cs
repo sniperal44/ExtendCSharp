@@ -13,6 +13,13 @@ namespace ExtendCSharp.ExtendedClass
         public event ClientConnectedDelegate ClientConnected;
         private ThreadPlus tp;
 
+        /// <summary>
+        /// Ritorna lo stato del listener
+        /// </summary>
+        public new bool Active
+        {
+            get { return base.Active; }
+        }
 
         public TcpListenerPlus(int port):base(port)
         {
