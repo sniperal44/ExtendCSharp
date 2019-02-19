@@ -1153,6 +1153,7 @@ namespace ExtendCSharp
 
         #region Point
 
+
         public static bool InPoligon(this Point p, Point[] Points)
         {
             int i, j;
@@ -1192,7 +1193,7 @@ namespace ExtendCSharp
             return new PointF((float)px, (float)py);
         }
 
-
+        
         public static double Distanza(this Point source, Point pnt)
         {
             return source.Distanza(pnt.X, pnt.Y);
@@ -1298,10 +1299,13 @@ namespace ExtendCSharp
         }
 
 
-     
 
 
 
+        public static System.Windows.Point Scala(this System.Windows.Point source, double scala)
+        {
+            return new System.Windows.Point(source.X * scala, source.Y * scala);
+        }
         public static Point Scala(this Point source, double scala)
         {
             return new Point((int)(source.X * scala), (int)(source.Y * scala));
