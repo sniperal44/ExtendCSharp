@@ -80,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\MySQLFieldAttribute.cs" />
+    <Compile Include="Wrapper\MultiKeyDictionary.cs" />
     <Compile Include="Controls\ButtonMenu.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -397,6 +398,7 @@
     <Content Include="_v4_0_3_Fix\README.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Classes\" />
     <Folder Include="Event\EventHandler\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
