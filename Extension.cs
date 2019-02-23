@@ -671,7 +671,14 @@ namespace ExtendCSharp
 
         //ListBox.ObjectCollection
 
-
+        public static void AddRangeUnique(this IList self, IEnumerable elements)
+        {
+            foreach(object o in elements)
+            {
+                self.AddUnique(o);
+            }
+           
+        }
         public static void AddUnique(this IList self, object obj)
         {
             if(!self.Contains(obj))

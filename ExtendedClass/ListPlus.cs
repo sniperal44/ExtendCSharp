@@ -110,6 +110,10 @@ namespace ExtendCSharp.ExtendedClass
             if(cprima!= Count)
                 OnRemove?.Invoke(this, null);
         }
+        /// <summary>
+        /// Rimuove tutti gli elementi specificati nella lista
+        /// </summary>
+        /// <param name="list"></param>
         public void RemoveRange(ListPlus<T> list)
         {
             int cprima = base.Count;
@@ -118,6 +122,10 @@ namespace ExtendCSharp.ExtendedClass
             if (cprima != Count)
                 OnRemove?.Invoke(this, null);
         }
+        /// <summary>
+        /// Rimuove tutti gli elementi NON specificati nella lista
+        /// </summary>
+        /// <param name="list"></param>
         public void RemoveNotInRange(ListPlus<T> list)
         {
             RemoveRange(GetNotInList(list));
