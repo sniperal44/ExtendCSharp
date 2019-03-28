@@ -2,9 +2,11 @@
 using System;
 using System.IO.Ports;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace ExtendCSharp.ExtendedClass
 {
+    //TODO: wrappare completamente la SerialPort
     public class SerialComunicationPlus : IDisposable
     {
         private SerialPort serialPort;
@@ -37,6 +39,14 @@ namespace ExtendCSharp.ExtendedClass
             serialPort.Open();
            
         }
+
+        public SerialComunicationPlus(String port,int baudRate)
+        {
+            serialPort = new SerialPort(port,baudRate);
+            serialPort.Open();
+
+        }
+
         public SerialComunicationPlus(SerialComunicationSetting setting)
         {
             serialPort = new SerialPort(setting.Port,setting.Speed,setting.Parity,setting.DataBits,setting.StopBits);
@@ -73,6 +83,25 @@ namespace ExtendCSharp.ExtendedClass
             serialPort.Write(Line);
             serialPort.Write("\r");
         }
+        public char? ReadChar(int TimeOutMillis)
+        {
+            var token = new CancellationTokenSource(TimeOutMillis);
+            Task<int?> t=Task<int?>.Factory.StartNew(() =>
+            {
+                while(!token.IsCancellationRequested)
+                {
+                    if(serialPort.BytesToRead>0)
+                    {
+                        return serialPort.ReadByte();        
+                    }
+                    Task.Delay(1);
+                }
+                return null;
+            });
+            t.Wait();
+            return (char?)t.Result;
+        }
+
 
 
 
