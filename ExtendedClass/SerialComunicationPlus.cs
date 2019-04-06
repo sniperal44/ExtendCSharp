@@ -31,7 +31,17 @@ namespace ExtendCSharp.ExtendedClass
                 serialPort.RtsEnable= value;
             }
         }
-
+        public bool DtrEnable
+        {
+            get
+            {
+                return serialPort.DtrEnable;
+            }
+            set
+            {
+                serialPort.DtrEnable = value;
+            }
+        }
 
         public SerialComunicationPlus(String port)
         {
@@ -40,10 +50,11 @@ namespace ExtendCSharp.ExtendedClass
            
         }
 
-        public SerialComunicationPlus(String port,int baudRate)
+        public SerialComunicationPlus(String port,int baudRate,bool Open=true)
         {
             serialPort = new SerialPort(port,baudRate);
-            serialPort.Open();
+            if(Open)
+                serialPort.Open();
 
         }
 
@@ -88,9 +99,11 @@ namespace ExtendCSharp.ExtendedClass
             var token = new CancellationTokenSource(TimeOutMillis);
             Task<int?> t=Task<int?>.Factory.StartNew(() =>
             {
+
                 while(!token.IsCancellationRequested)
                 {
-                    if(serialPort.BytesToRead>0)
+                   
+                    if (serialPort.BytesToRead>0)
                     {
                         return serialPort.ReadByte();        
                     }
@@ -102,7 +115,10 @@ namespace ExtendCSharp.ExtendedClass
             return (char?)t.Result;
         }
 
-
+        public void Write(byte b)
+        {
+            serialPort.Write(new byte[] { b }, 0, 1);
+        }
 
 
         public void Dispose()
