@@ -80,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\MySQLFieldAttribute.cs" />
+    <Compile Include="Services\VolumeService.cs" />
     <Compile Include="Wrapper\MultiKeyDictionary.cs" />
     <Compile Include="Controls\ButtonMenu.cs">
       <SubType>UserControl</SubType>
