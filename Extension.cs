@@ -406,6 +406,30 @@ namespace ExtendCSharp
         }
 
 
+        public static int IndexOf(this byte[] s,byte[] pattern)
+        {
+
+            int indice = -1;
+            for (int i = 0; i < s.Length - pattern.Length; i++)
+            {
+                bool trovato = true;
+                for (int j = 0; j < pattern.Length; j++)
+                {
+                    if (s[i + j] != pattern[j])
+                    {
+                        trovato = false;
+                        break;
+                    }
+                }
+                if (trovato)
+                {
+                    indice = i;
+                    break;
+                }
+            }
+            return indice;
+        }
+
         #endregion
 
 
@@ -2118,9 +2142,19 @@ namespace ExtendCSharp
             return stream.ReadObject<FilePlus>(timeoutMillisecond);
         }
 
+        public static void Write(this Stream stream, byte data,int TimeoutMillisecond=0)
+        {
+            stream.Write(new byte[] { data }, TimeoutMillisecond);
+        }
 
-
-
+        public static void Remove(this MemoryStream stream,int numberOfBytesToRemove)
+        {
+            byte[] buf = stream.GetBuffer();
+            Buffer.BlockCopy(buf, numberOfBytesToRemove, buf, 0, (int)stream.Length - numberOfBytesToRemove);
+            stream.SetLength(stream.Length - numberOfBytesToRemove);
+            
+        }
+        
 
 
         /// <summary>
@@ -2362,6 +2396,7 @@ namespace ExtendCSharp
                 StreamByteReaderTypeFunction.Add(typeof(Byte), (BinaryReader reader) => { return reader.ReadByte(); });
                 StreamByteReaderTypeFunction.Add(typeof(SByte), (BinaryReader reader) => { return reader.ReadSByte(); });
                 StreamByteReaderTypeFunction.Add(typeof(Char), (BinaryReader reader) => { return reader.ReadChar(); });
+                StreamByteReaderTypeFunction.Add(typeof(char), (BinaryReader reader) => { return reader.ReadChar(); });
                 StreamByteReaderTypeFunction.Add(typeof(Int16), (BinaryReader reader) => { return reader.ReadInt16(); });
                 StreamByteReaderTypeFunction.Add(typeof(UInt16), (BinaryReader reader) => { return reader.ReadUInt16(); });
                 StreamByteReaderTypeFunction.Add(typeof(Int32), (BinaryReader reader) => { return reader.ReadInt32(); });
@@ -2385,7 +2420,7 @@ namespace ExtendCSharp
                 ms.Write(temp, 0, temp.Length);
                 ms.Seek(0, SeekOrigin.Begin);
                 using (BinaryReader reader = new BinaryReader(ms))
-                {
+                {    
                     ret = StreamByteReaderTypeFunction[typeof(T)](reader)._Cast<T>();
                 }
             }

@@ -11,7 +11,7 @@ namespace ExtendCSharp.Services
     {
         public SerialComunicationPlus  StartCommunication(SerialComunicationSetting setting)
         {
-            return new SerialComunicationPlus(setting);
+            return new SerialComunicationPlus(setting.Port,setting.Speed);  //TODO: fix
         }
 
         public bool IsValidPort(String port)

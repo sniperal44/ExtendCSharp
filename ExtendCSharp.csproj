@@ -80,6 +80,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\MySQLFieldAttribute.cs" />
+    <Compile Include="ExtendedClass\MemoryStreamMutex.cs" />
+    <Compile Include="ExtendedClass\SerialComunicationPlus.cs" />
     <Compile Include="Services\VolumeService.cs" />
     <Compile Include="Wrapper\MultiKeyDictionary.cs" />
     <Compile Include="Controls\ButtonMenu.cs">
@@ -280,7 +282,6 @@
     <Compile Include="Services\OnlineServices.cs" />
     <Compile Include="Services\ProcessMemoryService.cs" />
     <Compile Include="Services\RegisteredFileTypeService.cs" />
-    <Compile Include="ExtendedClass\SerialComunicationPlus.cs" />
     <Compile Include="Services\RegistryService.cs" />
     <Compile Include="Services\ResourcesService.cs" />
     <Compile Include="Services\SerialServices.cs" />
