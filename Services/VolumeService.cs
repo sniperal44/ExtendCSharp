@@ -71,7 +71,10 @@ namespace ExtendCSharp.Services
         }
 
 
-
+        public VolumeService()
+        {
+            ServicesManager.RegistService(new KeyboardService());
+        }
         private IAudioEndpointVolume GetCurrentDevice()
         {
             try
@@ -202,6 +205,25 @@ namespace ExtendCSharp.Services
             device.SetMute(!b, ZeroGuid);
         }
 
+
+        public void UpKey()
+        {
+            ServicesManager.Get<KeyboardService>().SendKeyDownUp(System.Windows.Forms.Keys.VolumeUp);
+        }
+        public void DownKey()
+        {
+            ServicesManager.Get<KeyboardService>().SendKeyDownUp(System.Windows.Forms.Keys.VolumeDown);
+        }
+        public void SwitchMuteKey()
+        {
+            ServicesManager.Get<KeyboardService>().SendKeyDownUp(System.Windows.Forms.Keys.VolumeMute);
+        }
+        public void SetMuteKey(bool mute)
+        {
+            bool m = GetMute();
+            if(m!=mute)
+                ServicesManager.Get<KeyboardService>().SendKeyDownUp(System.Windows.Forms.Keys.VolumeMute);
+        }
 
         public int GetCurrent()
         {
