@@ -16,7 +16,7 @@ namespace ExtendCSharp.Services
         }
 
         /// <summary>
-        /// calcola la differenza di angoli in senso orario
+        /// calcola la differenza di angoli in senso orario (in gradi)
         /// </summary>
         /// <param name="FirstAngle"></param>
         /// <param name="SecondAngle"></param>
@@ -180,6 +180,13 @@ namespace ExtendCSharp.Services
 
             return new PointF((float)x, (float)y);
 
+        }
+
+
+
+        public int map(int x, int in_min, int in_max, int out_min, int out_max)
+        {
+            return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
         }
     }
 }
