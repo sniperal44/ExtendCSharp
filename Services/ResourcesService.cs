@@ -231,7 +231,7 @@ namespace ExtendCSharp.Services
             s.CopyTo(ms);
 
 
-            return FilePlus.Create("temp.tmp", ms.ToArray());   
+            return FilePlus.Create("temp","tmp", ms.ToArray());   
         }
     }
     public class ResourceBitmapImageParse : ResourceParser

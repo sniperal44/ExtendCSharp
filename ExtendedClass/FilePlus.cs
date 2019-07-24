@@ -16,11 +16,13 @@ namespace ExtendCSharp.ExtendedClass
         /// </summary>
         /// <param name="name"></param>
         /// <param name="data"></param>
-        public static FilePlus Create(string name,byte[] data)
+        public static FilePlus Create(string name,string extension,byte[] data)
         {
             FilePlus fp = new FilePlus();
             fp.data = data;
             fp.Name = name;
+
+            fp.Extension = extension.StartsWith(".") ? extension : "." + extension;//verifico se come primo carattere c'è un punto, se non c'è, lo metto io 
 
             SystemService ss = ServicesManager.Get<SystemService>();
             string FileFullPath = ss.GetFullPath(name);
@@ -126,7 +128,14 @@ namespace ExtendCSharp.ExtendedClass
                 ServicesManager.Get<SystemService>().WriteAllBytes(Path,data);
         }
 
-
+        /// <summary>
+        /// Verifica se il file esiste sul disco al percorso specificato
+        /// </summary>
+        /// <returns></returns>
+        public bool Exist()
+        {
+            return ServicesManager.Get<SystemService>().FileExist(Path);
+        }
 
 
     }
