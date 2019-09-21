@@ -431,6 +431,11 @@ namespace ExtendCSharp
             return indice;
         }
 
+
+        public static float ToFloat(this byte[] s)
+        {
+            return System.BitConverter.ToSingle(s, 0);
+        }
         #endregion
 
 

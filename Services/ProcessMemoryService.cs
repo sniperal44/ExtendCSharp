@@ -22,12 +22,19 @@ namespace ExtendCSharp.Services
 
 
 
+
+        public int WriteMem(IntPtr processHandle, IntPtr address, params byte[] v)
+        {
+            int wtf = 0;
+            WriteProcessMemory(processHandle, address, v, (UInt32)v.Length, out wtf);
+            return wtf;
+        }
+
+
         public int WriteMem(Process p, IntPtr address, params byte[] v)
         {
-            var hProc = OpenProcess(ProcessAccessFlags.All, false, p.Id);
-            int wtf = 0;
-            WriteProcessMemory(hProc, address, v, (UInt32)v.Length, out wtf);
-
+            var hProc = OpenHandleWrite(p);
+            int wtf=WriteMem(hProc, address, v);
             CloseHandle(hProc);
             return wtf;
         }
@@ -36,20 +43,76 @@ namespace ExtendCSharp.Services
             return WriteMem(Process.GetProcessesByName(ProcessName).FirstOrDefault(), address, v);
         }
 
-        public byte[] ReadMem(Process p, IntPtr address, long v)
+
+
+
+
+
+        public byte[] ReadMem(IntPtr processHandle, IntPtr address, long byteToRead)
         {
-            IntPtr processHandle = OpenProcess(ProcessAccessFlags.VMRead, false, p.Id);
 
             int bytesRead = 0;
-            byte[] buffer = new byte[v];
+            byte[] buffer = new byte[byteToRead];
             ReadProcessMemory(processHandle, address, buffer, buffer.Length, ref bytesRead);
 
             return buffer;
         }
-        public byte[] ReadMem(String ProcessName, IntPtr address, long v)
+
+        /// <summary>
+        /// Legge un numero di byte dalla memoria di un processo
+        /// </summary>
+        /// <param name="p">Processo da cui leggere</param>
+        /// <param name="address">Indirizzo di partenza</param>
+        /// <param name="byteToRead">Numero di byte da leggere</param>
+        /// <returns></returns>
+        public byte[] ReadMem(Process p, IntPtr address, long byteToRead)
         {
-            return ReadMem(Process.GetProcessesByName(ProcessName).FirstOrDefault(), address, v);
+            IntPtr processHandle = OpenHandleRead(p);
+
+            byte[] buffer = ReadMem(processHandle,address,byteToRead);
+
+
+            CloseHandle_(processHandle);
+
+            return buffer;
         }
+        public byte[] ReadMem(String ProcessName, IntPtr address, long byteToRead)
+        {
+            return ReadMem(Process.GetProcessesByName(ProcessName).FirstOrDefault(), address, byteToRead);
+        }
+
+        
+
+
+
+
+
+        /// <summary>
+        /// Permette di aprire un Handle ad un processo in lettura ( da usare per evitare di chiudere ogni volta l'Handle ) 
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        public IntPtr OpenHandleRead(Process p)
+        {
+            IntPtr processHandle = OpenProcess(ProcessAccessFlags.VMRead, false, p.Id);
+            return processHandle;
+        }
+        /// <summary>
+        /// Permette di aprire un Handle ad un processo in scrittura ( da usare per evitare di chiudere ogni volta l'Handle ) 
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        public IntPtr OpenHandleWrite(Process p)
+        {
+            IntPtr processHandle = OpenProcess(ProcessAccessFlags.VMRead, false, p.Id);
+            return processHandle;
+        }
+
+        public void CloseHandle_(IntPtr processHandle)
+        {
+            CloseHandle(processHandle);
+        }
+
 
 
     }
