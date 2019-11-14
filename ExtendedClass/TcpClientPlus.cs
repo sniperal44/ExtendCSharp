@@ -54,6 +54,28 @@ namespace ExtendCSharp.ExtendedClass
             inter = t;
             EventAssotiation();
         }
+
+
+        public static async Task<TcpClientPlus> Create(string hostname, Int32 port)
+        {
+            Exception retEx = null;
+            TcpClientPlus ret = await Task.Run(() =>
+            {
+                TcpClientPlus tmp = null;
+                try
+                {
+                    tmp = new TcpClientPlus(hostname, port);
+                }
+                catch (Exception ex)
+                {
+                    retEx = ex;
+                }
+                return tmp;
+            });
+            if (retEx!=null)
+                throw retEx;
+            return ret;
+        }
         #endregion
 
         #region Wrapper

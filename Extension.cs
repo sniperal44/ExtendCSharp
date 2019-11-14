@@ -449,7 +449,7 @@ namespace ExtendCSharp
             if (t.InvokeRequired)
                 t.BeginInvoke((MethodInvoker)delegate { t.SetImageInvoke(b); });
             else
-                t.Image = b;
+                t.Image = b; 
         }
         #endregion
         #region Control
@@ -594,7 +594,17 @@ namespace ExtendCSharp
 
         #endregion
 
-      
+        #region ToolStripItem
+        public static void SetTextInvoke(this ToolStripItem t, string s)
+        {        
+            if (t.GetCurrentParent().InvokeRequired)
+                t.GetCurrentParent().BeginInvoke((MethodInvoker)delegate { t.SetTextInvoke(s); });
+
+            else
+                t.Text = s;
+        }
+
+        #endregion
 
         #region Control.ControlCollection
         public static void AddVertical(this Control.ControlCollection self, Control c)

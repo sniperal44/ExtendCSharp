@@ -121,6 +121,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\MySQLFieldAttribute.cs" />
+    <Compile Include="Classes\JPG.cs" />
     <Compile Include="Classes\ProcessWatcher.cs" />
     <Compile Include="ExtendedClass\MemoryStreamMutex.cs" />
     <Compile Include="ExtendedClass\SerialComunicationPlus.cs" />
