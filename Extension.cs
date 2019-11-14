@@ -436,6 +436,10 @@ namespace ExtendCSharp
         {
             return System.BitConverter.ToSingle(s, 0);
         }
+        public static int ToInt(this byte[] s)
+        {
+            return System.BitConverter.ToInt32(s, 0);
+        }
         #endregion
 
 
@@ -907,7 +911,16 @@ namespace ExtendCSharp
             }
 
         }
-
+        public static void ScrollToEnd(this ListBox self)
+        {
+            if (self.InvokeRequired)
+                self.Invoke((MethodInvoker)delegate { self.ScrollToEnd(); });
+            else
+            {
+                self.SelectedIndex = self.Items.Count - 1;
+                self.SelectedIndex = -1;
+            }
+        }
 
         #endregion
 
