@@ -603,7 +603,10 @@ namespace ExtendCSharp
 
         #region ToolStripItem
         public static void SetTextInvoke(this ToolStripItem t, string s)
-        {        
+        {
+            if (t == null || t.GetCurrentParent()==null)
+                return;
+
             if (t.GetCurrentParent().InvokeRequired)
                 t.GetCurrentParent().BeginInvoke((MethodInvoker)delegate { t.SetTextInvoke(s); });
 

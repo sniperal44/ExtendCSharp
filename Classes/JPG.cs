@@ -13,13 +13,33 @@ namespace ExtendCSharp.Classes
     {
         public byte[] data { get; set; }
 
-        public JPG(Bitmap bitmap)
+        public JPG(Bitmap bitmap):this(bitmap,100)
         {
+            
+        }
+
+        /// <summary>
+        /// Genera un JPG con qualità specificata (0-100)
+        /// </summary>
+        /// <param name="bitmap">Immagine da convertire</param>
+        /// <param name="quality">Qualità del JPG ( da 0 a 100 )</param>
+        public JPG(Bitmap bitmap,uint quality)
+        {
+            if (quality > 100)
+                quality = 100;
+            var jpgEncoder = GetEncoder(ImageFormat.Jpeg);
+            var qualityEncoder = System.Drawing.Imaging.Encoder.Quality;
+            var encoderParameters = new EncoderParameters(1);
+            encoderParameters.Param[0] = new EncoderParameter(qualityEncoder, quality);
+
+
             using (MemoryStream ImgTmp = new MemoryStream())
             {
-                bitmap.Save(ImgTmp, ImageFormat.Jpeg);
+                bitmap.Save(ImgTmp, jpgEncoder, encoderParameters);
                 data = ImgTmp.ToArray();
             }
+
+
         }
         public JPG(byte[] data)
         {
@@ -36,5 +56,22 @@ namespace ExtendCSharp.Classes
                 return b;
             }
         }
+
+
+
+        private ImageCodecInfo GetEncoder(ImageFormat format)
+        {
+            var codecs = ImageCodecInfo.GetImageDecoders();
+            foreach (var codec in codecs)
+            {
+                if (codec.FormatID == format.Guid)
+                {
+                    return codec;
+                }
+            }
+
+            return null;
+        }
+       
     }
 }
