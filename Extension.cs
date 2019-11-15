@@ -589,7 +589,14 @@ namespace ExtendCSharp
                 self.Location = new Point(self.Location.X, y);
             }
         }
+        public static void RefreshInvoke(this Control t)
+        {
+            if (t.InvokeRequired)
+                t.BeginInvoke((MethodInvoker)delegate { t.RefreshInvoke(); });
 
+            else
+                t.Refresh();
+        }
 
 
         #endregion

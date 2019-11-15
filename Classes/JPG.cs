@@ -26,5 +26,15 @@ namespace ExtendCSharp.Classes
             this.data = data;
 
         }
+
+        public Bitmap ToBitmap()
+        {
+            using (MemoryStream img = new MemoryStream())
+            {
+                img.Write(this.data, 0, this.data.Length);
+                Bitmap b = new Bitmap(img);
+                return b;
+            }
+        }
     }
 }
