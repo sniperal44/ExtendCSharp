@@ -72,6 +72,23 @@ namespace ExtendCSharp.Classes
 
             return null;
         }
-       
+
+
+        public static bool operator ==(JPG img1, JPG img2)
+        {
+            if (Object.ReferenceEquals(img1,null) && Object.ReferenceEquals(img2, null))
+                return true;
+            else if (Object.ReferenceEquals(img1, null) || Object.ReferenceEquals(img2, null))
+                return false;
+
+            else if (Enumerable.SequenceEqual(img1.data, img2.data))
+                return true;
+            return false;
+        }
+        public static bool operator !=(JPG img1, JPG img2)
+        {
+            return !(img1 == img2);
+        }
+
     }
 }
