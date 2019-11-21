@@ -440,6 +440,18 @@ namespace ExtendCSharp
         {
             return System.BitConverter.ToInt32(s, 0);
         }
+
+        public static byte[][] Chunkize(this byte[] data,long ChunkSize)
+        {
+            // split on groups with each 100 items
+            byte[][] chunks = data
+                                .Select((s, i) => new { Value = s, Index = i })
+                                .GroupBy(x => x.Index / ChunkSize)
+                                .Select(grp => grp.Select(x => x.Value).ToArray())
+                                .ToArray();
+
+            return chunks;
+        }
         #endregion
 
 
