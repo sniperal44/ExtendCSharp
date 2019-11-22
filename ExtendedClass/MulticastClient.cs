@@ -178,6 +178,7 @@ namespace ExtendCSharp.ExtendedClass
 
         public void Dispose()
         {
+            Socket.Dispose();       //TODO: ci mette troppo a chiudersi... forse sta ancora aspettando di inviare i dati? 
             StopListener();
         }
 
