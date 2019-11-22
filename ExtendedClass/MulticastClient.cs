@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ExtendCSharp.ExtendedClass
 {
-    public class MulticastClient
+    public class MulticastClient:IDisposable
     {
         private int MaxDatagramLenght = 1000;
 
@@ -39,7 +39,7 @@ namespace ExtendCSharp.ExtendedClass
         /// <summary>
         /// Si unisce alla rete multicast
         /// </summary>
-        public void JoinMulticast()
+        public void JoinMulticast(bool RandomPort=false)
         {
             try
             {
@@ -47,10 +47,13 @@ namespace ExtendCSharp.ExtendedClass
                 Socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
 
-                IPAddress localIPAddr = IPAddress.Parse("192.168.1.2");
+                IPAddress localIPAddr = IPAddress.Parse("192.168.2.8");
 
                 // Create an IPEndPoint object. 
-                IPEndPoint IPlocal = new IPEndPoint(localIPAddr, Port);       //TODO: cambio in ip dell'interfaccia di out?
+                int TmpPort = Port;
+                if (RandomPort)
+                    TmpPort = 0;
+                IPEndPoint IPlocal = new IPEndPoint(localIPAddr, TmpPort);       //TODO: cambio in ip dell'interfaccia di out?
 
                 // Bind this endpoint to the multicast socket.
                 Socket.Bind(IPlocal);
@@ -70,6 +73,11 @@ namespace ExtendCSharp.ExtendedClass
             }
         }
 
+        public void Close()
+        {
+            StopListener();
+            Socket.Close();
+        }
 
         /// <summary>
         /// Invia un messaggio via connessione multicast
@@ -117,7 +125,12 @@ namespace ExtendCSharp.ExtendedClass
                     byte[][] chunks = data.Chunkize(MaxDatagramLenght);
                     for(int i=0;i<chunks.Length;i++)
                     {
-                        Socket.SendTo(chunks[i], endPoint);
+                        //Socket.SendTo(chunks[i], endPoint);
+                        SocketAsyncEventArgs e = new SocketAsyncEventArgs();
+                        e.RemoteEndPoint = endPoint;
+                        e.SetBuffer(chunks[i],0, chunks[i].Length);
+
+                        Socket.SendToAsync(e);
                     }
 
                 }
@@ -158,12 +171,14 @@ namespace ExtendCSharp.ExtendedClass
 
             }).Start();
         }
-        /// <summary>
-        /// TODO: stop listener on dipose
-        /// </summary>
         public void StopListener()
         {
             ListenerStatus = false;
+        }
+
+        public void Dispose()
+        {
+            StopListener();
         }
 
         public delegate void ReceivedByteDelegate(byte[] data, EndPoint remoteEP);
