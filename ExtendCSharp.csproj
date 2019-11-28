@@ -81,6 +81,39 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'EMU|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\EMU\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX4_6_1</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'EMU|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\EMU\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX4_6_1</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'EMU|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\EMU\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX4_6_1</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="CsQuery">
       <HintPath>.\CsQuery.dll</HintPath>
@@ -123,6 +156,12 @@
     <Compile Include="Attributes\MySQLFieldAttribute.cs" />
     <Compile Include="Classes\JPG.cs" />
     <Compile Include="Classes\ProcessWatcher.cs" />
+    <Compile Include="Controls\JPGPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\JPGPanel.Designer.cs">
+      <DependentUpon>JPGPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="ExtendedClass\MemoryStreamMutex.cs" />
     <Compile Include="ExtendedClass\MulticastClient.cs" />
     <Compile Include="ExtendedClass\SerialComunicationPlus.cs" />
@@ -387,6 +426,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\FolderSelectBar.resx">
       <DependentUpon>FolderSelectBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\JPGPanel.resx">
+      <DependentUpon>JPGPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\Led.resx">
       <DependentUpon>Led.cs</DependentUpon>

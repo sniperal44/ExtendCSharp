@@ -47,7 +47,7 @@ namespace ExtendCSharp.ExtendedClass
                 Socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
 
-                IPAddress localIPAddr = IPAddress.Parse("192.168.2.8");
+                IPAddress localIPAddr = IPAddress.Parse("192.168.0.9");
 
                 // Create an IPEndPoint object. 
                 int TmpPort = Port;
@@ -118,7 +118,12 @@ namespace ExtendCSharp.ExtendedClass
 
                 if(data.Length< MaxDatagramLenght)
                 {
-                    Socket.SendTo(data, endPoint);
+                    //Socket.SendTo(data, endPoint);
+                    SocketAsyncEventArgs e = new SocketAsyncEventArgs();
+                    e.RemoteEndPoint = endPoint;
+                    e.SetBuffer(data, 0, data.Length);
+
+                    Socket.SendToAsync(e);
                 }
                 else
                 {
@@ -159,14 +164,21 @@ namespace ExtendCSharp.ExtendedClass
 
             new Task(() =>
             {
-                byte[] bytes = new Byte[MaxDatagramLenght];
-                IPEndPoint groupEP = new IPEndPoint(ipAddress, Port);
-                EndPoint remoteEP = (EndPoint)new IPEndPoint(IPAddress.Any, 0);
-
-                while (ListenerStatus)
+                try
                 {
-                    Socket.ReceiveFrom(bytes, ref remoteEP);
-                    onReceivedByte?.Invoke(bytes, remoteEP);
+                    byte[] bytes = new Byte[MaxDatagramLenght];
+                    IPEndPoint groupEP = new IPEndPoint(ipAddress, Port);
+                    EndPoint remoteEP = (EndPoint)new IPEndPoint(IPAddress.Any, 0);
+
+                    while (ListenerStatus)
+                    {
+                        Socket.ReceiveFrom(bytes, ref remoteEP);
+                        onReceivedByte?.Invoke(bytes, remoteEP);
+                    }
+                }
+                catch(Exception ex)
+                {
+
                 }
 
             }).Start();
