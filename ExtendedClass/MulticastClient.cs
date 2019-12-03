@@ -1,17 +1,111 @@
 ﻿using ExtendCSharp.Classes;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ExtendCSharp.ExtendedClass
 {
-    public class MulticastClient:IDisposable
+    [Serializable]
+    public class MulticastPacket
     {
-        private int MaxDatagramLenght = 1000;
+        public static int MaxDatagramLenght { get; private set; } = 1000;
+        public static int SerializedLenght { get; private set; } = MaxDatagramLenght + 226; // 8= long-> Start address ( credo che ne servino molti di più)
+
+        public int index { get; private set; }
+        public bool Last { get; private set; } = false;
+        public byte[] Data { get; private set; }
+
+        public static MulticastPacket[] CreatePackets(byte[] Data)
+        {
+            byte[][] chunks = Data.Chunkize(MaxDatagramLenght);
+            MulticastPacket[] packets = new MulticastPacket[chunks.Length];
+            for (int i = 0; i < chunks.Length; i++)
+            {
+                packets[i] = new MulticastPacket();
+                packets[i].Data = chunks[i];
+                packets[i].index = i;
+            }
+            packets.Last().Last = true;
+            return packets;
+        }
+
+        public byte[] Serialize()
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                BinaryFormatter formatter = new BinaryFormatter(); // the formatter that will serialize my object on my stream 
+                formatter.Serialize(ms, this); // the serialization process 
+                byte[] tmp = ms.ToArray();
+                return tmp;
+            }
+        }
+        public static MulticastPacket Deserialize(byte[] data)
+        {
+            try
+            {
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    ms.Write(data, 0, data.Length);
+                    ms.Seek(0, SeekOrigin.Begin);
+                    BinaryFormatter formatter = new BinaryFormatter(); // the formatter that will serialize my object on my stream 
+                    MulticastPacket m = (MulticastPacket)formatter.Deserialize(ms);
+                    return m;
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+    }
+
+
+    public class MulticastPacketGroup
+    {
+        List<MulticastPacket> list = new List<MulticastPacket>();
+
+        public void AddPacket(MulticastPacket mp)
+        {
+            list[mp.index] = mp;
+        }
+        public bool Completed()
+        {
+            //TODO:
+            return false;
+        }
+
+        public void Clear()
+        {
+            list.Clear();
+        }
+        public byte[] GetData()    
+        {
+            TODO! DA TESTARE
+            int totalLen = 0;
+            for(int i=0;i<list.Count;i++)
+            {
+                totalLen += list[i].Data.Length;
+            }
+            byte[] data = new byte[totalLen];
+            long ByteWritten = 0;
+            for (int i = 0; i < list.Count; i++)
+            {
+                Array.Copy(list[i].Data, 0, data,ByteWritten, list[i].Data.Length);
+                ByteWritten += list[i].Data.Length;
+            }
+
+            return data
+        }
+    }
+
+    public class MulticastClient:IDisposable
+    { 
 
         IPAddress ipAddress;
         int Port;
@@ -47,7 +141,7 @@ namespace ExtendCSharp.ExtendedClass
                 Socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
 
-                IPAddress localIPAddr = IPAddress.Parse("192.168.0.9");
+                IPAddress localIPAddr = IPAddress.Parse("172.22.195.29"); 
 
                 // Create an IPEndPoint object. 
                 int TmpPort = Port;
@@ -116,28 +210,15 @@ namespace ExtendCSharp.ExtendedClass
                 //Send multicast packets to the listener.
                 endPoint = new IPEndPoint(ipAddress, Port);
 
-                if(data.Length< MaxDatagramLenght)
+                MulticastPacket[] packets= MulticastPacket.CreatePackets(data);
+                for (int i = 0; i < packets.Length; i++)
                 {
-                    //Socket.SendTo(data, endPoint);
                     SocketAsyncEventArgs e = new SocketAsyncEventArgs();
                     e.RemoteEndPoint = endPoint;
-                    e.SetBuffer(data, 0, data.Length);
+                    byte[] d = packets[i].Serialize();
+                    e.SetBuffer(d, 0, d.Length);
 
                     Socket.SendToAsync(e);
-                }
-                else
-                {
-                    byte[][] chunks = data.Chunkize(MaxDatagramLenght);
-                    for(int i=0;i<chunks.Length;i++)
-                    {
-                        //Socket.SendTo(chunks[i], endPoint);
-                        SocketAsyncEventArgs e = new SocketAsyncEventArgs();
-                        e.RemoteEndPoint = endPoint;
-                        e.SetBuffer(chunks[i],0, chunks[i].Length);
-
-                        Socket.SendToAsync(e);
-                    }
-
                 }
                 
 
@@ -166,14 +247,23 @@ namespace ExtendCSharp.ExtendedClass
             {
                 try
                 {
-                    byte[] bytes = new Byte[MaxDatagramLenght];
+                    byte[] bytes = new Byte[MulticastPacket.SerializedLenght];
                     IPEndPoint groupEP = new IPEndPoint(ipAddress, Port);
                     EndPoint remoteEP = (EndPoint)new IPEndPoint(IPAddress.Any, 0);
 
+                    MulticastPacketGroup mpr = new MulticastPacketGroup();
+                   
                     while (ListenerStatus)
                     {
-                        Socket.ReceiveFrom(bytes, ref remoteEP);
-                        onReceivedByte?.Invoke(bytes, remoteEP);
+                        
+                        int ByteRead=Socket.ReceiveFrom(bytes, ref remoteEP);
+                        MulticastPacket mp=MulticastPacket.Deserialize(bytes);
+                        mpr.AddPacket(mp);
+                        if( mpr.Completed())
+                        {
+                            onReceivedByte?.Invoke(mpr.GetStream(), remoteEP);
+                        }
+                        
                     }
                 }
                 catch(Exception ex)
@@ -194,8 +284,10 @@ namespace ExtendCSharp.ExtendedClass
             StopListener();
         }
 
-        public delegate void ReceivedByteDelegate(byte[] data, EndPoint remoteEP);
+        public delegate void ReceivedByteDelegate(MemoryStream s, EndPoint remoteEP);
         public event ReceivedByteDelegate onReceivedByte;
+
+
         
     }
 }

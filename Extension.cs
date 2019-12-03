@@ -1941,6 +1941,11 @@ namespace ExtendCSharp
             Array.Copy(data, index, result, 0, length);
             return result;
         }
+        public static T[] Resize<T>(this T[] data, int NewSize)
+        {
+            Array.Resize(ref data, NewSize);
+            return data;
+        }
         public static T[] SubArray<T>(this T[] data, int index)
         {
             int length = data.Count() - index;
