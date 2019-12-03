@@ -148,6 +148,23 @@ namespace ExtendCSharp.ExtendedClass
             return t;
         }
 
+
+        public T this[int n]
+        {
+            get { return base[n]; }
+            set { 
+
+                if( n<=this.Count)
+                {
+                    for(int i=this.Count;i<=n;i++ )
+                    {
+                        base.Add(default(T));
+                    }
+                }
+                base[n] = value;
+            
+            }
+        }
     }
 
 

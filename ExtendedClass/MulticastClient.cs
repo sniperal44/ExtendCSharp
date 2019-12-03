@@ -15,7 +15,7 @@ namespace ExtendCSharp.ExtendedClass
     public class MulticastPacket
     {
         public static int MaxDatagramLenght { get; private set; } = 1000;
-        public static int SerializedLenght { get; private set; } = MaxDatagramLenght + 226; // 8= long-> Start address ( credo che ne servino molti di più)
+        public static int SerializedLenght { get; private set; } = MaxDatagramLenght + 240; // 8= long-> Start address ( credo che ne servino molti di più)
 
         public int index { get; private set; }
         public bool Last { get; private set; } = false;
@@ -68,7 +68,7 @@ namespace ExtendCSharp.ExtendedClass
 
     public class MulticastPacketGroup
     {
-        List<MulticastPacket> list = new List<MulticastPacket>();
+        ListPlus<MulticastPacket> list = new ListPlus<MulticastPacket>();
 
         public void AddPacket(MulticastPacket mp)
         {
@@ -77,6 +77,21 @@ namespace ExtendCSharp.ExtendedClass
         public bool Completed()
         {
             //TODO:
+            bool isFull = true;
+            bool isEnd = false;
+
+            foreach(MulticastPacket p in list)
+            {
+                if (p == null)
+                {
+                    return false;
+                }
+                else if (p.Last == true)
+                    isEnd = true;
+            }
+
+            if (isFull && isEnd)
+                return true;
             return false;
         }
 
@@ -86,7 +101,7 @@ namespace ExtendCSharp.ExtendedClass
         }
         public byte[] GetData()    
         {
-            TODO! DA TESTARE
+           
             int totalLen = 0;
             for(int i=0;i<list.Count;i++)
             {
@@ -100,7 +115,7 @@ namespace ExtendCSharp.ExtendedClass
                 ByteWritten += list[i].Data.Length;
             }
 
-            return data
+            return data;
         }
     }
 
@@ -141,7 +156,7 @@ namespace ExtendCSharp.ExtendedClass
                 Socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
 
-                IPAddress localIPAddr = IPAddress.Parse("172.22.195.29"); 
+                IPAddress localIPAddr = IPAddress.Parse("192.168.0.6"); 
 
                 // Create an IPEndPoint object. 
                 int TmpPort = Port;
@@ -261,7 +276,8 @@ namespace ExtendCSharp.ExtendedClass
                         mpr.AddPacket(mp);
                         if( mpr.Completed())
                         {
-                            onReceivedByte?.Invoke(mpr.GetStream(), remoteEP);
+                            onReceivedByte?.Invoke(mpr.GetData(), remoteEP);
+                            mpr.Clear();
                         }
                         
                     }
@@ -284,7 +300,7 @@ namespace ExtendCSharp.ExtendedClass
             StopListener();
         }
 
-        public delegate void ReceivedByteDelegate(MemoryStream s, EndPoint remoteEP);
+        public delegate void ReceivedByteDelegate(byte[] data, EndPoint remoteEP);
         public event ReceivedByteDelegate onReceivedByte;
 
 
