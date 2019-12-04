@@ -76,7 +76,6 @@ namespace ExtendCSharp.ExtendedClass
         }
         public bool Completed()
         {
-            //TODO:
             bool isFull = true;
             bool isEnd = false;
 
@@ -124,21 +123,23 @@ namespace ExtendCSharp.ExtendedClass
 
         IPAddress ipAddress;
         int Port;
+        IPAddress interfaceIPAddress;
         public Socket Socket;
          
 
-        public MulticastClient(string Address, int port, bool initializeNow = true) : this(IPAddress.Parse(Address), port, initializeNow)
+        public MulticastClient(string Address, int port, string interfaceIPAddress, bool initializeNow = true) : this(IPAddress.Parse(Address), port, IPAddress.Parse(interfaceIPAddress), initializeNow)
         {
 
         }
-        public MulticastClient(IPAddress ipAddress, int port, bool initializeNow = true) : this(new IPEndPoint(ipAddress, port), initializeNow)
+        public MulticastClient(IPAddress ipAddress, int port, IPAddress interfaceIPAddress, bool initializeNow = true) : this(new IPEndPoint(ipAddress, port),interfaceIPAddress, initializeNow)
         {
 
         }
-        public MulticastClient(IPEndPoint ipEndPoint, bool initializeNow = true)
+        public MulticastClient(IPEndPoint ipEndPoint, IPAddress interfaceIPAddress,bool initializeNow = true)
         {
             ipAddress = ipEndPoint.Address;
             Port = ipEndPoint.Port;
+            this.interfaceIPAddress = interfaceIPAddress;
             if(initializeNow)
             {
                 JoinMulticast();
@@ -156,13 +157,13 @@ namespace ExtendCSharp.ExtendedClass
                 Socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
 
-                IPAddress localIPAddr = IPAddress.Parse("192.168.0.6"); 
+                
 
                 // Create an IPEndPoint object. 
                 int TmpPort = Port;
                 if (RandomPort)
                     TmpPort = 0;
-                IPEndPoint IPlocal = new IPEndPoint(localIPAddr, TmpPort);       //TODO: cambio in ip dell'interfaccia di out?
+                IPEndPoint IPlocal = new IPEndPoint(interfaceIPAddress, TmpPort);       //TODO: cambio in ip dell'interfaccia di out?
 
                 // Bind this endpoint to the multicast socket.
                 Socket.Bind(IPlocal);
@@ -171,7 +172,7 @@ namespace ExtendCSharp.ExtendedClass
                 // address and the local IP address.
                 // The multicast group address is the same as the address used by the listener.
                 MulticastOption mcastOption;
-                mcastOption = new MulticastOption(ipAddress, localIPAddr);
+                mcastOption = new MulticastOption(ipAddress, interfaceIPAddress);
 
                 Socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.AddMembership, mcastOption);
 

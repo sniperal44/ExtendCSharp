@@ -165,6 +165,7 @@
     <Compile Include="ExtendedClass\MemoryStreamMutex.cs" />
     <Compile Include="ExtendedClass\MulticastClient.cs" />
     <Compile Include="ExtendedClass\SerialComunicationPlus.cs" />
+    <Compile Include="Services\NetworkServices.cs" />
     <Compile Include="Services\VolumeService.cs" />
     <Compile Include="Wrapper\MultiKeyDictionary.cs" />
     <Compile Include="Controls\ButtonMenu.cs">

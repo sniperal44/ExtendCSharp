@@ -441,14 +441,28 @@ namespace ExtendCSharp
             return System.BitConverter.ToInt32(s, 0);
         }
 
-        public static byte[][] Chunkize(this byte[] data,long ChunkSize)
+        public static byte[][] Chunkize(this byte[] data,int ChunkSize)
         {
+            throw new NotImplementedException("TESTATO! mettere tutto tra try e catch perche crasha")
+            int NumberOfChunk = data.Length / ChunkSize;
+            if (data.Length % ChunkSize != 0)
+                NumberOfChunk++;
+
+            byte[][] chunks = new byte[NumberOfChunk][];
+            int index = 0;
+            for (int i = 0;i< data.Length;i+=ChunkSize)
+            {
+                chunks[index]= new byte[ChunkSize];
+                Array.Copy(data, i, chunks[index], 0, ChunkSize);
+                index++;
+            }
+            
             // split on groups with each 100 items
-            byte[][] chunks = data
+            /*byte[][] chunks = data
                                 .Select((s, i) => new { Value = s, Index = i })
                                 .GroupBy(x => x.Index / ChunkSize)
                                 .Select(grp => grp.Select(x => x.Value).ToArray())
-                                .ToArray();
+                                .ToArray();*/
 
             return chunks;
         }
