@@ -443,7 +443,7 @@ namespace ExtendCSharp
 
         public static byte[][] Chunkize(this byte[] data,int ChunkSize)
         {
-            throw new NotImplementedException("TESTATO! mettere tutto tra try e catch perche crasha")
+            //throw new NotImplementedException("TESTATO! mettere tutto tra try e catch perche crasha");
             int NumberOfChunk = data.Length / ChunkSize;
             if (data.Length % ChunkSize != 0)
                 NumberOfChunk++;
@@ -453,7 +453,10 @@ namespace ExtendCSharp
             for (int i = 0;i< data.Length;i+=ChunkSize)
             {
                 chunks[index]= new byte[ChunkSize];
-                Array.Copy(data, i, chunks[index], 0, ChunkSize);
+                int ByteToCopy = ChunkSize;
+                if (data.Length - i < ChunkSize)
+                    ByteToCopy = data.Length - i;
+                Array.Copy(data, i, chunks[index], 0, ByteToCopy);
                 index++;
             }
             

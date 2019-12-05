@@ -11,17 +11,20 @@ using System.Threading.Tasks;
 
 namespace ExtendCSharp.ExtendedClass
 {
+
+    //TODO: implemento un conteggio dei pacchetti
     [Serializable]
     public class MulticastPacket
     {
         public static int MaxDatagramLenght { get; private set; } = 1000;
-        public static int SerializedLenght { get; private set; } = MaxDatagramLenght + 240; // 8= long-> Start address ( credo che ne servino molti di più)
+        public static int SerializedLenght { get; private set; } = MaxDatagramLenght + 275; // aggiunta per dati aggiuntivi
 
+        public int GroupNumber { get; set; }
         public int index { get; private set; }
         public bool Last { get; private set; } = false;
         public byte[] Data { get; private set; }
 
-        public static MulticastPacket[] CreatePackets(byte[] Data)
+        public static MulticastPacket[] CreatePackets(byte[] Data,int GroupNumber)
         {
             byte[][] chunks = Data.Chunkize(MaxDatagramLenght);
             MulticastPacket[] packets = new MulticastPacket[chunks.Length];
@@ -30,6 +33,7 @@ namespace ExtendCSharp.ExtendedClass
                 packets[i] = new MulticastPacket();
                 packets[i].Data = chunks[i];
                 packets[i].index = i;
+                packets[i].GroupNumber = GroupNumber;
             }
             packets.Last().Last = true;
             return packets;
@@ -65,14 +69,29 @@ namespace ExtendCSharp.ExtendedClass
         }
     }
 
-
+    
     public class MulticastPacketGroup
     {
         ListPlus<MulticastPacket> list = new ListPlus<MulticastPacket>();
 
+        int CurrentGroup = -1;
         public void AddPacket(MulticastPacket mp)
         {
-            list[mp.index] = mp;
+            if (CurrentGroup == -1)
+                CurrentGroup = mp.GroupNumber;
+
+            if (CurrentGroup == mp.GroupNumber)
+            {
+                list[mp.index] = mp;
+            }
+            else if ( mp.GroupNumber>CurrentGroup)      //stanno gia arrivando pacchetti nuovi
+            {
+                //cancello i vecchi pacchetti e imposto il nuovo gruppo
+                list.Clear();
+                list[mp.index] = mp;
+                CurrentGroup = mp.GroupNumber;
+            }
+            // se non più vecchi, li ignoro
         }
         public bool Completed()
         {
@@ -213,12 +232,16 @@ namespace ExtendCSharp.ExtendedClass
             //Socket.Close();
         }
 
+
+        int GroupNumber = 0;
+
         /// <summary>
         /// Invia un messaggio via connessione multicast
         /// </summary>
         /// <param name="data"></param>
-        public void SendMessage(byte[] data)
+        public void SendGroup(byte[] data)
         {
+
             IPEndPoint endPoint;
 
             try
@@ -226,7 +249,7 @@ namespace ExtendCSharp.ExtendedClass
                 //Send multicast packets to the listener.
                 endPoint = new IPEndPoint(ipAddress, Port);
 
-                MulticastPacket[] packets= MulticastPacket.CreatePackets(data);
+                MulticastPacket[] packets= MulticastPacket.CreatePackets(data, GroupNumber++);
                 for (int i = 0; i < packets.Length; i++)
                 {
                     SocketAsyncEventArgs e = new SocketAsyncEventArgs();
