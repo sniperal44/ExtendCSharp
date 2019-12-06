@@ -12,19 +12,18 @@ using System.Threading.Tasks;
 namespace ExtendCSharp.ExtendedClass
 {
 
-    //TODO: implemento un conteggio dei pacchetti
     [Serializable]
     public class MulticastPacket
     {
         public static int MaxDatagramLenght { get; private set; } = 1000;
-        public static int SerializedLenght { get; private set; } = MaxDatagramLenght + 275; // aggiunta per dati aggiuntivi
+        public static int SerializedLenght { get; private set; } = MaxDatagramLenght + 279; // aggiunta per dati aggiuntivi
 
-        public int GroupNumber { get; set; }
+        public ulong GroupNumber { get; set; }
         public int index { get; private set; }
         public bool Last { get; private set; } = false;
         public byte[] Data { get; private set; }
 
-        public static MulticastPacket[] CreatePackets(byte[] Data,int GroupNumber)
+        public static MulticastPacket[] CreatePackets(byte[] Data,ulong GroupNumber)
         {
             byte[][] chunks = Data.Chunkize(MaxDatagramLenght);
             MulticastPacket[] packets = new MulticastPacket[chunks.Length];
@@ -74,10 +73,10 @@ namespace ExtendCSharp.ExtendedClass
     {
         ListPlus<MulticastPacket> list = new ListPlus<MulticastPacket>();
 
-        int CurrentGroup = -1;
+        ulong? CurrentGroup = null;
         public void AddPacket(MulticastPacket mp)
         {
-            if (CurrentGroup == -1)
+            if (CurrentGroup == null)
                 CurrentGroup = mp.GroupNumber;
 
             if (CurrentGroup == mp.GroupNumber)
@@ -233,13 +232,13 @@ namespace ExtendCSharp.ExtendedClass
         }
 
 
-        int GroupNumber = 0;
+        ulong GroupNumber = 0;
 
         /// <summary>
         /// Invia un messaggio via connessione multicast
         /// </summary>
         /// <param name="data"></param>
-        public void SendGroup(byte[] data)
+        public void SendGroup(byte[] data,ulong? GroupNumber=null)
         {
 
             IPEndPoint endPoint;
@@ -248,8 +247,11 @@ namespace ExtendCSharp.ExtendedClass
             {
                 //Send multicast packets to the listener.
                 endPoint = new IPEndPoint(ipAddress, Port);
-
-                MulticastPacket[] packets= MulticastPacket.CreatePackets(data, GroupNumber++);
+                if( GroupNumber==null)        
+                    GroupNumber = this.GroupNumber++;
+                
+                
+                MulticastPacket[] packets= MulticastPacket.CreatePackets(data, GroupNumber.Value);
                 for (int i = 0; i < packets.Length; i++)
                 {
                     SocketAsyncEventArgs e = new SocketAsyncEventArgs();
@@ -293,8 +295,7 @@ namespace ExtendCSharp.ExtendedClass
                     MulticastPacketGroup mpr = new MulticastPacketGroup();
                    
                     while (ListenerStatus)
-                    {
-                        
+                    {     
                         int ByteRead=Socket.ReceiveFrom(bytes, ref remoteEP);
                         MulticastPacket mp=MulticastPacket.Deserialize(bytes);
                         mpr.AddPacket(mp);

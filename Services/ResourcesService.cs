@@ -134,6 +134,15 @@ namespace ExtendCSharp.Services
             }
         }
 
+        /// <summary>
+        /// Ritorna un array contenente tutte le risorse incorporate
+        /// </summary>
+        /// <returns></returns>
+        public string[] GetGetManifestResourceNames()
+        {
+            return targetAssembly.GetManifestResourceNames();
+        }
+
 
         public void RegisterParser<T>(ResourceParser parser)
         {
