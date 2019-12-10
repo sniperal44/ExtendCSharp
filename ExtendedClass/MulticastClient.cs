@@ -256,7 +256,7 @@ namespace ExtendCSharp.ExtendedClass
         /// <param name="data"></param>
         public void SendGroup(byte[] data,ulong? GroupNumber=null)
         {
-
+            
             IPEndPoint endPoint;
 
             try
@@ -276,7 +276,12 @@ namespace ExtendCSharp.ExtendedClass
                     e.SetBuffer(d, 0, d.Length);
 
                     Socket.SendToAsync(e);
+                    e.Completed += (object sender, SocketAsyncEventArgs ee) =>
+                    {
+                        ee.Dispose();
+                    };
                 }
+                
                 
 
             }
@@ -288,8 +293,7 @@ namespace ExtendCSharp.ExtendedClass
             //Socket.Close();
         }
 
-
-
+      
 
         public bool ListenerStatus { get; set; } = false;
 
