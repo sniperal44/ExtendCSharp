@@ -34,6 +34,7 @@ namespace ExtendCSharp.ExtendedClass
             return mp.Serialize().Length;
         }
 
+
         public ulong GroupNumber { get; set; }
         public int index { get; private set; }
         public bool Last { get; private set; } = false;
@@ -87,6 +88,9 @@ namespace ExtendCSharp.ExtendedClass
     
     public class MulticastPacketGroup
     {
+        //TODO: implemento il dictionary per implementare la ricezione multipla di pacchetti
+        //TODO: implemento i gruppi suddivisi per connessione
+
         ListPlus<MulticastPacket> list = new ListPlus<MulticastPacket>();
 
         ulong? CurrentGroup = null;
