@@ -15,8 +15,25 @@ namespace ExtendCSharp.ExtendedClass
     [Serializable]
     public class MulticastPacket
     {
-        public static int MaxDatagramLenght { get; private set; } = 1000;
-        public static int SerializedLenght { get; private set; } = MaxDatagramLenght + 279; // aggiunta per dati aggiuntivi
+       
+        public static int MaxDatagramLenght { get; private set; } = 1024*60; //32k
+        public static int SerializedLenght
+        {
+            get
+            {
+                if (serializedLenght == -1)
+                    serializedLenght = CalculateSerializedLenght();
+                return serializedLenght;
+            }
+        }
+        private static int serializedLenght=-1;
+        private static int CalculateSerializedLenght()
+        {
+            MulticastPacket mp = new MulticastPacket();
+            mp.Data = new byte[MaxDatagramLenght];
+            return mp.Serialize().Length;
+        }
+
 
         public ulong GroupNumber { get; set; }
         public int index { get; private set; }
@@ -72,6 +89,7 @@ namespace ExtendCSharp.ExtendedClass
     public class MulticastPacketGroup
     {
 
+        //TODO: implemento i gruppi suddivisi per connessione
         Dictionary<ulong, ListPlus<MulticastPacket>> list = new Dictionary<ulong, ListPlus<MulticastPacket>>();
 
         //ulong? CurrentGroup = null;
@@ -254,7 +272,7 @@ namespace ExtendCSharp.ExtendedClass
         /// <param name="data"></param>
         public void SendGroup(byte[] data,ulong? GroupNumber=null)
         {
-
+            
             IPEndPoint endPoint;
 
             try
@@ -274,7 +292,12 @@ namespace ExtendCSharp.ExtendedClass
                     e.SetBuffer(d, 0, d.Length);
 
                     Socket.SendToAsync(e);
+                    e.Completed += (object sender, SocketAsyncEventArgs ee) =>
+                    {
+                        ee.Dispose();
+                    };
                 }
+                
                 
 
             }
@@ -286,8 +309,7 @@ namespace ExtendCSharp.ExtendedClass
             //Socket.Close();
         }
 
-
-
+      
 
         public bool ListenerStatus { get; set; } = false;
 
