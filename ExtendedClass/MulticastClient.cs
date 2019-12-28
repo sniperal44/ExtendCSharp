@@ -71,33 +71,38 @@ namespace ExtendCSharp.ExtendedClass
     
     public class MulticastPacketGroup
     {
-        ListPlus<MulticastPacket> list = new ListPlus<MulticastPacket>();
 
-        ulong? CurrentGroup = null;
+        Dictionary<ulong, ListPlus<MulticastPacket>> list = new Dictionary<ulong, ListPlus<MulticastPacket>>();
+
+        //ulong? CurrentGroup = null;
         public void AddPacket(MulticastPacket mp)
         {
-            if (CurrentGroup == null)
-                CurrentGroup = mp.GroupNumber;
+            if (!list.ContainsKey(mp.GroupNumber))
+                list[mp.GroupNumber] = new ListPlus<MulticastPacket>();
 
-            if (CurrentGroup == mp.GroupNumber)
-            {
-                list[mp.index] = mp;
-            }
-            else if ( mp.GroupNumber>CurrentGroup)      //stanno gia arrivando pacchetti nuovi
-            {
-                //cancello i vecchi pacchetti e imposto il nuovo gruppo
-                list.Clear();
-                list[mp.index] = mp;
-                CurrentGroup = mp.GroupNumber;
-            }
-            // se non più vecchi, li ignoro
+            list[mp.GroupNumber][mp.index] = mp;
         }
-        public bool Completed()
+
+        public ulong? LastCompleted()
+        {
+            ulong? LastCompletedIndex = null;
+            IOrderedEnumerable<ulong> keys= list.Keys.OrderBy((key)=> { return key; });
+            foreach (ulong k in keys)
+            {
+                if (Completed(list[k]))
+                {
+                    LastCompletedIndex = k;
+                }
+            }
+            return LastCompletedIndex;
+        }
+
+        private bool Completed(ListPlus<MulticastPacket> listToCheck)
         {
             bool isFull = true;
             bool isEnd = false;
 
-            foreach(MulticastPacket p in list)
+            foreach(MulticastPacket p in listToCheck)
             {
                 if (p == null)
                 {
@@ -112,13 +117,22 @@ namespace ExtendCSharp.ExtendedClass
             return false;
         }
 
+        public void ClearBeforeIndex(ulong index)
+        {
+            IOrderedEnumerable<ulong> keys = list.Keys.Where((key)=> { 
+                return key <= index ? true : false; 
+            }).OrderBy((key) => { return key; });
+            foreach (ulong k in keys)
+                list.Remove(k);
+            
+        }
         public void Clear()
         {
             list.Clear();
         }
-        public byte[] GetData()    
+        public byte[] GetDataByIndex(ulong index)    
         {
-           
+            ListPlus<MulticastPacket> list = this.list[index];
             int totalLen = 0;
             for(int i=0;i<list.Count;i++)
             {
@@ -299,11 +313,13 @@ namespace ExtendCSharp.ExtendedClass
                         int ByteRead=Socket.ReceiveFrom(bytes, ref remoteEP);
                         MulticastPacket mp=MulticastPacket.Deserialize(bytes);
                         mpr.AddPacket(mp);
-                        if( mpr.Completed())
+                        ulong? LastCompletedIndex = mpr.LastCompleted();
+                        if( LastCompletedIndex!=null)
                         {
-                            onReceivedByte?.Invoke(mpr.GetData(), remoteEP);
-                            mpr.Clear();
+                            onReceivedByte?.Invoke(mpr.GetDataByIndex(LastCompletedIndex.Value), remoteEP);
+                            mpr.ClearBeforeIndex(LastCompletedIndex.Value);
                         }
+                        
                         
                     }
                 }
