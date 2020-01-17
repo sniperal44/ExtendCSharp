@@ -169,37 +169,41 @@ namespace ExtendCSharp.ExtendedClass
     }
 
     public class MulticastClient:IDisposable
-    { 
-
-        IPAddress ipAddress;
-        int Port;
+    {
         IPAddress interfaceIPAddress;
+        IPAddress MulticastAddress;
+        int Listening_SourcePort;
+
+        int DestinationPort;
+        
         public Socket Socket;
          
 
-        public MulticastClient(string Address, int port, string interfaceIPAddress, bool initializeNow = true) : this(IPAddress.Parse(Address), port, IPAddress.Parse(interfaceIPAddress), initializeNow)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="MulticastAddress"></param>
+        /// <param name="SourcePort">0 = random</param>
+        /// <param name="DestinationPort"></param>
+        /// <param name="interfaceIPAddress"></param>
+        /// <param name="initializeNow"></param>
+        public MulticastClient(string MulticastAddress, int SourcePort,int DestinationPort, string interfaceIPAddress, bool initializeNow = true)
         {
-
-        }
-        public MulticastClient(IPAddress ipAddress, int port, IPAddress interfaceIPAddress, bool initializeNow = true) : this(new IPEndPoint(ipAddress, port),interfaceIPAddress, initializeNow)
-        {
-
-        }
-        public MulticastClient(IPEndPoint ipEndPoint, IPAddress interfaceIPAddress,bool initializeNow = true)
-        {
-            ipAddress = ipEndPoint.Address;
-            Port = ipEndPoint.Port;
-            this.interfaceIPAddress = interfaceIPAddress;
-            if(initializeNow)
+            this.MulticastAddress = IPAddress.Parse(MulticastAddress);
+            this.Listening_SourcePort = SourcePort;
+            this.DestinationPort = DestinationPort;
+            this.interfaceIPAddress = IPAddress.Parse(interfaceIPAddress);
+            if (initializeNow)
             {
                 JoinMulticast();
             }
         }
+        
 
         /// <summary>
         /// Si unisce alla rete multicast
         /// </summary>
-        public void JoinMulticast(bool RandomPort=false)
+        public void JoinMulticast()
         {
             try
             {
@@ -207,13 +211,9 @@ namespace ExtendCSharp.ExtendedClass
                 Socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
 
-                
-
                 // Create an IPEndPoint object. 
-                int TmpPort = Port;
-                if (RandomPort)
-                    TmpPort = 0;
-                IPEndPoint IPlocal = new IPEndPoint(interfaceIPAddress, TmpPort);       //TODO: cambio in ip dell'interfaccia di out?
+                int TmpPort = Listening_SourcePort;
+                IPEndPoint IPlocal = new IPEndPoint(interfaceIPAddress, TmpPort);      
 
                 // Bind this endpoint to the multicast socket.
                 Socket.Bind(IPlocal);
@@ -222,7 +222,7 @@ namespace ExtendCSharp.ExtendedClass
                 // address and the local IP address.
                 // The multicast group address is the same as the address used by the listener.
                 MulticastOption mcastOption;
-                mcastOption = new MulticastOption(ipAddress, interfaceIPAddress);
+                mcastOption = new MulticastOption(MulticastAddress, interfaceIPAddress);
 
                 Socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.AddMembership, mcastOption);
 
@@ -250,7 +250,7 @@ namespace ExtendCSharp.ExtendedClass
             try
             {
                 //Send multicast packets to the listener.
-                endPoint = new IPEndPoint(ipAddress, Port);
+                endPoint = new IPEndPoint(MulticastAddress, DestinationPort);
                 Socket.SendTo(ASCIIEncoding.ASCII.GetBytes(message), endPoint);
 
 
@@ -278,7 +278,7 @@ namespace ExtendCSharp.ExtendedClass
             try
             {
                 //Send multicast packets to the listener.
-                endPoint = new IPEndPoint(ipAddress, Port);
+                endPoint = new IPEndPoint(MulticastAddress, DestinationPort);
                 if( GroupNumber==null)        
                     GroupNumber = this.GroupNumber++;
                 
@@ -325,7 +325,7 @@ namespace ExtendCSharp.ExtendedClass
                 try
                 {
                     byte[] bytes = new Byte[MulticastPacket.SerializedLenght];
-                    IPEndPoint groupEP = new IPEndPoint(ipAddress, Port);
+                    IPEndPoint groupEP = new IPEndPoint(MulticastAddress, Listening_SourcePort);
                     EndPoint remoteEP = (EndPoint)new IPEndPoint(IPAddress.Any, 0);
 
                     MulticastPacketGroup mpr = new MulticastPacketGroup();
