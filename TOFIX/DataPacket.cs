@@ -38,7 +38,7 @@ namespace ExtendCSharp.TOFIX
                 BinaryFormatter formatter = new BinaryFormatter(); // the formatter that will serialize my object on my stream 
                 formatter.Serialize(ms, this); // the serialization process 
                 byte[] tmp = ms.ToArray();
-                s.WriteAsync(tmp, 0, tmp.Length);  //NON AWAIT! non devo aspettare che termini!          
+                await s.WriteAsync(tmp, 0, tmp.Length);  //NON AWAIT! non devo aspettare che termini!          
             }
             
         }
