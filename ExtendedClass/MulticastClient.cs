@@ -183,14 +183,14 @@ namespace ExtendCSharp.ExtendedClass
         /// 
         /// </summary>
         /// <param name="MulticastAddress"></param>
-        /// <param name="SourcePort">0 = random</param>
+        /// <param name="Listening_SourcePort">0 = random</param>
         /// <param name="DestinationPort"></param>
         /// <param name="interfaceIPAddress"></param>
         /// <param name="initializeNow"></param>
-        public MulticastClient(string MulticastAddress, int SourcePort,int DestinationPort, string interfaceIPAddress, bool initializeNow = true)
+        public MulticastClient(string MulticastAddress, int Listening_SourcePort,int DestinationPort, string interfaceIPAddress, bool initializeNow = true)
         {
             this.MulticastAddress = IPAddress.Parse(MulticastAddress);
-            this.Listening_SourcePort = SourcePort;
+            this.Listening_SourcePort = Listening_SourcePort;
             this.DestinationPort = DestinationPort;
             this.interfaceIPAddress = IPAddress.Parse(interfaceIPAddress);
             if (initializeNow)

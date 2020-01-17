@@ -27,9 +27,9 @@ namespace ExtendCSharp.Services
 
             return IP4Address;
         }
-        public List<Tuple<string, string>> GetAllIPv4Addresses()
+        public List<ComboIp> GetAllIPv4Addresses()
         {
-            List<Tuple<string, string>> ipList = new List<Tuple<string, string>>();
+            List<ComboIp> ipList = new List<ComboIp>();
             foreach (var ni in NetworkInterface.GetAllNetworkInterfaces())
             {
 
@@ -37,11 +37,28 @@ namespace ExtendCSharp.Services
                 {
                     if (ua.Address.AddressFamily == AddressFamily.InterNetwork)
                     {
-                        ipList.Add(Tuple.Create(ni.Name, ua.Address.ToString()));
+                        ipList.Add(new ComboIp( ua.Address.ToString(), ni.Name));
                     }
                 }
             }
             return ipList;
+        }
+    }
+
+    public class ComboIp
+    {
+        public String Address { get; set; }
+        public String Description { get; set; }
+
+        public ComboIp(string address, string description)
+        {
+            Address = address;
+            Description = description;
+        }
+
+        public override string ToString()
+        {
+            return Address + " - " + Description;
         }
     }
 }
