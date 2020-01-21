@@ -120,6 +120,23 @@ namespace ExtendCSharp.Services
             return lp.ToArray();
         }
 
+        /// <summary>
+        /// Ritorna un array di path ( stringhe ) a tutti i file contenuti in un determinato path
+        /// ATTENZIONE! potrebbe essere molto lento!
+        /// </summary>
+        /// <param name="Path">Cartella root di ricerca</param>
+        /// <returns></returns>
+        public string[] GetFilesInTree(String Path)
+        {
+            ListPlus<String> lp = new ListPlus<string>();
+            lp.AddRange(Directory.GetFiles(Path));
+            foreach (string d in Directory.GetDirectories(Path))
+            {
+                lp.AddRange(GetFilesInTree(d));
+            }
+            return lp.ToArray();
+        }
+
 
         /// <summary>
         /// Ritorna la directory dove è posizionato il file  ( se viene passata una cartella, ritorna la cartella stessa ) 

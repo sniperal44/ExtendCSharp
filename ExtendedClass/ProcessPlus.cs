@@ -24,6 +24,7 @@ namespace ExtendCSharp.ExtendedClass
         public string WorkingDirectory { get; set; }
 
         public bool Async { get; set; }
+        public bool WaitForExit { get; set; } = true;
 
         public delegate void ProcessStatusChanged(ProcessStatus s);
         public delegate void ProcessStatusNewLine(String line);
@@ -78,8 +79,10 @@ namespace ExtendCSharp.ExtendedClass
             }
             SetProcessStatusInvoke(ProcessStatus.Running);
 
-            
-           
+
+
+            if (!WaitForExit)
+                return;
 
             if (Async)
             {
