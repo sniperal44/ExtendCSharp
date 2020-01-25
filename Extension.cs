@@ -352,6 +352,30 @@ namespace ExtendCSharp
             return r.Match(s);
         }
 
+
+        /// <summary>
+        /// Ripete la replace fin quando non vengono rimosse tutte le occorrenze
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="OldValue"></param>
+        /// <param name="NewValue"></param>
+        /// <returns></returns>
+        public static String ReplaceAsLongExistOccurency(this String s, String OldValue, String NewValue)
+        {
+            bool finito = false;
+            do
+            {
+                string NewString = s.Replace(OldValue, NewValue);
+                if (NewString == s)
+                    finito = true;
+
+                s = NewString;
+            }
+            while (!finito);
+
+            return s;
+        }
+
         #endregion
 
         #region String[]
