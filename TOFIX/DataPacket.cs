@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ExtendCSharp.TOFIX
@@ -32,13 +33,21 @@ namespace ExtendCSharp.TOFIX
             }
         }
         async public Task SerializeToStream( Stream s)
-        {
+        {          
             using (MemoryStream ms = new MemoryStream())
             {
                 BinaryFormatter formatter = new BinaryFormatter(); // the formatter that will serialize my object on my stream 
                 formatter.Serialize(ms, this); // the serialization process 
                 byte[] tmp = ms.ToArray();
-                await s.WriteAsync(tmp, 0, tmp.Length);  //NON AWAIT! non devo aspettare che termini!          
+                
+               
+                await s.WriteAsync(tmp, 0, tmp.Length);  //NON AWAIT! non devo aspettare che termini!      
+               /* var waitedTask = await Task.WhenAny(task, Task.Delay(1000));
+                
+                await waitedTask; //Wait on the returned task to observe any exceptions.
+                //task.Dispose();
+                int a = 3;*/
+                //TODO: Controllo se è stato terminato a causa del wait, allora chiudo lo stream -> errore di scrittura
             }
             
         }
