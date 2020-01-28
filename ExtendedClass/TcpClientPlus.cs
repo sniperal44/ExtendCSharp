@@ -208,7 +208,7 @@ namespace ExtendCSharp.ExtendedClass
         {
             get
             {
-                return inter.Connected;
+                return inter.IsConnected();
             }
         }
         public bool ExclusiveAddressUse
