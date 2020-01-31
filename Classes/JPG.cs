@@ -32,14 +32,14 @@ namespace ExtendCSharp.Classes
             var encoderParameters = new EncoderParameters(1);
             encoderParameters.Param[0] = new EncoderParameter(qualityEncoder, quality);
 
-
+            
             using (MemoryStream ImgTmp = new MemoryStream())
             {
                 bitmap.Save(ImgTmp, jpgEncoder, encoderParameters);
                 data = ImgTmp.ToArray();
             }
-
-
+            encoderParameters.Param[0].Dispose();
+            encoderParameters.Dispose();
         }
         public JPG(byte[] data)
         {

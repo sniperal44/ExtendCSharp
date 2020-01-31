@@ -58,12 +58,14 @@ namespace ExtendCSharp.Services
         {
             Bitmap result = new Bitmap(bounds.Width, bounds.Height);
 
+            
             try
             {
                 using (Graphics g = Graphics.FromImage(result))
                 {
+                    
                     g.CopyFromScreen(bounds.Location, Point.Empty, bounds.Size);
-
+                   
                     if (captureMouse)
                     {
                         CURSORINFO pci;
@@ -83,6 +85,7 @@ namespace ExtendCSharp.Services
             }
             catch
             {
+                result.Dispose();
                 result = null;
             }
 
