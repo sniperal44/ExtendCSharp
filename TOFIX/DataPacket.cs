@@ -171,23 +171,30 @@ namespace ExtendCSharp.TOFIX
         public String SpeedText { get
             {
                 double s = Speed;
-                if( s<1000)
+                String unit = "B/s";
+
+                if(s<1024)
                 {
-                    return s+" B/s";
+
                 }
-                else if (s < 1000000)
+                else if(s<1048576)
                 {
-                    return (s/1000)+" KB/s";
+                    s = s / 1024;
+                    unit = "KB/s";
                 }
-                if (s < 1000000000)
+                else if(s<1073741824)
                 {
-                    return (s / 1000) + " MB/s";
+                    s = s / 1048576;
+                    unit = "MB/s";
                 }
-                if (s < 1000000000000)
+                else if (s < 1099511627776)
                 {
-                    return (s / 1000) + " GB/s";
+                    s = s / 1073741824;
+                    unit = "GB/s";
                 }
-                return s + " B/s";
+
+                s =Math.Round(s, 2);
+                return s + " " + unit;
             } 
         }
 

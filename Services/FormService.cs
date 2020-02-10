@@ -40,11 +40,12 @@ namespace ExtendCSharp.Services
                 Form f = FunzioneCreazione();
                 ListThread.Add(f, (ThreadPlus)CurrentThread);
 
-                
-                f.FormClosed += (object sender, FormClosedEventArgs e) =>
+                f.FormClosing += (object sender, FormClosingEventArgs e) =>
                 {
+                    f.Dispose();
                     Finito = true;
                 };
+                
 
                 f.Show();
                 
@@ -58,12 +59,15 @@ namespace ExtendCSharp.Services
                     Thread.Sleep(100);
                     Application.DoEvents();
                 }
-
+                
 
             });
             t.Start(t);
 
         }
+
+       
+
         public void StopThread(Form f)
         {
             if (f == null)
