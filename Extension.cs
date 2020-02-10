@@ -651,6 +651,14 @@ namespace ExtendCSharp
                 t.Refresh();
         }
 
+        public static void AddControlInvoke(this Control t,Control ToAdd)
+        {
+            if (t.InvokeRequired)
+                t.BeginInvoke((MethodInvoker)delegate { t.AddControlInvoke(ToAdd); });
+
+            else
+                t.Controls.Add(ToAdd);
+        }
 
         #endregion
 

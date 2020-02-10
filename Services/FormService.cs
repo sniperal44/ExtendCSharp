@@ -47,6 +47,12 @@ namespace ExtendCSharp.Services
                 };
 
                 f.Show();
+                
+                //TODO: implementare i task per la gestione asincrona della cancellazione
+                // creare un task cancellabile
+                // richiamare l'await di quel task
+                // richiamare la cancellazione del task al richiamo de FormClosed
+                // ( in modo da togliere il ciclo while )
                 while (!Finito)
                 {
                     Thread.Sleep(100);
@@ -76,6 +82,20 @@ namespace ExtendCSharp.Services
             }
         }
 
+        public void StopAllThread()
+        {
+            ListThread.ForEach((kvp) =>
+            {
+                try
+                {
+                    kvp.Value.Abort();
+                }
+                catch (Exception)
+                {
+
+                }
+            });
+        }
 
     }
 }

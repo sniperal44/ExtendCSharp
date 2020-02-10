@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -32,25 +33,36 @@ namespace ExtendCSharp.TOFIX
                 return tmp;
             }
         }
-        async public Task SerializeToStream( Stream s)
+        /// <summary>
+        /// Permette di serializzare il dataPacket corrente su uno stream 
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        async public Task<OperationData> SerializeToStream(Stream s)
         {          
             using (MemoryStream ms = new MemoryStream())
             {
                 BinaryFormatter formatter = new BinaryFormatter(); // the formatter that will serialize my object on my stream 
                 formatter.Serialize(ms, this); // the serialization process 
                 byte[] tmp = ms.ToArray();
+
+                Stopwatch stopWatch = new Stopwatch();
+                stopWatch.Start();
+                await s.WriteAsync(tmp, 0, tmp.Length);  //NON AWAIT! non devo aspettare che termini!    
+                stopWatch.Stop();
+                return new OperationData(tmp.Length,stopWatch.Elapsed.TotalMilliseconds);
                 
-               
-                await s.WriteAsync(tmp, 0, tmp.Length);  //NON AWAIT! non devo aspettare che termini!      
-               /* var waitedTask = await Task.WhenAny(task, Task.Delay(1000));
-                
-                await waitedTask; //Wait on the returned task to observe any exceptions.
-                //task.Dispose();
-                int a = 3;*/
+
+                /* var waitedTask = await Task.WhenAny(task, Task.Delay(1000));
+
+                 await waitedTask; //Wait on the returned task to observe any exceptions.
+                 //task.Dispose();
+                 int a = 3;*/
                 //TODO: Controllo se è stato terminato a causa del wait, allora chiudo lo stream -> errore di scrittura
-            }
-            
+            }      
         }
+
+
         static public DataPacket DeserializeFromStream(Stream s)
         {
             try
@@ -141,5 +153,44 @@ namespace ExtendCSharp.TOFIX
 
     }
 
+    public class OperationData
+    {
+        public OperationData(int byteSend, double millisecond)
+        {
+            ByteSend = byteSend;
+            Millisecond = millisecond;
+        }
+
+        public int ByteSend { get; set; }
+        public double Millisecond { get; set; }
+        public double Speed { get
+            {
+                return ByteSend / Millisecond;
+            } 
+        }
+        public String SpeedText { get
+            {
+                double s = Speed;
+                if( s<1000)
+                {
+                    return s+" B/s";
+                }
+                else if (s < 1000000)
+                {
+                    return (s/1000)+" KB/s";
+                }
+                if (s < 1000000000)
+                {
+                    return (s / 1000) + " MB/s";
+                }
+                if (s < 1000000000000)
+                {
+                    return (s / 1000) + " GB/s";
+                }
+                return s + " B/s";
+            } 
+        }
+
+    }
    
 }
