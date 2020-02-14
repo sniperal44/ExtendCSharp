@@ -46,9 +46,11 @@ namespace ExtendCSharp.TOFIX
                 formatter.Serialize(ms, this); // the serialization process 
                 byte[] tmp = ms.ToArray();
 
+                
+
                 Stopwatch stopWatch = new Stopwatch();
                 stopWatch.Start();
-                await s.WriteAsync(tmp, 0, tmp.Length);  //NON AWAIT! non devo aspettare che termini!    
+                await s.WriteAsync(tmp, 0, tmp.Length);
                 stopWatch.Stop();
                 return new OperationData(tmp.Length,stopWatch.Elapsed.TotalMilliseconds);
                 

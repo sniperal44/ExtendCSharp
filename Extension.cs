@@ -500,7 +500,7 @@ namespace ExtendCSharp
         public static void SetImageInvoke(this PictureBox t, Image b)
         {
             if (t.InvokeRequired)
-                t.BeginInvoke((MethodInvoker)delegate { t.SetImageInvoke(b); });
+                t.Invoke((MethodInvoker)delegate { t.SetImageInvoke(b); });
             else
                 t.Image = b; 
         }
@@ -510,7 +510,7 @@ namespace ExtendCSharp
         public static void Enable(this Control t)
         {
             if (t.InvokeRequired)
-                t.BeginInvoke((MethodInvoker)delegate { t.Enable(); });
+                t.Invoke((MethodInvoker)delegate { t.Enable(); });
 
             else
                 t.Enabled = true;
@@ -518,7 +518,7 @@ namespace ExtendCSharp
         public static void Disable(this Control t)
         {
             if (t.InvokeRequired)
-                t.BeginInvoke((MethodInvoker)delegate { t.Disable(); });
+                t.Invoke((MethodInvoker)delegate { t.Disable(); });
 
             else
                 t.Enabled = false;
@@ -526,7 +526,7 @@ namespace ExtendCSharp
         public static void ChangeState(this Control t)
         {
             if (t.InvokeRequired)
-                t.BeginInvoke((MethodInvoker)delegate { t.ChangeState(); });
+                t.Invoke((MethodInvoker)delegate { t.ChangeState(); });
 
             else
                 t.Enabled = !t.Enabled;
@@ -535,7 +535,7 @@ namespace ExtendCSharp
         public static void SetTextInvoke(this Control t, string s)
         {
             if (t.InvokeRequired)
-                t.BeginInvoke((MethodInvoker)delegate { t.SetTextInvoke(s); });
+                t.Invoke((MethodInvoker)delegate { t.SetTextInvoke(s); });
             
             else
                 t.Text = s;
@@ -543,7 +543,7 @@ namespace ExtendCSharp
         public static void AppendTextInvoke(this Control t, string s)
         {
             if (t.InvokeRequired)
-                t.BeginInvoke((MethodInvoker)delegate { t.AppendTextInvoke(s); });
+                t.Invoke((MethodInvoker)delegate { t.AppendTextInvoke(s); });
             else
                 t.Text = t.Text+s;
         }
@@ -551,14 +551,14 @@ namespace ExtendCSharp
         public static void SetEnableInvoke(this Control t, bool b)
         {
             if (t.InvokeRequired)
-                t.BeginInvoke((MethodInvoker)delegate { t.SetEnableInvoke(b); });
+                t.Invoke((MethodInvoker)delegate { t.SetEnableInvoke(b); });
             else
                 t.Enabled = b;
         }
         public static void SetVisibleInvoke(this Control t, bool b)
         {
             if (t.InvokeRequired)
-                t.BeginInvoke((MethodInvoker)delegate { t.SetVisibleInvoke(b); });
+                t.Invoke((MethodInvoker)delegate { t.SetVisibleInvoke(b); });
             else
                 t.Visible = b;
         }
@@ -574,7 +574,7 @@ namespace ExtendCSharp
         public static void SetSizeInvoke(this Control t, int Width, int Height)
         {
             if (t.InvokeRequired)
-                t.BeginInvoke((MethodInvoker)delegate { t.SetSize(Width, Height); });
+                t.Invoke((MethodInvoker)delegate { t.SetSize(Width, Height); });
             else
                 t.SetSize(Width, Height);
         }
@@ -584,11 +584,18 @@ namespace ExtendCSharp
             return t;
         }
 
+        public static void SetWidthInvoke(this Control t, int Width)
+        {
+            if (t.InvokeRequired)
+                t.Invoke((MethodInvoker)delegate { t.SetWidthInvoke(Width); });
+            else
+                t.Width = Width;
+        }
 
         public static void SetLocationInvoke(this Control t, int X, int Y)
         {
             if (t.InvokeRequired)
-                t.BeginInvoke((MethodInvoker)delegate { t.SetLocation(X, Y); });
+                t.Invoke((MethodInvoker)delegate { t.SetLocation(X, Y); });
             else
                 t.SetLocation(X, Y);
         }
@@ -620,7 +627,10 @@ namespace ExtendCSharp
             }
         }
 
-
+        /// <summary>
+        /// Permette di rimuovere il control corrente dal proprio parent
+        /// </summary>
+        /// <param name="self"></param>
         public static void RemoveFromParent(this Control self)
         {
             if (self.Parent != null)
@@ -654,11 +664,50 @@ namespace ExtendCSharp
         public static void AddControlInvoke(this Control t,Control ToAdd)
         {
             if (t.InvokeRequired)
-                t.BeginInvoke((MethodInvoker)delegate { t.AddControlInvoke(ToAdd); });
+                t.Invoke((MethodInvoker)delegate { t.AddControlInvoke(ToAdd); });
 
             else
                 t.Controls.Add(ToAdd);
+           
         }
+        public static void RemoveControlInvoke(this Control t, Control ToRemove)
+        {
+            if (t.InvokeRequired)
+                t.Invoke((MethodInvoker)delegate { t.RemoveControlInvoke(ToRemove); });
+
+            else
+                t.Controls.Remove(ToRemove);
+        }
+        public static void RemoveControlsInvoke(this Control t, IEnumerable<Control> ToRemove)
+        {
+            if (t.InvokeRequired)
+                t.Invoke((MethodInvoker)delegate { t.RemoveControlsInvoke(ToRemove); });
+
+            else
+            {
+                foreach(Control c in ToRemove)
+                {
+                    t.Controls.Remove(c);
+                }
+            }
+        }
+        public static void RemoveControlsInvoke(this Control t, Predicate<Control> Condition)
+        {
+            var ToRemove=t.Controls.Where((c)=>{ return Condition(c); });
+            t.RemoveControlsInvoke(ToRemove);
+        }
+
+        public static void ClearControlsInvoke(this Control t)
+        {
+            if (t.InvokeRequired)
+                t.Invoke((MethodInvoker)delegate { t.ClearControlsInvoke(); });
+
+            else
+            {
+                t.Controls.Clear();
+            }
+        }
+
 
         #endregion
 
@@ -669,7 +718,7 @@ namespace ExtendCSharp
                 return;
 
             if (t.GetCurrentParent().InvokeRequired)
-                t.GetCurrentParent().BeginInvoke((MethodInvoker)delegate { t.SetTextInvoke(s); });
+                t.GetCurrentParent().Invoke((MethodInvoker)delegate { t.SetTextInvoke(s); });
 
             else
                 t.Text = s;
@@ -696,6 +745,14 @@ namespace ExtendCSharp
             self.Remove(ToRemove);
             self.Add(ToAdd);
         }
+        public static IEnumerable<Control> Where(this Control.ControlCollection self, Func<Control,bool> predicate)
+        {
+            return self.Cast<Control>().Where(predicate);        
+        }
+        public static IEnumerable<Control> Where(this Control.ControlCollection self, Func<Control, int,bool> predicate)
+        {
+            return self.Cast<Control>().Where(predicate);
+        }
 
 
 
@@ -712,7 +769,7 @@ namespace ExtendCSharp
         public static void SetValueInvoke(this ProgressBar p, int Value)
         {
             if (p.InvokeRequired)
-                p.BeginInvoke((MethodInvoker)delegate { p.SetValueInvoke(Value); });
+                p.Invoke((MethodInvoker)delegate { p.SetValueInvoke(Value); });
             else
                 if(Value<p.Maximum)
                     p.Value = Value;
@@ -720,7 +777,7 @@ namespace ExtendCSharp
         public static void SetMaximumInvoke(this ProgressBar p, int Maximum)
         {
             if (p.InvokeRequired)
-                p.BeginInvoke((MethodInvoker)delegate { p.SetMaximumInvoke(Maximum); });
+                p.Invoke((MethodInvoker)delegate { p.SetMaximumInvoke(Maximum); });
             else
                 p.Maximum = Maximum;
         }
@@ -746,7 +803,7 @@ namespace ExtendCSharp
         public static void SetValueNoAnimationInvoke(this ProgressBar p, int value)
         {
             if (p.InvokeRequired)
-                p.BeginInvoke((MethodInvoker)delegate { p.SetValueNoAnimation(value); });
+                p.Invoke((MethodInvoker)delegate { p.SetValueNoAnimation(value); });
             else
             {
                 p.SetValueNoAnimation(value);
@@ -883,6 +940,8 @@ namespace ExtendCSharp
             }
             catch (Exception) { };
         }
+        
+
         public static void AddInvoke(this ListBox self, object[] obj)
         {
             if (self.InvokeRequired)
@@ -1024,11 +1083,10 @@ namespace ExtendCSharp
         {
             return listToClone.Select(item => (T)item.Clone()).ToList();
         }
-        public static void Remove<T>(this IList<T> self, List<T> ToRemove)
+        public static void Remove<T>(this IList<T> self, IEnumerable<T> ToRemove)
         {
             foreach (T t in ToRemove)
                 self.Remove(t);
-
         }
 
       
