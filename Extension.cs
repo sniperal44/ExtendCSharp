@@ -731,6 +731,18 @@ namespace ExtendCSharp
 
         #endregion
 
+        #region CheckBox
+
+        public static void SetCheckedInvoke(this CheckBox t,bool Checked)
+        {
+            if (t.InvokeRequired)
+                t.Invoke((MethodInvoker)delegate { t.SetCheckedInvoke(Checked); });
+
+            else
+                t.Checked = Checked;
+        }
+
+        #endregion
         #region ToolStripItem
         public static void SetTextInvoke(this ToolStripItem t, string s)
         {
