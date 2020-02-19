@@ -376,6 +376,26 @@ namespace ExtendCSharp
             return s;
         }
 
+
+        public static String ReverseString(this String s)
+        {
+            char[] arr = s.ToCharArray();
+            Array.Reverse(arr);
+            return new string(arr);
+        }
+        #endregion
+
+        #region char
+        public static bool IsNumber(this char c)
+        {
+            return c >= '0' && c <= '9';
+        }
+
+        public static bool IsUpperChar(this char c)
+        {
+            return c >= 'A' && c <= 'Z';
+        }
+
         #endregion
 
         #region String[]
