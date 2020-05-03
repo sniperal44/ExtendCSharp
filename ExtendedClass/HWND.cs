@@ -23,12 +23,15 @@ namespace ExtendCSharp.ExtendedClass
             [DllImport("kernel32.dll")]
             private static extern IntPtr GetConsoleWindow();
             [DllImport("user32.dll", SetLastError = true)]
-            public static extern IntPtr SetActiveWindow(IntPtr hWnd);
+            private static extern IntPtr SetActiveWindow(IntPtr hWnd);
             [DllImport("user32.dll", EntryPoint = "GetDC")]
-            public static extern IntPtr GetDC(IntPtr hWnd);
+            private static extern IntPtr GetDC(IntPtr hWnd);
             [DllImport("user32.dll")]
-            static extern IntPtr GetWindowThreadProcessId(IntPtr hWnd, IntPtr ProcessId);
+            private static extern IntPtr GetWindowThreadProcessId(IntPtr hWnd, IntPtr ProcessId);
 
+
+            [DllImport("user32.dll", SetLastError = true)]
+            private static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
 
         #endregion
 
@@ -106,6 +109,9 @@ namespace ExtendCSharp.ExtendedClass
             return GetWindowThreadProcessId(_hwndPtr, IntPtr.Zero);
         }
 
-
+        public bool MoveWindow( int X, int Y, int nWidth, int nHeight, bool bRepaint)
+        {
+            return MoveWindow(this, X, Y, nWidth, nHeight, bRepaint);
+        }
     }
 }
