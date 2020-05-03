@@ -126,13 +126,18 @@ namespace ExtendCSharp.Services
         /// </summary>
         /// <param name="Path">Cartella root di ricerca</param>
         /// <returns></returns>
-        public string[] GetFilesInTree(String Path)
+        public string[] GetFilesInTree(String Path,String Regex="")
         {
             ListPlus<String> lp = new ListPlus<string>();
-            lp.AddRange(Directory.GetFiles(Path));
+            string[] files;
+            if (Regex != "")
+                files = FindRegex(Path, Regex);
+            else
+                files = Directory.GetFiles(Path);
+            lp.AddRange(files);
             foreach (string d in Directory.GetDirectories(Path))
             {
-                lp.AddRange(GetFilesInTree(d));
+                lp.AddRange(GetFilesInTree(d, Regex));
             }
             return lp.ToArray();
         }
