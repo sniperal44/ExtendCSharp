@@ -55,7 +55,8 @@ namespace ExtendCSharp.ExtendedClass
             pProcess.StartInfo.CreateNoWindow = CreateNoWindow;
             pProcess.StartInfo.WindowStyle = WindowStyle;
             pProcess.StartInfo.WorkingDirectory = WorkingDirectory;
-
+            
+            
             if (RedirectStandardOutput)
             {
                 

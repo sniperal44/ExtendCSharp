@@ -389,7 +389,7 @@ namespace ExtendCSharp.Services
                 {
                     File.Delete(Path);
                 }
-                catch (Exception ) { }
+                catch (Exception e) { }
 
                 return !FileExist(Path);
             }

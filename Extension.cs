@@ -29,11 +29,17 @@ using System.Xml.Serialization;
     using ExtendCSharp._v3_5_Fix;
 #endif
 
+
 namespace ExtendCSharp
 {
     public static class Extension
     {
         #region NUMBER
+        /// <summary>
+        /// Permette di capire se il double passato ha solo parte intera e non decimale
+        /// </summary>
+        /// <param name="d">Il numero double da controllare</param>
+        /// <returns>true = solo intero | false = con parte decimale</returns>
         public static bool IsInteger(this double d)
         {
             return (d - (int)d) == 0;
@@ -84,6 +90,10 @@ namespace ExtendCSharp
 
 
         public static string ToHexString(this int Number, bool upperCase = true)
+        {
+            return Number.ToString(upperCase ? "X2" : "x2");
+        }
+        public static string ToHexString(this byte Number, bool upperCase = true)
         {
             return Number.ToString(upperCase ? "X2" : "x2");
         }
