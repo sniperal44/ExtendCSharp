@@ -99,6 +99,11 @@ namespace ExtendCSharp.Services
                 //keybd_event(0x12, 0xB8, a, 0);
                 keybd_event(18, 0, (uint)ke.ToSendKeyEventInternal().Value, 0);
             }
+            else  if( k==Keys.Control)
+            {
+                //VK_LCONTROL = 0xA2; //Left Control key code
+                keybd_event(0xA2, 0, (uint)ke.ToSendKeyEventInternal().Value, 0);
+            }
             else
             {
                 keybd_event((byte)k, 0x45, KEYEVENTF_EXTENDEDKEY | (uint)ke.ToSendKeyEventInternal().Value, 0);
@@ -111,12 +116,15 @@ namespace ExtendCSharp.Services
             ke.KeyStat = MyKeyboardEvent.KeyStatus.Down;
             SendKeyEvent(ke, k);
         }
-        public void SendKeyDownUp(Keys k)
+        public void SendKeyDownUp(params Keys[] keys)
         {
             MyKeyboardEvent ke = new MyKeyboardEvent(MyKeyboardEvent.KeyStatus.Down);
-            SendKeyEvent(ke, k);
+            foreach ( Keys k in keys)
+                SendKeyEvent(ke, k);
+
             ke.KeyStat = MyKeyboardEvent.KeyStatus.Up;
-            SendKeyEvent(ke, k);
+            foreach (Keys k in keys)
+                SendKeyEvent(ke, k);
         }
 
     }

@@ -168,6 +168,7 @@
     <Compile Include="ExtendedClass\MemoryStreamMutex.cs" />
     <Compile Include="ExtendedClass\MulticastClient.cs" />
     <Compile Include="ExtendedClass\SerialComunicationPlus.cs" />
+    <Compile Include="Services\AjaxService.cs" />
     <Compile Include="Services\NetworkServices.cs" />
     <Compile Include="Services\ScreenCaptureService.cs" />
     <Compile Include="Services\VolumeService.cs" />
