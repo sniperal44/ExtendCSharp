@@ -12,6 +12,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Management;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Reflection;
@@ -79,7 +80,7 @@ namespace ExtendCSharp
         }
 
 
-        public static float Proportion(this float value,float in_min, float in_max, float out_min, float out_max)
+        public static float Proportion(this float value, float in_min, float in_max, float out_min, float out_max)
         {
             return (value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
         }
@@ -118,7 +119,7 @@ namespace ExtendCSharp
         {
             return Encoding.ASCII.GetBytes(n);
         }
-        
+
 
         #endregion
 
@@ -143,8 +144,8 @@ namespace ExtendCSharp
         }
         public static float ParseFloat(this String d)
         {
-            
-            return float.Parse(d.Replace('.',','));
+
+            return float.Parse(d.Replace('.', ','));
         }
         public static bool IsDouble(this String d)
         {
@@ -175,9 +176,9 @@ namespace ExtendCSharp
         public static String Concatenate(this String s, String Separatore, params String[] str)
         {
             String temp = s;
-            foreach(String ss in str)
+            foreach (String ss in str)
             {
-                if(temp!="")
+                if (temp != "")
                     temp += Separatore;
 
                 temp += ss;
@@ -185,7 +186,7 @@ namespace ExtendCSharp
             return temp;
         }
         public static String Concat(this String s, params String[] str)
-        {  
+        {
             return s.Concatenate("", str);
         }
 
@@ -199,15 +200,15 @@ namespace ExtendCSharp
         /// <param name="s"></param>
         /// <param name="str"></param>
         /// <returns></returns>
-        public static Tuple<String,String> SplitFirst(this String s, String str)
+        public static Tuple<String, String> SplitFirst(this String s, String str)
         {
             int index = s.IndexOf(str);
             Tuple<String, String> t = null;
             if (index != -1)
             {
-                String s1= s.Substring(0, index);
+                String s1 = s.Substring(0, index);
                 String s2 = s.Substring(index + str.Length);   //TODO: controllare che se str è alla fine di s, viene creata una stringa vuota e può dare errore
-                t  = new Tuple<String, String>(s1,s2);
+                t = new Tuple<String, String>(s1, s2);
 
             }
             return t;
@@ -244,14 +245,14 @@ namespace ExtendCSharp
             String[] t = s.Split(chars);
             return t.First();
         }
-        public static String SplitAndGetFirst(this String s,  params String[] str)
+        public static String SplitAndGetFirst(this String s, params String[] str)
         {
             String[] t = s.Split(str, StringSplitOptions.None);
             return t.First();
         }
 
 
-        public static String RemoveLeft(this String s,params String[] str)
+        public static String RemoveLeft(this String s, params String[] str)
         {
             bool repeat = false;
             String st = s;
@@ -278,9 +279,9 @@ namespace ExtendCSharp
                 foreach (String ss in str)
                     if (st.EndsWith(ss))
                     {
-                        st=st.Remove(st.LastIndexOf(ss));
+                        st = st.Remove(st.LastIndexOf(ss));
                         repeat = true;
-                    } 
+                    }
             }
             while (repeat == true && s.Length > 1);
             return st;
@@ -301,13 +302,13 @@ namespace ExtendCSharp
             s = RemoveRight(s.ToUpperInvariant(), str.ToUpperInvariant());
             if (origin.Length != s.Length)
                 origin = origin.Substring(0, s.Length);
-           
+
 
             return origin;
         }
 
 
-        public static String Substring(this String s,string delimiter1,string delimiter2)
+        public static String Substring(this String s, string delimiter1, string delimiter2)
         {
             int iD1 = s.IndexOf(delimiter1);
             int iD2 = s.IndexOf(delimiter2);
@@ -317,10 +318,10 @@ namespace ExtendCSharp
             else
                 iD1 += delimiter1.Length;
 
-            if(iD2==-1)
+            if (iD2 == -1)
                 return s.Substring(iD1);
             else
-                return s.Substring(iD1,iD2-iD1);
+                return s.Substring(iD1, iD2 - iD1);
         }
 
 
@@ -333,12 +334,12 @@ namespace ExtendCSharp
         public static String OneStringEnd(this String s, String c)
         {
             String t = s;
-            while(t.EndsWith(c))
-                t=t.RemoveRight(c);
-  
+            while (t.EndsWith(c))
+                t = t.RemoveRight(c);
+
             return t + c;
         }
-        public static String OneCharEnd(this String s,char c)
+        public static String OneCharEnd(this String s, char c)
         {
             s.TrimEnd(c);
             return s + c;
@@ -348,10 +349,10 @@ namespace ExtendCSharp
         public static String OneCharStart(this String s, char c)
         {
             s.TrimStart(c);
-            return c+s;
+            return c + s;
         }
 
-        public static bool RegexIsMatch(this String s, String pattern,RegexOptions o)
+        public static bool RegexIsMatch(this String s, String pattern, RegexOptions o)
         {
             Regex r = new Regex(pattern, o);
             return r.IsMatch(s);
@@ -441,7 +442,7 @@ namespace ExtendCSharp
 
         #region byte[]
 
-        public static string ToHexString(this byte[] bytes, bool upperCase=true)
+        public static string ToHexString(this byte[] bytes, bool upperCase = true)
         {
             StringBuilder result = new StringBuilder(bytes.Length * 2);
 
@@ -461,7 +462,7 @@ namespace ExtendCSharp
         }
 
 
-        public static int IndexOf(this byte[] s,byte[] pattern)
+        public static int IndexOf(this byte[] s, byte[] pattern)
         {
 
             int indice = -1;
@@ -495,7 +496,7 @@ namespace ExtendCSharp
             return System.BitConverter.ToInt32(s, 0);
         }
 
-        public static byte[][] Chunkize(this byte[] data,int ChunkSize)
+        public static byte[][] Chunkize(this byte[] data, int ChunkSize)
         {
             //throw new NotImplementedException("TESTATO! mettere tutto tra try e catch perche crasha");
             int NumberOfChunk = data.Length / ChunkSize;
@@ -504,16 +505,16 @@ namespace ExtendCSharp
 
             byte[][] chunks = new byte[NumberOfChunk][];
             int index = 0;
-            for (int i = 0;i< data.Length;i+=ChunkSize)
+            for (int i = 0; i < data.Length; i += ChunkSize)
             {
-                chunks[index]= new byte[ChunkSize];
+                chunks[index] = new byte[ChunkSize];
                 int ByteToCopy = ChunkSize;
                 if (data.Length - i < ChunkSize)
                     ByteToCopy = data.Length - i;
                 Array.Copy(data, i, chunks[index], 0, ByteToCopy);
                 index++;
             }
-            
+
             // split on groups with each 100 items
             /*byte[][] chunks = data
                                 .Select((s, i) => new { Value = s, Index = i })
@@ -532,7 +533,7 @@ namespace ExtendCSharp
             if (t.InvokeRequired)
                 t.Invoke((MethodInvoker)delegate { t.SetImageInvoke(b); });
             else
-                t.Image = b; 
+                t.Image = b;
         }
         #endregion
         #region Control
@@ -566,7 +567,7 @@ namespace ExtendCSharp
         {
             if (t.InvokeRequired)
                 t.Invoke((MethodInvoker)delegate { t.SetTextInvoke(s); });
-            
+
             else
                 t.Text = s;
         }
@@ -575,7 +576,7 @@ namespace ExtendCSharp
             if (t.InvokeRequired)
                 t.Invoke((MethodInvoker)delegate { t.AppendTextInvoke(s); });
             else
-                t.Text = t.Text+s;
+                t.Text = t.Text + s;
         }
 
         public static void SetEnableInvoke(this Control t, bool b)
@@ -691,14 +692,14 @@ namespace ExtendCSharp
                 t.Refresh();
         }
 
-        public static void AddControlInvoke(this Control t,Control ToAdd)
+        public static void AddControlInvoke(this Control t, Control ToAdd)
         {
             if (t.InvokeRequired)
                 t.Invoke((MethodInvoker)delegate { t.AddControlInvoke(ToAdd); });
 
             else
                 t.Controls.Add(ToAdd);
-           
+
         }
         public static void RemoveControlInvoke(this Control t, Control ToRemove)
         {
@@ -715,7 +716,7 @@ namespace ExtendCSharp
 
             else
             {
-                foreach(Control c in ToRemove)
+                foreach (Control c in ToRemove)
                 {
                     t.Controls.Remove(c);
                 }
@@ -723,7 +724,7 @@ namespace ExtendCSharp
         }
         public static void RemoveControlsInvoke(this Control t, Predicate<Control> Condition)
         {
-            var ToRemove=t.Controls.Where((c)=>{ return Condition(c); });
+            var ToRemove = t.Controls.Where((c) => { return Condition(c); });
             t.RemoveControlsInvoke(ToRemove);
         }
 
@@ -743,7 +744,7 @@ namespace ExtendCSharp
 
         #region CheckBox
 
-        public static void SetCheckedInvoke(this CheckBox t,bool Checked)
+        public static void SetCheckedInvoke(this CheckBox t, bool Checked)
         {
             if (t.InvokeRequired)
                 t.Invoke((MethodInvoker)delegate { t.SetCheckedInvoke(Checked); });
@@ -756,7 +757,7 @@ namespace ExtendCSharp
         #region ToolStripItem
         public static void SetTextInvoke(this ToolStripItem t, string s)
         {
-            if (t == null || t.GetCurrentParent()==null)
+            if (t == null || t.GetCurrentParent() == null)
                 return;
 
             if (t.GetCurrentParent().InvokeRequired)
@@ -787,11 +788,11 @@ namespace ExtendCSharp
             self.Remove(ToRemove);
             self.Add(ToAdd);
         }
-        public static IEnumerable<Control> Where(this Control.ControlCollection self, Func<Control,bool> predicate)
+        public static IEnumerable<Control> Where(this Control.ControlCollection self, Func<Control, bool> predicate)
         {
-            return self.Cast<Control>().Where(predicate);        
+            return self.Cast<Control>().Where(predicate);
         }
-        public static IEnumerable<Control> Where(this Control.ControlCollection self, Func<Control, int,bool> predicate)
+        public static IEnumerable<Control> Where(this Control.ControlCollection self, Func<Control, int, bool> predicate)
         {
             return self.Cast<Control>().Where(predicate);
         }
@@ -813,8 +814,8 @@ namespace ExtendCSharp
             if (p.InvokeRequired)
                 p.Invoke((MethodInvoker)delegate { p.SetValueInvoke(Value); });
             else
-                if(Value<p.Maximum)
-                    p.Value = Value;
+                if (Value < p.Maximum)
+                p.Value = Value;
         }
         public static void SetMaximumInvoke(this ProgressBar p, int Maximum)
         {
@@ -840,7 +841,7 @@ namespace ExtendCSharp
             {
                 p.Value = value + 1;
             }
-            p.Value = value;   
+            p.Value = value;
         }
         public static void SetValueNoAnimationInvoke(this ProgressBar p, int value)
         {
@@ -849,7 +850,7 @@ namespace ExtendCSharp
             else
             {
                 p.SetValueNoAnimation(value);
-            }         
+            }
         }
 
 
@@ -865,11 +866,11 @@ namespace ExtendCSharp
                 throw new ArgumentException("T deve essere un Enum", "enumerationValue");
             }
 
-            EnumService es = ServicesManager.GetOrSet(()=> { return new EnumService(); });
+            EnumService es = ServicesManager.GetOrSet(() => { return new EnumService(); });
 
 
 
-           
+
 
             comboBox.ValueMember = "Value";     //in Item1 c'è il value
             comboBox.DisplayMember = "Key"; //in Item2 c'è la stringa
@@ -887,24 +888,24 @@ namespace ExtendCSharp
 
         public static void AddRangeUnique(this IList self, IEnumerable elements)
         {
-            foreach(object o in elements)
+            foreach (object o in elements)
             {
                 self.AddUnique(o);
             }
-           
+
         }
         public static void AddUnique(this IList self, object obj)
         {
-            if(!self.Contains(obj))
+            if (!self.Contains(obj))
                 self.Add(obj);
         }
-        
+
 
         public static List<T> ToList<T>(this IList self)
         {
-            
+
             List<T> temp = new List<T>();
-            foreach(T o in self)
+            foreach (T o in self)
                 temp.Add(o);
 
             return temp;
@@ -922,7 +923,7 @@ namespace ExtendCSharp
 
         public static void SwapInvoke(this IList self, int item1, int item2)
         {
-           
+
             if (item1 < self.Count && item2 < self.Count)
             {
                 object t = self[item1];
@@ -982,7 +983,7 @@ namespace ExtendCSharp
             }
             catch (Exception) { };
         }
-        
+
 
         public static void AddInvoke(this ListBox self, object[] obj)
         {
@@ -1014,7 +1015,7 @@ namespace ExtendCSharp
             }
         }
 
-       
+
 
 
         public static object GetAtInvoke(this ListBox self, int i)
@@ -1039,7 +1040,7 @@ namespace ExtendCSharp
             }
 
         }
-       
+
 
         public static int GetItemsCountInvoke(this ListBox self)
         {
@@ -1081,14 +1082,14 @@ namespace ExtendCSharp
         }
 
 
-        public static void SetSelectedIndexInvoke(this ListBox self,int index)
+        public static void SetSelectedIndexInvoke(this ListBox self, int index)
         {
-            
+
             if (self.InvokeRequired)
                 self.Invoke((MethodInvoker)delegate { self.SetSelectedIndexInvoke(index); });
             else
             {
-                if(index< self.Items.Count && index>=0)
+                if (index < self.Items.Count && index >= 0)
                     self.SelectedIndex = index;
             }
 
@@ -1131,7 +1132,7 @@ namespace ExtendCSharp
                 self.Remove(t);
         }
 
-      
+
 
 
 
@@ -1163,7 +1164,7 @@ namespace ExtendCSharp
             List<TKey> ToRemove = new List<TKey>();
             foreach (KeyValuePair<TKey, TValue> entry in source)
             {
-                if (entry.Value.Equals( element))
+                if (entry.Value.Equals(element))
                     ToRemove.Add(entry.Key);
             }
 
@@ -1175,9 +1176,9 @@ namespace ExtendCSharp
         {
             return source.Select(x => { return x.Value; });
         }
-        public static bool ContainsKeys<TKey, TValue>(this Dictionary<TKey, TValue> source,params TKey[] keys)
+        public static bool ContainsKeys<TKey, TValue>(this Dictionary<TKey, TValue> source, params TKey[] keys)
         {
-            foreach(TKey s in keys)
+            foreach (TKey s in keys)
             {
                 if (!source.ContainsKey(s))
                     return false;
@@ -1186,14 +1187,14 @@ namespace ExtendCSharp
         }
 
 
-        
+
         #endregion
 
         #region CheckedListBox
 
         public static void RemoveChecked(this CheckedListBox self)
         {
-            object[] indici=self.CheckedItems.ToArray<object>();
+            object[] indici = self.CheckedItems.ToArray<object>();
             foreach (object o in indici)
             {
                 //self.RemoveInvoke(o);
@@ -1213,7 +1214,7 @@ namespace ExtendCSharp
 
         public static void ClearChecked(this CheckedListBox self)
         {
-            foreach(int i in self.CheckedIndices)
+            foreach (int i in self.CheckedIndices)
             {
                 self.SetItemChecked(i, false);
             }
@@ -1433,7 +1434,7 @@ namespace ExtendCSharp
             return new PointF((float)px, (float)py);
         }
 
-        
+
         public static double Distanza(this Point source, Point pnt)
         {
             return source.Distanza(pnt.X, pnt.Y);
@@ -1467,7 +1468,7 @@ namespace ExtendCSharp
         public static double DistanzaAlQuandrato(this Point source, int X, int Y)
         {
             int dy = source.Y - Y;
-            int dx= source.X - X;
+            int dx = source.X - X;
             return dy * dy - dx * dx;
         }
 
@@ -1481,7 +1482,7 @@ namespace ExtendCSharp
         {
             MathService ms = ServicesManager.GetOrSet(() => { return new MathService(); });
             float xDiff = X - source.X;
-            float yDiff = Y - source.Y;  
+            float yDiff = Y - source.Y;
             return ms.RadToGrad(Math.Atan2(yDiff, xDiff));
         }
 
@@ -1516,7 +1517,7 @@ namespace ExtendCSharp
         {
             return new PointF(source.X + x, source.Y + y);
         }
-        
+
 
 
 
@@ -1565,7 +1566,7 @@ namespace ExtendCSharp
         }
 
 
-        public static Rectangle CreateRectangle(this Point source,int Margin)
+        public static Rectangle CreateRectangle(this Point source, int Margin)
         {
             return new Rectangle(source.X - Margin, source.Y - Margin, Margin * 2, Margin * 2);
         }
@@ -1576,7 +1577,7 @@ namespace ExtendCSharp
 
         public static Point Clone(this Point source)
         {
-            return new Point(source.X,source.Y);
+            return new Point(source.X, source.Y);
         }
 
 
@@ -1608,7 +1609,7 @@ namespace ExtendCSharp
 
 
 
-            
+
         #endregion
 
         #region Size
@@ -1639,7 +1640,7 @@ namespace ExtendCSharp
                 self.Invoke((MethodInvoker)delegate { self.CloseInvoke(); });
             else
                 self.Close();
-            
+
         }
         public static void HideInvoke(this Form self)
         {
@@ -1677,7 +1678,7 @@ namespace ExtendCSharp
                 self.BringToFront();
 
         }
-        public static void SetWindowStateInvoke(this Form self,FormWindowState fws)
+        public static void SetWindowStateInvoke(this Form self, FormWindowState fws)
         {
             if (self.InvokeRequired)
                 self.Invoke((MethodInvoker)delegate { self.WindowState = fws; });
@@ -1711,7 +1712,7 @@ namespace ExtendCSharp
                 self.Invoke((MethodInvoker)delegate { UnLockSizeInvoke(self); });
             else
             {
-                self.MaximumSize = new Size(0,0);
+                self.MaximumSize = new Size(0, 0);
                 self.MinimumSize = new Size(0, 0);
             }
 
@@ -1851,14 +1852,14 @@ namespace ExtendCSharp
 
         #region Graphics
 
-        public static void DrawLines(this Graphics g, Pen pen, params Point[] p )
+        public static void DrawLines(this Graphics g, Pen pen, params Point[] p)
         {
-            g.DrawLines(pen,p);
+            g.DrawLines(pen, p);
         }
 
-        public static void DrawPolygon(this Graphics g, Pen pen, params Point[] p )
+        public static void DrawPolygon(this Graphics g, Pen pen, params Point[] p)
         {
-            g.DrawPolygon(pen,p);
+            g.DrawPolygon(pen, p);
         }
         public static void DrawPolygon(this Graphics g, Pen pen, params PointF[] p)
         {
@@ -1866,9 +1867,9 @@ namespace ExtendCSharp
         }
 
 
-        public static void DrawCircle(this Graphics g, Pen pen,float centerX, float centerY, float radius)
+        public static void DrawCircle(this Graphics g, Pen pen, float centerX, float centerY, float radius)
         {
-            g.DrawEllipse(pen, centerX - radius, centerY - radius,radius + radius, radius + radius);
+            g.DrawEllipse(pen, centerX - radius, centerY - radius, radius + radius, radius + radius);
         }
         public static void DrawCircle(this Graphics g, Pen pen, PointF Center, float radius)
         {
@@ -1877,18 +1878,18 @@ namespace ExtendCSharp
 
         public static void DrawRectangle(this Graphics g, Pen pen, Point TopLeft, Size size)
         {
-            g.DrawRectangle(pen, TopLeft.X , TopLeft.Y, size.Width, size.Height);
+            g.DrawRectangle(pen, TopLeft.X, TopLeft.Y, size.Width, size.Height);
         }
 
-        public static void FillCircle(this Graphics g, Brush brush,float centerX, float centerY, float radius)
+        public static void FillCircle(this Graphics g, Brush brush, float centerX, float centerY, float radius)
         {
-            g.FillEllipse(brush, centerX - radius, centerY - radius,radius + radius, radius + radius);
+            g.FillEllipse(brush, centerX - radius, centerY - radius, radius + radius, radius + radius);
         }
 
-        public static void DrawArc(this Graphics g,Pen pen, float xCenter,float yCenter, float radius,float StartAngle,float SweepAngle)
+        public static void DrawArc(this Graphics g, Pen pen, float xCenter, float yCenter, float radius, float StartAngle, float SweepAngle)
         {
 
-            g.DrawArc(pen, xCenter - radius, yCenter - radius, radius *2, radius *2,StartAngle, SweepAngle);
+            g.DrawArc(pen, xCenter - radius, yCenter - radius, radius * 2, radius * 2, StartAngle, SweepAngle);
         }
 
 
@@ -1898,7 +1899,7 @@ namespace ExtendCSharp
         /// </summary>
         /// <param name="g">Graphics</param>
         /// <param name="pictureBox">PictureBoxPlus da disegnare</param>
-        public static void DrawPictureBoxPlus(this Graphics g, PictureBoxPlus pictureBox, bool trasparentBackground=true)
+        public static void DrawPictureBoxPlus(this Graphics g, PictureBoxPlus pictureBox, bool trasparentBackground = true)
         {
             g.DrawPictureBoxPlus(pictureBox, pictureBox.X, pictureBox.Y, false, trasparentBackground);
         }
@@ -1911,12 +1912,12 @@ namespace ExtendCSharp
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <param name="Center">Serve per definire se le cordinate si riferiscono al centro della picture box</param>
-        public static void DrawPictureBoxPlus(this Graphics g, PictureBoxPlus pictureBox, int x, int y,bool Center= false,bool trasparentBackground= true)
+        public static void DrawPictureBoxPlus(this Graphics g, PictureBoxPlus pictureBox, int x, int y, bool Center = false, bool trasparentBackground = true)
         {
             if (pictureBox == null)
                 return;
 
-            if ( Center)
+            if (Center)
             {
                 x -= pictureBox.Width / 2;
                 y -= pictureBox.Height / 2;
@@ -1931,7 +1932,7 @@ namespace ExtendCSharp
                 g.DrawImage((Image)pictureBox.UnitedBitmap, x, y, pictureBox.UnitedBitmap.Width, pictureBox.UnitedBitmap.Height);
             }
 
-            
+
 
         }
 
@@ -1958,7 +1959,7 @@ namespace ExtendCSharp
             }
             return bmp;
         }
-        
+
         /// <summary>
         /// Ruota un immagine in base al suo valore EXIF ( metadata ) di orientamento
         /// </summary>
@@ -1997,7 +1998,7 @@ namespace ExtendCSharp
                 dr.Close();
                 return null;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return e;
             }
@@ -2016,7 +2017,7 @@ namespace ExtendCSharp
         }
 
 
-        public static object GetFieldValue(this MySqlDataReader dr,int i,Type tipo)
+        public static object GetFieldValue(this MySqlDataReader dr, int i, Type tipo)
         {
             try
             {
@@ -2028,7 +2029,7 @@ namespace ExtendCSharp
             {
                 throw e;
             }
-            
+
         }
         #endregion
 
@@ -2039,7 +2040,7 @@ namespace ExtendCSharp
         static extern bool ShowCaret(IntPtr hWnd);
 
 
-        public static void Caret(this TextBox dr,bool Visible)
+        public static void Caret(this TextBox dr, bool Visible)
         {
             if (Visible)
                 ShowCaret(dr.Handle);
@@ -2068,7 +2069,7 @@ namespace ExtendCSharp
         /// <param name="e"></param>
         /// <param name="f"></param>
         /// <returns></returns>
-        public static IEnumerable<T> Flatten<T>( this IEnumerable<T> e, Func<T, IEnumerable<T>> f)
+        public static IEnumerable<T> Flatten<T>(this IEnumerable<T> e, Func<T, IEnumerable<T>> f)
         {
             return e.SelectMany(c => f(c).Flatten(f)).Concat(e);
         }
@@ -2349,7 +2350,7 @@ namespace ExtendCSharp
             {
                 ms.Write(data);
                 ms.Seek(0, SeekOrigin.Begin);
-                temp =(T)_BinaryFormatter.Deserialize(ms);
+                temp = (T)_BinaryFormatter.Deserialize(ms);
             }
             return temp;
         }
@@ -2368,7 +2369,7 @@ namespace ExtendCSharp
         /// </summary>
         /// <param name="stream"></param>
         /// <param name="file"></param>
-        public static void SendFile(this Stream stream, FilePlus file,int timeoutMillisecond=0)
+        public static void SendFile(this Stream stream, FilePlus file, int timeoutMillisecond = 0)
         {
             stream.WriteObject(file, timeoutMillisecond);
         }
@@ -2383,19 +2384,19 @@ namespace ExtendCSharp
             return stream.ReadObject<FilePlus>(timeoutMillisecond);
         }
 
-        public static void Write(this Stream stream, byte data,int TimeoutMillisecond=0)
+        public static void Write(this Stream stream, byte data, int TimeoutMillisecond = 0)
         {
             stream.Write(new byte[] { data }, TimeoutMillisecond);
         }
 
-        public static void Remove(this MemoryStream stream,int numberOfBytesToRemove)
+        public static void Remove(this MemoryStream stream, int numberOfBytesToRemove)
         {
             byte[] buf = stream.GetBuffer();
             Buffer.BlockCopy(buf, numberOfBytesToRemove, buf, 0, (int)stream.Length - numberOfBytesToRemove);
             stream.SetLength(stream.Length - numberOfBytesToRemove);
-            
+
         }
-        
+
 
 
         /// <summary>
@@ -2421,7 +2422,7 @@ namespace ExtendCSharp
                     throw new SocketException((int)SocketError.TimedOut);
                 }
             }
-    
+
         }
 
 
@@ -2430,7 +2431,7 @@ namespace ExtendCSharp
         /// </summary>
         /// <param name="value">Numero da inviare</param>
         /// <param name="timeout"> 0 = infinito, espresso in millisecondi</param>
-        public static void Write(this Stream stream,int value, int timeoutMillisecond = 0)
+        public static void Write(this Stream stream, int value, int timeoutMillisecond = 0)
         {
             byte[] temp;
             using (MemoryStream ms = new MemoryStream())
@@ -2600,7 +2601,7 @@ namespace ExtendCSharp
         /// Permette di leggere qualcosa sul flusso di dati in maniera sincrona, impostando un tempo massimo
         /// </summary>
         /// <param name="timeout"> 0 = infinito, espresso in millisecondi</param>
-        public static byte[] Read(this Stream stream,int count, int timeoutMillisecond = 0)
+        public static byte[] Read(this Stream stream, int count, int timeoutMillisecond = 0)
         {
 
             //Dichiaro un array lungo quanto passato ( count ) 
@@ -2661,14 +2662,14 @@ namespace ExtendCSharp
                 ms.Write(temp, 0, temp.Length);
                 ms.Seek(0, SeekOrigin.Begin);
                 using (BinaryReader reader = new BinaryReader(ms))
-                {    
+                {
                     ret = StreamByteReaderTypeFunction[typeof(T)](reader)._Cast<T>();
                 }
             }
             return ret;
- 
+
         }
- 
+
         /// <summary>
         /// Permette di leggere un oggetto sul flusso di dati in maniera sincrona, impostando un tempo massimo
         /// </summary>
@@ -2684,9 +2685,9 @@ namespace ExtendCSharp
             T temp = formatter.DeserializeFromArray<T>(data);
             return temp;
         }
- 
-            
-   
+
+
+
 
         #endregion
 
@@ -2787,7 +2788,7 @@ namespace ExtendCSharp
 
             return new PointF(rect.Left + x, rect.Top + y);
         }
-        public static Point GetLocation(this Rectangle rect, System.Drawing.ContentAlignment Alignment=System.Drawing.ContentAlignment.TopLeft)
+        public static Point GetLocation(this Rectangle rect, System.Drawing.ContentAlignment Alignment = System.Drawing.ContentAlignment.TopLeft)
         {
             VerticalAlignment v = Alignment.GetVertical();
             HorizontalAlignment h = Alignment.GetHorizontal();
@@ -2799,7 +2800,7 @@ namespace ExtendCSharp
             }
             else if (h == HorizontalAlignment.Center)
             {
-                x = rect.Size.Width/2;
+                x = rect.Size.Width / 2;
             }
 
 
@@ -2818,7 +2819,7 @@ namespace ExtendCSharp
         }
         public static VerticalAlignment GetVertical(this System.Drawing.ContentAlignment Alignment)
         {
-            switch(Alignment)
+            switch (Alignment)
             {
                 case System.Drawing.ContentAlignment.BottomCenter:
                 case System.Drawing.ContentAlignment.BottomLeft:
@@ -2854,12 +2855,12 @@ namespace ExtendCSharp
                     return HorizontalAlignment.Right;
 
             }
-            return HorizontalAlignment.Left ;
+            return HorizontalAlignment.Left;
         }
 
         public static Rectangle Round(this RectangleF rect)
         {
-            return Rectangle.Round(rect);      
+            return Rectangle.Round(rect);
         }
         public static Rectangle Truncate(this RectangleF rect)
         {
@@ -2869,7 +2870,7 @@ namespace ExtendCSharp
         {
             return new Rectangle((int)(rect.X - offset), (int)(rect.Y - offset), (int)(rect.Width + (offset * 2)), (int)(rect.Height + (offset * 2)));
         }
-        public static RectangleF Offset(this RectangleF rect,float offset)
+        public static RectangleF Offset(this RectangleF rect, float offset)
         {
             return new RectangleF(rect.X - offset, rect.Y - offset, rect.Width + (offset * 2), rect.Height + (offset * 2));
         }
@@ -2897,16 +2898,31 @@ namespace ExtendCSharp
 
             return tcs.Task;
         }
+        public static IEnumerable<Process> GetChild(this Process process)
+        {
+            List<Process> children = new List<Process>();
+            ManagementObjectSearcher mos = new ManagementObjectSearcher(String.Format("Select * From Win32_Process Where ParentProcessID={0}", process.Id));
+
+            foreach (ManagementObject mo in mos.Get())
+            {
+                children.Add(Process.GetProcessById(Convert.ToInt32(mo["ProcessID"])));
+            }
+
+            return children;
+        }
+
         #endregion
 
         #region MethodInfo
-        public static Object Invoke(this MethodInfo mi, object obj, params  object[] parameters)
+        public static Object Invoke(this MethodInfo mi, object obj, params object[] parameters)
         {
             return mi.Invoke(obj, parameters);
         }
         #endregion
 
-            //TODO: implementare gli altri ToPlus
+
+       
+        //TODO: implementare gli altri ToPlus
         #region ToPlus
 
         public static PictureBoxPlus ToPlus(this PictureBox self)
@@ -2929,6 +2945,8 @@ namespace ExtendCSharp
             return new TcpClientPlus(self);     
         }
         #endregion
+
+
     }
 
 

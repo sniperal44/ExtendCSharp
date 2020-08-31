@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Management;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -41,9 +44,11 @@ namespace ExtendCSharp.ExtendedClass
             _Params = Params;
         }
 
+        
+
         public async Task Start()
         {
-           
+
             System.Diagnostics.Process pProcess = new System.Diagnostics.Process();
             pProcess.StartInfo.FileName = Command;
             pProcess.StartInfo.Arguments = Params;
