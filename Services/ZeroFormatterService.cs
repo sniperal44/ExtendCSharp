@@ -15,30 +15,21 @@ namespace ExtendCSharp.Services
 
         public T Deserialize<T>(byte[] data)
         {
-            try
-            {
-                return ZeroFormatterSerializer.Deserialize<T>(data);
-            }
-            catch (Exception ex) { return default(T); }
+            return ZeroFormatterSerializer.Deserialize<T>(data);
         }
         public T Deserialize<T>(Stream stream)
         {
-            try
-            {
-                return ZeroFormatterSerializer.Deserialize<T>(stream);
-            }
-            catch (Exception ex) { return default(T); }
+            return ZeroFormatterSerializer.Deserialize<T>(stream);
         }
 
     
         public byte[] Serialize(object o)
         {
-            try
-            {
-                return ZeroFormatterSerializer.Serialize(o);
-            }
-            catch (Exception ex) { return default(byte[]); }
-
+            return ZeroFormatterSerializer.Serialize(o);
+        }
+        public void Serialize(Stream stream,object o)
+        {
+            ZeroFormatterSerializer.Serialize(stream,o);
         }
     }
 }

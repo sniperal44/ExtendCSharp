@@ -3,6 +3,7 @@ using ExtendCSharp.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ExtendCSharp.Services
@@ -31,10 +32,20 @@ namespace ExtendCSharp.Services
 
 
 
-        public void StartFormThread(Func<Form> FunzioneCreazione)
+        async public Task StartFormThread(Func<Form> FunzioneCreazione)
         {
-            
-            ThreadPlus t = new ThreadPlus((object CurrentThread) =>
+            CancellationTokenSource cs = new CancellationTokenSource();
+            CancellationToken ct = cs.Token;
+
+            Task ts=Task.Factory.StartNew(() =>
+            {
+                Form f = FunzioneCreazione();
+                f.ShowDialog();
+            },ct);
+
+            await ts;
+
+            /*ThreadPlus t = new ThreadPlus((object CurrentThread) =>
             {
                 bool Finito = false;
                 Form f = FunzioneCreazione();
@@ -62,7 +73,7 @@ namespace ExtendCSharp.Services
                 
 
             });
-            t.Start(t);
+            t.Start(t);*/
 
         }
 

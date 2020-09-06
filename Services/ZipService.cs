@@ -9,7 +9,7 @@ namespace ExtendCSharp.Services
 {
     public class ZipService : IService
     {
-        
+
         /*public static String Zip(String Soruce)
         {
             try
@@ -83,6 +83,52 @@ namespace ExtendCSharp.Services
             }
         }
         */
+
+        public byte[] Zip(byte[] Soruce)
+        {
+            try
+            {
+                var bytes = Soruce;
+                using (var msi = new MemoryStream(bytes))
+                {
+                    using (var mso = new MemoryStream())
+                    {
+                        using (var gs = new GZipStream(mso, CompressionMode.Compress))
+                        {
+                            CopyTo(msi, gs);
+                        }
+                        return mso.ToArray();
+                    }
+                }
+            }
+            catch (Exception)
+            {
+
+                return null;
+            }
+        }
+        public byte[] UnZip(byte[] Soruce)
+        {
+
+            try
+            {
+                byte[] bytes = Soruce;
+                using (var msi = new MemoryStream(bytes))
+                using (var mso = new MemoryStream())
+                {
+                    using (var gs = new GZipStream(msi, CompressionMode.Decompress))
+                    {
+                        CopyTo(gs, mso);
+                    }
+                    return mso.ToArray();
+                }
+            }
+            catch (Exception)
+            {
+
+                return null;
+            }
+        }
 
         public String Zip(String Soruce)
         {

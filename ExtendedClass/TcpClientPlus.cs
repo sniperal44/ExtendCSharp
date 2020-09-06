@@ -9,6 +9,7 @@ using ExtendCSharp;
 using System.Threading;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using System.Net.NetworkInformation;
 
 namespace ExtendCSharp.ExtendedClass
 {
@@ -18,7 +19,7 @@ namespace ExtendCSharp.ExtendedClass
         private TcpClient inter;
         private ThreadPlus t;
         private int CheckStatusTime = 1000;
-        private bool CheckTreadActive = true;
+        //private bool CheckTreadActive = true;
 
 
         public event ClosedDelegate Closed;
@@ -296,53 +297,87 @@ namespace ExtendCSharp.ExtendedClass
         }
         #endregion
 
-
+        CancellationTokenSource cs_CheckClose;
         public void StartCheckClose()
         {
-            if( t!=null)
+            StopCheckClose();
+            cs_CheckClose = new CancellationTokenSource();
+            CancellationToken ct = cs_CheckClose.Token;
+            Task.Factory.StartNew(() =>
             {
-                StopCheckClose();
-            }
-            t = new ThreadPlus(ThreadCheckClose);
-            CheckTreadActive = true;
-            t.Start();
+                try
+                {
 
+
+                    while (!ct.IsCancellationRequested)
+                    {
+                        Task.Delay(CheckStatusTime).Wait();
+                        if (!IsConnected())
+                        {
+                            Closed?.Invoke(this);
+                            cs_CheckClose.Cancel();
+                        }
+                    }
+                }catch(Exception ex)
+                {
+
+                }
+            }, ct);
         }
         public void StopCheckClose()
         {
+            if (cs_CheckClose != null)
+                cs_CheckClose.Cancel();
+
+        }
+
+
+
+        //TODO: NON FUNZIONAAAAAAAAAAAAAAAAAAAAAAAAA
+        /*public bool IsConnected()
+        {
+            Socket client = inter.Client;
+            // This is how you can determine whether a socket is still connected.
+            bool blockingState = client.Blocking;
             try
             {
-                CheckTreadActive = false;
-                t.Join();
-            }
-            catch(Exception ex)
-            {
+                byte[] tmp = new byte[1] { 0 };
 
+                client.Blocking = false;
+                client.Send(tmp, 0, 0);
+                return true;
             }
-        }
-        private void ThreadCheckClose()
-        {
-            do
+            catch (SocketException e)
             {
-                Thread.Sleep(CheckStatusTime);
-                if (!inter.IsConnected())
+                // 10035 == WSAEWOULDBLOCK
+                if (e.NativeErrorCode.Equals(10035))
+                    return true;
+                else
                 {
-                    bool ToDispose = false;
-                    Closed?.Invoke(this,out ToDispose);
-                    if(ToDispose)
-                    {
-                        CheckTreadActive = false;
-                        Dispose();
-                    }
+                    return false;
                 }
-                    
             }
-            while (CheckTreadActive);
+            finally
+            {
+                client.Blocking = blockingState;
+            }
+        }*/
+
+        public  TcpState GetState()
+        {
+            var foo = IPGlobalProperties.GetIPGlobalProperties()
+              .GetActiveTcpConnections()
+              .SingleOrDefault(x => x.LocalEndPoint.Equals(inter.Client.LocalEndPoint) && x.RemoteEndPoint.Equals(inter.Client.RemoteEndPoint));
+            return foo != null ? foo.State : TcpState.Unknown;
         }
-
-      
-
+        public bool IsConnected()
+        {
+            TcpState s = GetState();
+            if (s == TcpState.Closed )
+                return false;
+            return true;
+        }
 
     }
-    public delegate void ClosedDelegate(TcpClientPlus client,out bool ToDispose);
+    public delegate void ClosedDelegate(TcpClientPlus client);
 }

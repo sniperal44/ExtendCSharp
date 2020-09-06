@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ExtendCSharp.ExtendedClass
@@ -56,11 +57,11 @@ namespace ExtendCSharp.ExtendedClass
             
             
         }
-       
 
 
 
-        private void ThreadListener()
+
+        /*private void ThreadListener()
         {
             try
             {
@@ -82,10 +83,44 @@ namespace ExtendCSharp.ExtendedClass
         {
             base.Stop();
             tp?.Abort();
+        }*/
+       
+        CancellationTokenSource cs_listener;
+        public new void Start()
+        {
+            Stop();
+            cs_listener = new CancellationTokenSource();
+            CancellationToken ct = cs_listener.Token;
+
+            base.Start();
+            Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    while (!ct.IsCancellationRequested)
+                    {
+                        TcpClient client = AcceptTcpClient();
+                        ClientConnected?.Invoke(client.ToPlus());
+                    }
+                }
+                catch(Exception ex)
+                {
+
+                }
+                
+            }, ct);
+        }
+        public new void Stop()
+        {
+            if (cs_listener != null)
+            {
+                cs_listener.Cancel();
+                base.Stop();
+            }
         }
 
 
-        
+
 
     }
     public delegate void ClientConnectedDelegate(TcpClientPlus client);

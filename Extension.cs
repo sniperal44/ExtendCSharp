@@ -739,6 +739,8 @@ namespace ExtendCSharp
             }
         }
 
+      
+
 
         #endregion
 
@@ -761,7 +763,22 @@ namespace ExtendCSharp
                 return;
 
             if (t.GetCurrentParent().InvokeRequired)
-                t.GetCurrentParent().Invoke((MethodInvoker)delegate { t.SetTextInvoke(s); });
+            {
+                try
+                {
+                    if (t.GetCurrentParent().GetControlOwnerThread().IsAlive)
+                        t.GetCurrentParent().Invoke((MethodInvoker)delegate { t.SetTextInvoke(s); });
+                    else
+                    {
+
+                    }
+                }catch(Exception ex)
+                {
+
+                }
+            }
+
+
 
             else
                 t.Text = s;
@@ -1139,7 +1156,11 @@ namespace ExtendCSharp
         #endregion
 
         #region Dictionary<>
-
+        public static Dictionary<TKey, TValue> Shuffle<TKey, TValue>(this Dictionary<TKey, TValue> source)
+        {
+            Random r = new Random();
+            return source.OrderBy(x => r.Next()).ToDictionary(item => item.Key, item => item.Value);
+        }
         public static Dictionary<TKey, TValue> Clone<TKey, TValue>(this Dictionary<TKey, TValue> original) where TValue : ICloneable
         {
             Dictionary<TKey, TValue> ret = new Dictionary<TKey, TValue>(original.Count, original.Comparer);
@@ -1640,6 +1661,14 @@ namespace ExtendCSharp
                 self.Invoke((MethodInvoker)delegate { self.CloseInvoke(); });
             else
                 self.Close();
+
+        }
+        public static void DisableInvoke(this Form self)
+        {
+            if (self.InvokeRequired)
+                self.Invoke((MethodInvoker)delegate { self.DisableInvoke(); });
+            else
+                self.Disable();
 
         }
         public static void HideInvoke(this Form self)

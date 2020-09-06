@@ -4,10 +4,13 @@ using System.Linq;
 
 namespace ExtendCSharp.ExtendedClass
 {
+    [Serializable]
     public class ListPlus<T> : List<T>
     {
 
+        [field: NonSerialized]
         public event EventHandler OnAdd;
+        [field: NonSerialized]
         public event EventHandler OnRemove;
 
         public ListPlus()
@@ -32,8 +35,8 @@ namespace ExtendCSharp.ExtendedClass
 
         public new void Add(T item)
         {
-            OnAdd?.Invoke(this, null);
             base.Add(item);
+            OnAdd?.Invoke(this, null);
         }
         public void AddUnique(T item)
         {
