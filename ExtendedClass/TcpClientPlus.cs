@@ -320,7 +320,8 @@ namespace ExtendCSharp.ExtendedClass
                     }
                 }catch(Exception ex)
                 {
-
+                    Closed?.Invoke(this);
+                    cs_CheckClose.Cancel();
                 }
             }, ct);
         }

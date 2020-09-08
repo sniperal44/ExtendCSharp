@@ -2,6 +2,7 @@
 using ExtendCSharp.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -10,7 +11,18 @@ namespace ExtendCSharp.Services
 {
     public class FormService : IService
     {
-        Dictionary<Form, ThreadPlus> ListThread = new Dictionary<Form, ThreadPlus>();
+        Dictionary<Form, ThreadPlus> _ListThread = new Dictionary<Form, ThreadPlus>();
+        Dictionary<Form, ThreadPlus> ListThread {
+            [MethodImpl(MethodImplOptions.Synchronized)]
+            get
+            {
+                if (_ListThread == null)
+                    _ListThread = new Dictionary<Form, ThreadPlus>();
+
+                return _ListThread;
+            } 
+        }
+
 
         /// <summary>
         /// Permette di aprire un dialog
@@ -32,52 +44,23 @@ namespace ExtendCSharp.Services
 
 
 
-        async public Task StartFormThread(Func<Form> FunzioneCreazione)
+        async public Task StartFormInThread(Func<Form> FunzioneCreazione)
         {
-            CancellationTokenSource cs = new CancellationTokenSource();
-            CancellationToken ct = cs.Token;
+            SemaphoreSlim ss = new SemaphoreSlim(0, 1);
 
-            Task ts=Task.Factory.StartNew(() =>
-            {
-                Form f = FunzioneCreazione();
-                f.ShowDialog();
-            },ct);
-
-            await ts;
-
-            /*ThreadPlus t = new ThreadPlus((object CurrentThread) =>
-            {
-                bool Finito = false;
+            ThreadPlus t = new ThreadPlus((object CurrentThread) =>
+            {     
                 Form f = FunzioneCreazione();
                 ListThread.Add(f, (ThreadPlus)CurrentThread);
-
-                f.FormClosing += (object sender, FormClosingEventArgs e) =>
-                {
-                    f.Dispose();
-                    Finito = true;
-                };
-                
-
-                f.Show();
-                
-                //TODO: implementare i task per la gestione asincrona della cancellazione
-                // creare un task cancellabile
-                // richiamare l'await di quel task
-                // richiamare la cancellazione del task al richiamo de FormClosed
-                // ( in modo da togliere il ciclo while )
-                while (!Finito)
-                {
-                    Thread.Sleep(100);
-                    Application.DoEvents();
-                }
-                
-
+                Application.Run(f);
+                f.Dispose();
+                ss.Release();
             });
-            t.Start(t);*/
+            t.Start(t);
 
+            await ss.WaitAsync();
         }
 
-       
 
         public void StopThread(Form f)
         {
@@ -88,6 +71,7 @@ namespace ExtendCSharp.Services
             {
                 try
                 {
+                    f.CloseInvoke();
                     ListThread[f].Abort();
                 }
                 catch(Exception )
@@ -103,7 +87,8 @@ namespace ExtendCSharp.Services
             {
                 try
                 {
-                    kvp.Value.Abort();
+                   kvp.Key.CloseInvoke();
+                   kvp.Value.Abort();
                 }
                 catch (Exception)
                 {

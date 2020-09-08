@@ -526,7 +526,6 @@ namespace ExtendCSharp
         }
         #endregion
 
-
         #region PictureBox
         public static void SetImageInvoke(this PictureBox t, Image b)
         {
@@ -536,8 +535,17 @@ namespace ExtendCSharp
                 t.Image = b;
         }
         #endregion
+
         #region Control
 
+        public static void InvalidateInvoke(this Control t)
+        {
+            if (t.InvokeRequired)
+                t.Invoke((MethodInvoker)delegate { t.InvalidateInvoke(); });
+
+            else
+                t.Invalidate();
+        }
         public static void Enable(this Control t)
         {
             if (t.InvokeRequired)
@@ -563,6 +571,22 @@ namespace ExtendCSharp
                 t.Enabled = !t.Enabled;
         }
 
+        public static void SuspendLayoutInvoke(this Control self)
+        {
+            if (self.InvokeRequired)
+                self.Invoke((MethodInvoker)delegate { self.SuspendLayoutInvoke(); });
+            else
+                self.SuspendLayout();
+
+        }
+        public static void ResumeLayoutInvoke(this Control self)
+        {
+            if (self.InvokeRequired)
+                self.Invoke((MethodInvoker)delegate { self.ResumeLayoutInvoke(); });
+            else
+                self.ResumeLayout();
+
+        }
         public static void SetTextInvoke(this Control t, string s)
         {
             if (t.InvokeRequired)
@@ -1192,6 +1216,16 @@ namespace ExtendCSharp
             foreach (TKey k in ToRemove)
                 source.Remove(k);
         }
+        public static TValue RemoveAndGet<TKey, TValue>(this Dictionary<TKey, TValue> self, TKey key, TValue DefaultValue = default(TValue))
+        {
+            if(self.ContainsKey(key))
+            {
+                DefaultValue = self[key];
+                self.Remove(key);
+            }
+            return DefaultValue;
+        }
+
 
         public static IEnumerable<TValue> ToIEnumerable<TKey, TValue>(this Dictionary<TKey, TValue> source)
         {
@@ -1655,6 +1689,8 @@ namespace ExtendCSharp
 
         #region Form
 
+
+
         public static void CloseInvoke(this Form self)
         {
             if (self.InvokeRequired)
@@ -1663,6 +1699,7 @@ namespace ExtendCSharp
                 self.Close();
 
         }
+        
         public static void DisableInvoke(this Form self)
         {
             if (self.InvokeRequired)

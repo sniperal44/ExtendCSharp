@@ -84,7 +84,7 @@ namespace ExtendCSharp.Log
         private static void RunLogForm()
         {
             FormService fs = ServicesManager.GetOrSet(() => { return new FormService(); });
-            fs.StartFormThread(() => {  l = new LogForm(); Inizializzato = true; return l; });
+            fs.StartFormInThread(() => {  l = new LogForm(); Inizializzato = true; return l; });
 
         }
 

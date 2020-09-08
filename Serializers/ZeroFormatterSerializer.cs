@@ -7,10 +7,10 @@ using System.Text;
 using System.Threading.Tasks;
 using ZeroFormatter;
 
-namespace ExtendCSharp.Services
+namespace ExtendCSharp.Serializers
 {
     
-    public class ZeroFormatterService : IService
+    public class ZeroFormatterService : ISerializer
     {
 
         public T Deserialize<T>(byte[] data)

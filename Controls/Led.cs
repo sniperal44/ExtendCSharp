@@ -67,7 +67,7 @@ namespace ExtendCSharp.Controls
             set
             {
                 _Acceso = value;
-                Invalidate();
+                this.InvalidateInvoke();
             }
         }
 
