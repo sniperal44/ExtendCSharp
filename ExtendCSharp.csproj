@@ -191,6 +191,7 @@
     <Compile Include="Controls\JPGPanel.Designer.cs">
       <DependentUpon>JPGPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="ExtendedClass\AdditionalData.cs" />
     <Compile Include="ExtendedClass\CancellationTokenSourcePlus .cs" />
     <Compile Include="ExtendedClass\MemoryStreamMutex.cs" />
     <Compile Include="ExtendedClass\MulticastClient.cs" />

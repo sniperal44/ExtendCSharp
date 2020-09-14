@@ -19,6 +19,11 @@ namespace ExtendCSharp.ExtendedClass
             messages[Token] = Message;
             base.Cancel();
         }
+        public void CancelAfter(int millisecondDelay,String Message)
+        {
+            messages[Token] = Message;
+            base.CancelAfter(millisecondDelay);
+        }
     }
 
     public static class CancellationTokenExtend

@@ -790,12 +790,7 @@ namespace ExtendCSharp
             {
                 try
                 {
-                    if (t.GetCurrentParent().GetControlOwnerThread().IsAlive)
-                        t.GetCurrentParent().Invoke((MethodInvoker)delegate { t.SetTextInvoke(s); });
-                    else
-                    {
-
-                    }
+                    t.GetCurrentParent().Invoke((MethodInvoker)delegate { t.SetTextInvoke(s); });
                 }catch(Exception ex)
                 {
 
@@ -1194,6 +1189,7 @@ namespace ExtendCSharp
             }
             return ret;
         }
+
         public static Dictionary<TKey, TValue> ClonePlus<TKey, TValue>(this Dictionary<TKey, TValue> original) where TValue : ICloneablePlus
         {
             Dictionary<TKey, TValue> ret = new Dictionary<TKey, TValue>(original.Count, original.Comparer);
