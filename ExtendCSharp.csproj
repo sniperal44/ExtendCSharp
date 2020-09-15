@@ -182,6 +182,7 @@
     <Compile Include="Attributes\MySQLFieldAttribute.cs" />
     <Compile Include="Classes\JPG.cs" />
     <Compile Include="Classes\ProcessWatcher.cs" />
+    <Compile Include="Classes\WinAPIHelper.cs" />
     <Compile Include="Controls\CheckBoxPlus.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -199,6 +200,7 @@
     <Compile Include="Serializers\ISerializer.cs" />
     <Compile Include="Serializers\MessagePackSerializer.cs" />
     <Compile Include="Services\AjaxService.cs" />
+    <Compile Include="Services\MouseMessageFilterService.cs" />
     <Compile Include="Services\RuningWindowsServices.cs" />
     <Compile Include="Services\NetworkServices.cs" />
     <Compile Include="Services\ScreenCaptureService.cs" />

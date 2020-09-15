@@ -21,6 +21,8 @@ namespace ExtendCSharp.Services
     {
         static readonly Dictionary<Type, Object> services = new Dictionary<Type, Object>();
 
+
+
         public static void RegistService<T>(T Service) where T : IService
         {
             services.Add(typeof(T), Service);
