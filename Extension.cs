@@ -1554,7 +1554,10 @@ namespace ExtendCSharp
         {
             return new Point(source.X + x, source.Y + y);
         }
-
+        public static Point Add(this Point source, Size s)
+        {
+            return new Point(source.X + s.Width, source.Y + s.Height);
+        }
 
         public static PointF Add(this PointF source, double x, double y)
         {
@@ -1672,6 +1675,10 @@ namespace ExtendCSharp
         public static SizeF Scala(this SizeF source, double scala)
         {
             return new SizeF((float)(source.Width * scala), (float)(source.Height * scala));
+        }
+        public static Size Add(this Size source, int Width,int Height)
+        {
+            return new Size(source.Width + Width, source.Height + Height);
         }
 
         #endregion
@@ -2937,7 +2944,41 @@ namespace ExtendCSharp
             return new RectangleF(rect.X - offset, rect.Y - offset, rect.Width + (offset * 2), rect.Height + (offset * 2));
         }
 
+        /// <summary>
+        /// Sottrae dal rettangolo corrente un altro rettangolo (INTERNO) creando 4 rettangoli che vanno a coprire l'area rimanente
+        /// se non è interno ritorna un vettore vuoto;
+        /// </summary>
+        /// <param name="rect"></param>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public static Rectangle[] Subract(this Rectangle rect, Rectangle other)
+        {
+            List<Rectangle> arr = new List<Rectangle>();
 
+            if (rect.Contains(other))
+            {
+                Point rectBl = rect.GetLocation(System.Drawing.ContentAlignment.BottomLeft);
+                Point otherBl = other.GetLocation(System.Drawing.ContentAlignment.BottomLeft);
+
+                Point otherTr = other.GetLocation(System.Drawing.ContentAlignment.TopRight);
+
+                Rectangle r1 = new Rectangle(rect.X, rect.Y, rect.Width, other.Y - rect.Y);
+                Point r1Bl = r1.GetLocation(System.Drawing.ContentAlignment.BottomLeft);
+                Point r1Br = r1.GetLocation(System.Drawing.ContentAlignment.BottomRight);
+                Rectangle r2 = new Rectangle(r1Bl.X, r1Bl.Y,other.X- rect.X, other.Height);
+                Point r2Bl = r2.GetLocation(System.Drawing.ContentAlignment.BottomLeft);
+                Rectangle r3 = new Rectangle(r2Bl.X, r2Bl.Y, rect.Width, rectBl.Y- otherBl.Y);
+                Point r3Tr = r3.GetLocation(System.Drawing.ContentAlignment.TopRight);
+                Rectangle r4 = new Rectangle(otherTr.X, otherTr.Y, r3Tr.X-otherTr.X, other.Height);
+
+                arr.Add(r1);
+                arr.Add(r2);
+                arr.Add(r3);
+                arr.Add(r4);
+            }
+
+            return arr.ToArray();
+        }
 
 
         #endregion
