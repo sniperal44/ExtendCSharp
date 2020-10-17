@@ -1,6 +1,7 @@
 ﻿using ExtendCSharp.Interfaces;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace ExtendCSharp.Services
@@ -127,6 +128,45 @@ namespace ExtendCSharp.Services
                 SendKeyEvent(ke, k);
         }
 
+
+        public void WriteString(string str)
+        {
+            foreach(char c in str)
+            {
+                
+                if (c == '@')
+                {
+                    SendKeyEvent(new MyKeyboardEvent(MyKeyboardEvent.KeyStatus.Down),Keys.LMenu);
+                    SendKeyEvent(new MyKeyboardEvent(MyKeyboardEvent.KeyStatus.Down),Keys.Control);
+                    SendKeyEvent(new MyKeyboardEvent(MyKeyboardEvent.KeyStatus.Down),Keys.Oemtilde);
+                    SendKeyEvent(new MyKeyboardEvent(MyKeyboardEvent.KeyStatus.Up), Keys.Oemtilde);
+                    SendKeyEvent(new MyKeyboardEvent(MyKeyboardEvent.KeyStatus.Up), Keys.Control);
+                    SendKeyEvent(new MyKeyboardEvent(MyKeyboardEvent.KeyStatus.Up), Keys.LMenu);
+
+                }
+                else if (c == '.')
+                {
+                    SendKeyDownUp(Keys.OemPeriod);
+                }
+                else
+                {
+                    
+                    Keys k = (Keys)char.ToUpper(c);
+                    if (char.IsLetter(c) && c == char.ToUpper(c))
+                    {
+                        //è in maiuscolo
+                        SendKeyEvent(new MyKeyboardEvent(MyKeyboardEvent.KeyStatus.Down), Keys.LShiftKey);
+                        SendKeyDownUp(k);
+                        SendKeyEvent(new MyKeyboardEvent(MyKeyboardEvent.KeyStatus.Up), Keys.LShiftKey);
+                    }
+                    else
+                    {
+                        SendKeyDownUp(k);
+                    }
+                }
+                Thread.Sleep(50);
+            }
+        }
     }
 
 

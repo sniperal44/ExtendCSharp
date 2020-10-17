@@ -10,6 +10,7 @@ namespace ExtendCSharp.Excel
     public class ExcelManager
     {
         public event AppEvents_WorkbookBeforeCloseEventHandler WorkbookBeforeClose;
+        public event AppEvents_WorkbookOpenEventHandler WorkbookOpen;
         //TODO: implemento gli altri eventi
 
         protected String FileUri;
@@ -18,19 +19,23 @@ namespace ExtendCSharp.Excel
         //protected Microsoft.Office.Interop.Excel._Worksheet XSheet;
         //protected Microsoft.Office.Interop.Excel.Range XRng;
 
-        public ExcelManager(String uri)
+        public ExcelManager()
         {
-            this.FileUri = uri;
-            OpenFile(uri);
         }
 
-        private void OpenFile(string FileName)
+        public void OpenFile(string FileName)
         {
             XApplication = new Microsoft.Office.Interop.Excel.Application();
+            XApplication.WorkbookOpen += (Workbook Wb) => { 
+                WorkbookOpen?.Invoke(Wb); 
+            };
+            XApplication.Visible = true;
+            XApplication.WorkbookBeforeClose += (Workbook Wb, ref bool Cancel) => { WorkbookBeforeClose?.Invoke(Wb, ref Cancel); };
+
             XWorkbook = XApplication.Workbooks.Open(FileName);
 
-            XApplication.Visible = true;
-            XApplication.WorkbookBeforeClose += (Workbook Wb, ref bool Cancel)=> { WorkbookBeforeClose?.Invoke(Wb,ref Cancel); };
+           
+           
         }
 
 
@@ -48,7 +53,7 @@ namespace ExtendCSharp.Excel
 
         }
 
-        public Worksheet GetWorksheets(String Name)
+        public Worksheet GetWorksheet(String Name)
         {
             return (Worksheet)XWorkbook.Worksheets[Name];
         }
@@ -76,6 +81,14 @@ namespace ExtendCSharp.Excel
         public bool WorksheetExist(String Name)
         {
             return XWorkbook.Worksheets.Keys().Contains(Name);
+        }
+
+        public void Close()
+        {
+            XWorkbook.Close(0);
+            System.Runtime.InteropServices.Marshal.ReleaseComObject(XWorkbook);
+            XApplication.Quit();
+            System.Runtime.InteropServices.Marshal.ReleaseComObject(XApplication);
         }
     }
 

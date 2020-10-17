@@ -538,6 +538,16 @@ namespace ExtendCSharp
 
         #region Control
 
+        public static void SetHWNDChildInvoke(this Control t,HWND hwnd)
+        {
+            if (t.InvokeRequired)
+                t.Invoke((MethodInvoker)delegate { t.SetHWNDChildInvoke(hwnd); });
+
+            else
+            {
+                hwnd.SetWindowParent(t);
+            }
+        }
         public static void InvalidateInvoke(this Control t)
         {
             if (t.InvokeRequired)
@@ -1236,7 +1246,12 @@ namespace ExtendCSharp
             }
             return true;
         }
-
+        public static void RemoveAll<K, V>(this IDictionary<K, V> dict, Func<K, V, bool> match)
+        {
+            foreach (var key in dict.Keys.ToArray()
+                    .Where(key => match(key, dict[key])))
+                dict.Remove(key);
+        }
 
 
         #endregion

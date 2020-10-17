@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace ExtendCSharp.ExtendedClass
 {
@@ -146,6 +147,10 @@ namespace ExtendCSharp.ExtendedClass
         public IntPtr SetWindowParent( IntPtr hWndNewParent)
         {
             return SetParent(_hwndPtr, hWndNewParent);
+        }
+        public IntPtr SetWindowParent(Control controlParent)
+        {
+            return SetParent(_hwndPtr, controlParent.Handle);
         }
 
 
