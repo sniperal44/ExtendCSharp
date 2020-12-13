@@ -35,6 +35,21 @@ namespace ExtendCSharp
 {
     public static class Extension
     {
+
+        #region WPF
+
+        
+        public static void SetContentInvoke(this System.Windows.Controls.ContentControl c, String Content)
+        {
+            if (!c.Dispatcher.CheckAccess())
+                c.Dispatcher.Invoke(()=>{ c.SetContentInvoke(Content); });
+            else
+            {
+                c.Content = Content;
+            }
+        }
+
+        #endregion
         #region NUMBER
         /// <summary>
         /// Permette di capire se il double passato ha solo parte intera e non decimale

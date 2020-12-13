@@ -786,8 +786,15 @@ namespace ExtendCSharp.Services
         {
             return Process.Start(Command,String.Join(" ",args));
         }
-       
+
         #endregion
+
+        #region GetInfoFromTheSistem
+
+            
+
+        #endregion
+
 
         public delegate void CopyProgressChangedDelegate(double percent,ref bool cancelFlag);
         public delegate void CopyCompleteDelegate(bool copiato,Exception ex);

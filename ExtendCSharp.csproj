@@ -141,6 +141,7 @@
       <HintPath>.\Newtonsoft.Json_40.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\SchoolTimeTable2.0\packages\System.Buffers.4.4.0\lib\netstandard2.0\System.Buffers.dll</HintPath>
