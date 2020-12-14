@@ -24,6 +24,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
+using System.Windows.Input;
 using System.Xml.Serialization;
 
 #if (NETFX3_5)
@@ -48,6 +49,28 @@ namespace ExtendCSharp
                 c.Content = Content;
             }
         }
+
+        public static void IsEnabledInvoke(this System.Windows.UIElement c, bool enabled)
+        {
+            if (!c.Dispatcher.CheckAccess())
+                c.Dispatcher.Invoke(() => { c.IsEnabledInvoke(enabled); });
+            else
+            {
+                c.IsEnabled = enabled;
+            }
+        }
+
+
+        public static void ClearInvoke(this System.Windows.Controls.Panel p)
+        {
+            if (!p.Dispatcher.CheckAccess())
+                p.Dispatcher.Invoke(() => { p.ClearInvoke(); });
+            else
+            {
+                p.Children.Clear();
+            }
+        }
+
 
         #endregion
         #region NUMBER
@@ -3104,8 +3127,8 @@ namespace ExtendCSharp
         }
         #endregion
 
-
        
+
         //TODO: implementare gli altri ToPlus
         #region ToPlus
 

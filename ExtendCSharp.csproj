@@ -207,6 +207,7 @@
     <Compile Include="Services\NetworkServices.cs" />
     <Compile Include="Services\ScreenCaptureService.cs" />
     <Compile Include="Services\VolumeService.cs" />
+    <Compile Include="Services\KeyService.cs" />
     <Compile Include="TOFIX\DataPacket.cs" />
     <Compile Include="Wrapper\MultiKeyDictionary.cs" />
     <Compile Include="Controls\ButtonMenu.cs">
