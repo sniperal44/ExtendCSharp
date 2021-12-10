@@ -476,6 +476,11 @@ namespace ExtendCSharp.Controls
 
             g.DrawRectangle(p, X, Y, width, height);
         }
+
+        public RectangleF GetRect()
+        {
+            return new RectangleF(X, Y, width, height);
+        }
     }
 
 

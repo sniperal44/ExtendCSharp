@@ -200,7 +200,8 @@
     <Compile Include="ExtendedClass\MemoryStreamMutex.cs" />
     <Compile Include="ExtendedClass\MulticastClient.cs" />
     <Compile Include="ExtendedClass\SerialComunicationPlus.cs" />
-    <Compile Include="Interfaces\ISettingSerializer.cs" />
+    <Compile Include="Geometry\PointD.cs" />
+    <Compile Include="Geometry\Line.cs" />
     <Compile Include="Serializers\ISerializer.cs" />
     <Compile Include="Serializers\MessagePackSerializer.cs" />
     <Compile Include="Services\AjaxService.cs" />
@@ -524,6 +525,7 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="CsQuery.dll" />
+    <None Include="Geometry\README.md" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

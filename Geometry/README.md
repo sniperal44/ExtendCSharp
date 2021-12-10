@@ -1,0 +1,1 @@
+﻿In questa cartella ci sono una serie di classi che gestiscono una serie di elementi geometrici ( triangoli, linee, punti, ...)
