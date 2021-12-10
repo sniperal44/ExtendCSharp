@@ -88,11 +88,14 @@ namespace ExtendCSharp.ExtendedClass
             Name = ss.GetFileNameWithoutExtension(FileFullPath);
             Extension = ss.GetExtension(FileFullPath);
             Folder = ss.GetParent(FileFullPath);
-            String v = ss.GetFileVersion(FileFullPath);
-            if (v != null)
-                Version = new Version(v);
+            if (Exist())
+            {
+                String v = ss.GetFileVersion(FileFullPath);
+                if (v != null)
+                    Version = new Version(v);
 
-            Size = ss.GetFileSize(FileFullPath);
+                Size = ss.GetFileSize(FileFullPath);
+            }
 
         }
         private FilePlus()
@@ -135,6 +138,15 @@ namespace ExtendCSharp.ExtendedClass
         public bool Exist()
         {
             return ServicesManager.Get<SystemService>().FileExist(Path);
+        }
+
+        /// <summary>
+        /// Cancella il file specificato dal disco
+        /// </summary>
+        /// <returns></returns>
+        public bool Delete()
+        {
+            return ServicesManager.Get<SystemService>().DeleteSecure(Path);
         }
 
 

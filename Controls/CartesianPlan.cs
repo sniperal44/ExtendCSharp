@@ -18,13 +18,7 @@ namespace ExtendCSharp.Controls
 
         Point origin = new Point(0, 0);
 
-        /*TODO: creo enum TipoDiResize ( stretch o zoom )
-         * 
-         * durante il settaggio della XMax o YMax ( proprierty ) se è stretch non faccio niente di nuovo
-         * se è zoom vado a impostare entramble se Scale sul valore minimo
-           */
-
-           
+             
         CartesianLayout _cartesianLayout = CartesianLayout.Stretch;
         float XScale = 1;
         float YScale = 1;
@@ -48,15 +42,18 @@ namespace ExtendCSharp.Controls
             set
             {
                 _XMax = value;
-                if (_XMax == null)
-                    XScale = 1;
-                else
-                    XScale =(float) (InternalWidth/ _XMax);
+              
 
                 if(_cartesianLayout==CartesianLayout.Zoom)
                 {
-                    YScale = Math.Min(YScale, XScale);
-                    XScale = YScale;
+                    RecalculateScale();
+                }
+                else
+                {
+                    if (_XMax == null)
+                        XScale = 1;
+                    else
+                        XScale = (float)(InternalWidth / _XMax);
                 }
             }
         }
@@ -66,15 +63,18 @@ namespace ExtendCSharp.Controls
             set
             {
                 _YMax = value;
-                if (_YMax == null)
-                    YScale = 1;
-                else
-                    YScale = (float)(InternalHeight / _YMax);
+                
 
                 if (_cartesianLayout == CartesianLayout.Zoom)
                 {
-                    YScale = Math.Min(YScale, XScale);
-                    XScale = YScale;
+                    RecalculateScale();
+                }
+                else
+                {
+                    if (_YMax == null)
+                        YScale = 1;
+                    else
+                        YScale = (float)(InternalHeight / _YMax);
                 }
             }
         }
@@ -419,7 +419,10 @@ namespace ExtendCSharp.Controls
         {
 
         }
+        public CartesianActionCircle(Point p, float radius) : this(p.X, p.Y, radius)
+        {
 
+        }
 
 
         public override void Paint(Graphics g, PenDataObject pen = null)

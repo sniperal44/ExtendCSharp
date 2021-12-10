@@ -16,6 +16,7 @@ using System.Management;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Reflection;
+using System.Resources;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
@@ -3127,7 +3128,20 @@ namespace ExtendCSharp
         }
         #endregion
 
-       
+        #region Resource
+
+        public static object Get(this ResourceReader reader,string key)
+        {
+            return reader.Cast<DictionaryEntry>().Where((e) => { return (string)e.Key == key; }).FirstOrDefault().Value;
+        }
+        public static T Get<T>(this ResourceReader reader, string key)
+        {
+            return (T)reader.Cast<DictionaryEntry>().Where((e) => { return (string)e.Key == key; }).FirstOrDefault().Value;
+        }
+        
+
+        #endregion
+
 
         //TODO: implementare gli altri ToPlus
         #region ToPlus
