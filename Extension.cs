@@ -3032,6 +3032,43 @@ namespace ExtendCSharp
             return HorizontalAlignment.Left;
         }
 
+        /// <summary>
+        /// I riferimenti Top e Bottom seguono la logica cartesiana  ( zero Y in basso )  e non quella grafica PC
+        /// </summary>
+        /// <param name="rect"></param>
+        /// <param name="Alignment"></param>
+        /// <returns></returns>
+        public static PointF GetLocationCartesian(this RectangleF rect, System.Drawing.ContentAlignment Alignment = System.Drawing.ContentAlignment.TopLeft)
+        {
+            VerticalAlignment v = Alignment.GetVertical();
+            HorizontalAlignment h = Alignment.GetHorizontal();
+
+            float x = 0;
+            if (h == HorizontalAlignment.Right)
+            {
+                x = rect.Size.Width;
+            }
+            else if (h == HorizontalAlignment.Center)
+            {
+                x = rect.Size.Width / 2;
+            }
+
+
+            float y = 0;
+            if (v == VerticalAlignment.Top)
+            {
+                y = rect.Size.Height;
+            }
+            else if (v == VerticalAlignment.Center)
+            {
+                y = rect.Size.Height / 2;
+            }
+
+
+            return new PointF(rect.Left + x, rect.Top + y);
+        }
+
+
         public static Rectangle Round(this RectangleF rect)
         {
             return Rectangle.Round(rect);
@@ -3089,23 +3126,7 @@ namespace ExtendCSharp
         #endregion
 
         #region Process
-        /// <summary>
-        /// Waits asynchronously for the process to exit.
-        /// </summary>
-        /// <param name="process">The process to wait for cancellation.</param>
-        /// <param name="cancellationToken">A cancellation token. If invoked, the task will return 
-        /// immediately as canceled.</param>
-        /// <returns>A Task representing waiting for the process to end.</returns>
-        public static Task WaitForExitAsync(this Process process, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            var tcs = new TaskCompletionSource<object>();
-            process.EnableRaisingEvents = true;
-            process.Exited += (sender, args) => tcs.TrySetResult(null);
-            if (cancellationToken != default(CancellationToken))
-                cancellationToken.Register(tcs.SetCanceled);
-
-            return tcs.Task;
-        }
+      
         public static IEnumerable<Process> GetChild(this Process process)
         {
             List<Process> children = new List<Process>();

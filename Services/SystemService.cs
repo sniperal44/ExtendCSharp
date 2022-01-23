@@ -214,6 +214,14 @@ namespace ExtendCSharp.Services
             
         }
 
+        /// <summary>
+        /// Ritorna il path della cartella temporanea dell'utente
+        /// /// </summary>
+        /// <returns></returns>
+        public String GetTempPath()
+        {
+            return Path.GetTempPath();
+        }
 
 
         public String GetCommonPath(string path1, string path2)

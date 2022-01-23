@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Management;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,8 +11,8 @@ namespace ExtendCSharp.ExtendedClass
     public class ProcessPlus
     {
 	
-        public ProcessStatus _Status;
-        ProcessStatus Status { get { return _Status; } }
+        private ProcessStatus _Status;
+        public ProcessStatus Status { get { return _Status; } }
 
         String _Command, _Params;
         public String Command { get { return _Command; } }
@@ -26,8 +27,9 @@ namespace ExtendCSharp.ExtendedClass
         public System.Diagnostics.ProcessWindowStyle WindowStyle { get; set; }
         public string WorkingDirectory { get; set; }
 
-        public bool Async { get; set; }
-        public bool WaitForExit { get; set; } = true;
+        System.Diagnostics.Process pProcess = null;
+
+
 
         public delegate void ProcessStatusChanged(ProcessStatus s);
         public delegate void ProcessStatusNewLine(String line);
@@ -45,11 +47,14 @@ namespace ExtendCSharp.ExtendedClass
         }
 
         
-
+        /// <summary>
+        /// se viene richiamato con await, il metodo aspetta la fine del processo
+        /// altrimenti viene eseguito tutto in un task
+        /// </summary>
+        /// <returns></returns>
         public async Task Start()
         {
-
-            System.Diagnostics.Process pProcess = new System.Diagnostics.Process();
+            pProcess = new System.Diagnostics.Process();
             pProcess.StartInfo.FileName = Command;
             pProcess.StartInfo.Arguments = Params;
 
@@ -70,6 +75,10 @@ namespace ExtendCSharp.ExtendedClass
                     if (OnNewLine != null)
                         OnNewLine(args.Data);
                 };
+            }
+
+            if (RedirectStandardError)
+            {
                 pProcess.ErrorDataReceived += (sender, args) =>
                 {
                     if (OnNewLine != null)
@@ -77,35 +86,47 @@ namespace ExtendCSharp.ExtendedClass
                 };
             }
 
-            pProcess.Start();
-            if (RedirectStandardOutput)
+            try
             {
-                pProcess.BeginOutputReadLine();
-                pProcess.BeginErrorReadLine();
-            }
-            SetProcessStatusInvoke(ProcessStatus.Running);
-
-
-
-            if (!WaitForExit)
-                return;
-
-            if (Async)
-            {
-                new Thread(() =>
+                pProcess.Start();
+                if (RedirectStandardOutput)
                 {
-                    pProcess.WaitForExit();
-                    SetProcessStatusInvoke(ProcessStatus.Stop);
-                }).Start();
-            }
-            else
-            {
-                await pProcess.WaitForExitAsync();
+                    pProcess.BeginOutputReadLine();
+                }
+                if (RedirectStandardError)
+                {
+                    pProcess.BeginErrorReadLine();
+                }
+                SetProcessStatusInvoke(ProcessStatus.Running);
+
+                
+
+
+                while (!pProcess.HasExited)
+                { 
+                    await Task.Delay(10);
+                }
+                //pProcess.WaitForExit();
                 SetProcessStatusInvoke(ProcessStatus.Stop);
+            }
+            catch(Exception ex)
+            {
+
+            }
+            
+            
+        }
+
+
+
+        public void Stop()
+        { 
+            if(pProcess!=null && Status!=ProcessStatus.Stop)
+            {
+                pProcess.Kill();
             }
         }
 
-    
         private void SetProcessStatusInvoke(ProcessStatus s)
         {
             _Status=s;

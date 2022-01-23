@@ -3,6 +3,7 @@ using ExtendCSharp.Interfaces;
 using System;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace ExtendCSharp.Services
 {
@@ -49,7 +50,7 @@ namespace ExtendCSharp.Services
             _PathFFmpeg = null;
         }
 
-        public bool CheckValidMetaflac(string pathMetaflac)
+         public bool CheckValidMetaflac(string pathMetaflac)
         {
             if (!ss.FileExist(pathMetaflac))
                 return false;
@@ -71,8 +72,7 @@ namespace ExtendCSharp.Services
             p.CreateNoWindow = true;
             p.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
 
-            p.Async = false;
-            p.Start();
+            p.Start().Wait();
             return valid;
 
         }
@@ -98,8 +98,7 @@ namespace ExtendCSharp.Services
             p.CreateNoWindow = true;
             p.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
 
-            p.Async = false;
-            p.Start();
+            p.Start().Wait();
             return valid;
         }
 
@@ -143,10 +142,8 @@ namespace ExtendCSharp.Services
 
                     p.CreateNoWindow = true;
                     p.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-                    p.Async = false;
-                    p.Start();
-
-
+                    
+                    p.Start().Wait();
 
 
 
@@ -216,8 +213,8 @@ namespace ExtendCSharp.Services
                     ss.CreateFolderSecure(ss.GetParent(Output));
 
 
-                    p.Async = false;
-                    p.Start();
+                   
+                    p.Start().Wait();
 
 
                     if (ss.FileExist(JpgNameTemp))
@@ -228,8 +225,8 @@ namespace ExtendCSharp.Services
                         p.RedirectStandardError = false;
                         p.CreateNoWindow = true;
                         p.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-                        p.Async = false;
-                        p.Start();
+                        
+                        p.Start().Wait();
                     }
 
                     if (OnStatusChanged != null)
@@ -382,8 +379,8 @@ namespace ExtendCSharp.Services
                 ss.CreateFolderSecure(ss.GetParent(Output));
                 
 
-                p.Async = Async;
-                p.Start();
+                
+                p.Start().Wait();
             }
             else
                 return false;
@@ -773,8 +770,8 @@ namespace ExtendCSharp.Services
                 p.CreateNoWindow = true;
                 p.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
 
-                p.Async = false;
-                p.Start();
+                
+                p.Start().Wait();
 
                 return temp;
             }

@@ -406,12 +406,13 @@ namespace ExtendCSharp.Controls
     public class CartesianActionCircle : CartesianAction
     {
 
-        public float X, Y, radius;
+        public float  radius;
+        public PointF Center;
+       
 
         public CartesianActionCircle(float X, float Y, float radius)
         {
-            this.X = X;
-            this.Y = Y;
+            Center = new PointF(X, Y);
             this.radius = radius;
         }
 
@@ -436,7 +437,7 @@ namespace ExtendCSharp.Controls
                 p = DefaultPen;
 
 
-            g.DrawCircle(p, X, Y, radius);
+            g.DrawCircle(p,Center, radius);
         }
     }
     public class CartesianActionRectangle : CartesianAction
