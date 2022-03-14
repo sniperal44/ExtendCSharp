@@ -21,6 +21,16 @@ namespace ExtendCSharp.ExtendedClass
             objs[o][Key] = attribute;
         }
 
+        public static bool HasAttribute(this object o, object Key)
+        {
+            if (!objs.ContainsKey(o))
+                return false;
+
+            if (!objs[o].ContainsKey(Key))
+                return false;
+
+            return true;
+        }
         public static object GetAttribute(this object o, object Key)
         {
             if (!objs.ContainsKey(o))
